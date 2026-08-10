@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CicloPack Eco - CRM Vendedores</title>
+    <style>
+        :root {
+            --primary: #4169E1; /* Azul Rey */
+            --secondary: #00FFFF; /* Cian */
+            --bg: #f8f9fa; /* Fondo clarito */
+            --text: #333;
+        }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text); 
+            padding: 20px; 
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            border-top: 5px solid var(--primary); 
+        }
+        h1 { color: var(--primary); text-align: center; font-size: 2.5em; margin-bottom: 5px;}
+        h1 span { 
+            color: var(--secondary); 
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.6); 
+        }
+        h2 { text-align: center; color: #666; font-size: 1.2em; margin-bottom: 30px; }
+        
+        .form-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 25px; }
+        input, select { 
+            flex: 1 1 200px; 
+            padding: 12px; 
+            border-radius: 8px; 
+            border: 1px solid #ddd; 
+            outline: none;
+            transition: border 0.3s;
+        }
+        input:focus, select:focus { border-color: var(--secondary); box-shadow: 0 0 5px var(--secondary); }
+        
+        button { 
+            width: 100%; 
+            padding: 15px; 
+            background: linear-gradient(135deg, var(--primary), #284baf); 
+            color: white; 
+            border: none; 
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            box-shadow: 0 4px 15px rgba(65, 105, 225, 0.3);
+        }
+        button:hover { background: var(--secondary); color: #000; box-shadow: 0 4px 15px rgba(0, 255, 255, 0.4); }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th, td { border-bottom: 1px solid #eee; padding: 15px; text-align: left; }
+        th { background-color: var(--primary); color: white; border-radius: 4px 4px 0 0;}
+        tr:hover { background-color: #f1f4ff; }
+        
+        /* Etiqueta de mejor precio */
+        .mejor-precio { background-color: #d4edda; color: #155724; font-weight: bold; padding: 3px 8px; border-radius: 5px; font-size: 0.8em;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CicloPack <span>Eco</span></h1>
+        <h2>Módulo Comparador de Proveedores</h2>
+
+        <div class="form-group">
+            <input type="text" id="provNombre" placeholder="Nombre Proveedor (ej. Plásticos Mary)">
+            <input type="text" id="provProducto" placeholder="Producto (ej. Cajas cartón)">
+            <input type="number" id="provPrecio" placeholder="Precio ($)">
+            <select id="provCiudad">
+                <option value="Coquimbo">Coquimbo</option>
+                <option value="La Serena">La Serena</option>
+                <option value="Santiago">Santiago</option>
+            </select>
+            <button onclick="agregarProveedor()">Agregar a la Comparativa</button>
+        </div>
+
+        <table id="tablaProveedores">
+            <thead>
+                <tr>
+                    <th>Proveedor</th>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Ubicación</th>
+                </tr>
+            </thead>
+            <tbody id="listaProveedores">
+                <!-- Los proveedores se irán sumando aquí abajo -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Esta es una memoria temporal para que veas cómo funciona la app antes de conectarla a Firebase
+        function agregarProveedor() {
+            const nombre = document.getElementById('provNombre').value;
+            const producto = document.getElementById('provProducto').value;
+            const precio = document.getElementById('provPrecio').value;
+            const ciudad = document.getElementById('provCiudad').value;
+
+            if(!nombre || !producto || !precio) {
+                alert("¡Pucha! Faltan algunos datos, llénalos todos por favor.");
+                return;
+            }
+
+            const tabla = document.getElementById('listaProveedores');
+            // Aquí armamos la fila visualmente
+            const fila = `
+                <tr>
+                    <td><strong>${nombre}</strong></td>
+                    <td>${producto}</td>
+                    <td>$${Number(precio).toLocaleString('es-CL')}</td>
+                    <td>${ciudad}</td>
+                </tr>
+            `;
+            tabla.innerHTML += fila;
+
+            // Limpiamos las casillas para agregar el siguiente súper rápido
+            document.getElementById('provNombre').value = '';
+            document.getElementById('provProducto').value = '';
+            document.getElementById('provPrecio').value = '';
+            document.getElementById('provNombre').focus();
+        }
+    </script>
+</body>
+</html>
