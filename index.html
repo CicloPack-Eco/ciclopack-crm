@@ -6,37 +6,45 @@
     <title>CicloPack Eco - CRM Proveedores</title>
     <style>
         :root {
-            --bg-color: #f4f6f9;
+            /* MODO CLARO */
+            --bg-body: #e2e8f0;
+            --bg-main: #f8fafc;
             --card-bg: #ffffff;
-            --text-color: #2b2d42;
+            --text-color: #1e293b;
             --primary-blue: #1d4ed8;
             --chrome-blue: #023e8a;
             --cyan-accent: #00f5d4;
-            --border-color: #e2e8f0;
-            --rustic-pattern: rgba(2, 62, 138, 0.05);
-            --highlight-bg: #e0f2fe;
+            --border-color: #cbd5e1;
+            --rustic-pattern: rgba(2, 62, 138, 0.08);
+            --highlight-bg: #f0f9ff;
+            --modal-bg: rgba(0,0,0,0.5);
         }
 
         [data-theme="dark"] {
-            --bg-color: #0b132b;
-            --card-bg: #1c2541;
-            --text-color: #edf2f4;
-            --primary-blue: #3a86ff;
-            --chrome-blue: #0077b6;
+            /* MODO OSCURO */
+            --bg-body: #020617;
+            --bg-main: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f1f5f9;
+            --primary-blue: #3b82f6;
+            --chrome-blue: #0ea5e9;
             --cyan-accent: #00f5d4;
             --border-color: #334155;
-            --rustic-pattern: rgba(0, 245, 212, 0.05);
-            --highlight-bg: #1e3a8a;
+            --rustic-pattern: rgba(0, 245, 212, 0.08);
+            --highlight-bg: #172554;
+            --modal-bg: rgba(0,0,0,0.7);
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            background-color: var(--bg-body);
             color: var(--text-color);
             margin: 0;
-            padding: 20px;
+            /* Aquí creamos el marco lateral con el padding */
+            padding: 3vh 4vw;
             transition: all 0.3s ease;
-            /* Patrón geométrico romboidal rústico */
+            
+            /* Patrón rústico de fondo (ahora solo se ve en los bordes) */
             background-image: 
                 linear-gradient(135deg, var(--rustic-pattern) 25%, transparent 25%), 
                 linear-gradient(225deg, var(--rustic-pattern) 25%, transparent 25%), 
@@ -47,320 +55,420 @@
             background-repeat: repeat;
         }
 
-        .container {
-            max-width: 1000px;
+        /* Contenedor Principal Sólido */
+        .main-container {
+            max-width: 1300px;
             margin: 0 auto;
-            background: var(--card-bg);
-            padding: 25px;
+            background-color: var(--bg-main);
+            padding: 30px;
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            border-top: 6px solid var(--primary-blue);
-            border-bottom: 6px solid var(--cyan-accent);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            min-height: 90vh;
         }
 
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             border-bottom: 2px dashed var(--border-color);
-            padding-bottom: 15px;
-            margin-bottom: 25px;
+            padding-bottom: 15px; margin-bottom: 25px;
         }
 
         h1 {
-            margin: 0;
-            font-size: 2em;
+            margin: 0; font-size: 2.2em;
             background: linear-gradient(45deg, var(--chrome-blue), var(--cyan-accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .theme-toggle {
+        .theme-toggle, .btn-primary {
             background: linear-gradient(135deg, var(--chrome-blue), var(--primary-blue));
-            color: white;
-            border: 1px solid var(--cyan-accent);
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(0, 245, 212, 0.3);
+            color: white; border: 1px solid var(--cyan-accent);
+            padding: 10px 20px; border-radius: 8px;
+            cursor: pointer; font-weight: bold; font-size: 1em;
+            box-shadow: 0 0 10px rgba(0, 245, 212, 0.2); transition: 0.3s;
+        }
+        .theme-toggle:hover, .btn-primary:hover { filter: brightness(1.2); box-shadow: 0 0 15px var(--cyan-accent); }
+
+        .btn-secondary {
+            background: #64748b; color: white; border: none;
+            padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;
         }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+        /* MODALES (Ventanas flotantes) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--modal-bg); backdrop-filter: blur(4px);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
         }
+        .modal-content {
+            background: var(--card-bg); width: 90%; max-width: 700px;
+            border-radius: 12px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            max-height: 90vh; overflow-y: auto; border-top: 5px solid var(--primary-blue);
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;}
+        .modal-header h2 { margin: 0; color: var(--text-color); }
+        
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 15px;}
+        .form-group { display: flex; flex-direction: column; }
+        label { font-size: 0.85em; font-weight: bold; margin-bottom: 5px; color: var(--text-color); }
+        input, select { 
+            padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);
+            background: var(--bg-main); color: var(--text-color); outline: none;
+        }
+        input:focus, select:focus { border-color: var(--cyan-accent); box-shadow: 0 0 5px var(--cyan-accent); }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
+        /* Etiquetas visuales (Radio Buttons Personalizados) */
+        .radio-group { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;}
+        .radio-label {
+            padding: 8px 12px; border-radius: 20px; font-size: 0.85em; font-weight: bold;
+            cursor: pointer; border: 2px solid transparent; opacity: 0.6; transition: 0.2s;
+            display: flex; align-items: center; gap: 5px; color: #fff;
         }
+        .radio-label input { display: none; }
+        .radio-label:has(input:checked) { opacity: 1; border-color: white; box-shadow: 0 0 10px rgba(255,255,255,0.3); transform: scale(1.05);}
+        
+        .bg-eco { background-color: #0ea5e9; } /* Celeste */
+        .bg-premium { background-color: #a855f7; } /* Amatista */
+        .bg-oficial { background-color: #10b981; } /* Verde */
+        .bg-posible { background-color: #eab308; } /* Amarillo */
 
-        label {
-            font-size: 0.85em;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: var(--text-color);
+        .fav-btn {
+            font-size: 2em; cursor: pointer; color: #cbd5e1; user-select: none; transition: 0.3s;
         }
+        .fav-active { color: #fbbf24; filter: drop-shadow(0 0 5px #fbbf24); }
 
-        input, select {
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background: var(--card-bg);
-            color: var(--text-color);
-            outline: none;
-        }
+        /* Tablas */
+        .table-responsive { overflow-x: auto; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 8px; overflow: hidden;}
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 0.9em;}
+        th { background: var(--chrome-blue); color: white; }
+        tr:hover { background: var(--highlight-bg); }
 
-        input:focus, select:focus {
-            border-color: var(--cyan-accent);
-            box-shadow: 0 0 8px var(--cyan-accent);
-        }
-
-        .btn-add {
-            grid-column: 1 / -1;
-            padding: 14px;
-            background: linear-gradient(90deg, var(--chrome-blue), var(--primary-blue));
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.4);
-            transition: 0.3s;
-        }
-
-        .btn-add:hover {
-            filter: brightness(1.2);
-            box-shadow: 0 0 15px var(--cyan-accent);
-        }
-
-        /* Sección de Comparativa y Recomendación */
-        .compare-section {
-            background: var(--highlight-bg);
-            padding: 15px;
-            border-radius: 12px;
-            margin: 25px 0;
-            border: 1px solid var(--cyan-accent);
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.9em;
-        }
-
-        th {
-            background: var(--chrome-blue);
-            color: white;
-        }
-
-        .badge-best {
-            background: var(--cyan-accent);
-            color: #000;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 0.8em;
-        }
-
-        a.prov-link {
-            color: var(--primary-blue);
-            text-decoration: none;
-            font-weight: bold;
-        }
+        .tag { padding: 3px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; color: white;}
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="main-container">
         <div class="header">
             <div>
                 <h1>CicloPack Eco</h1>
-                <small>Módulo de Gestión y Comparación de Proveedores</small>
+                <small>Sistema CRM - Gestión de Proveedores</small>
             </div>
-            <button class="theme-toggle" onclick="toggleTheme()">🌓 Cambiar Modo</button>
-        </div>
-
-        <!-- FORMULARIO DE INGRESO -->
-        <h3>📥 Registrar Nuevo Proveedor</h3>
-        <div class="form-grid">
-            <div class="form-group">
-                <label>Proveedor</label>
-                <input type="text" id="nombre" placeholder="Ej. Envases Coquimbo">
+            <div>
+                <button class="btn-primary" onclick="abrirModalProv()">+ Nuevo Proveedor</button>
+                <button class="theme-toggle" onclick="toggleTheme()">🌓 Modo</button>
             </div>
-            <div class="form-group">
-                <label>Sitio Web</label>
-                <input type="url" id="web" placeholder="https://ejemplo.cl">
-            </div>
-            <div class="form-group">
-                <label>Ciudad</label>
-                <select id="ciudad">
-                    <option value="Coquimbo">Coquimbo</option>
-                    <option value="La Serena">La Serena</option>
-                    <option value="Santiago">Santiago</option>
-                    <option value="Otra">Otra</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Producto</label>
-                <input type="text" id="producto" placeholder="Ej. Cajas de Cartón 20x20">
-            </div>
-            <div class="form-group">
-                <label>Precio Minorista ($)</label>
-                <input type="number" id="pMinorista" placeholder="1500">
-            </div>
-            <div class="form-group">
-                <label>Precio Mayorista ($)</label>
-                <input type="number" id="pMayorista" placeholder="1000">
-            </div>
-            <div class="form-group">
-                <label>Tiempo Entrega a Coquimbo (Días)</label>
-                <input type="number" id="tiempoEntrega" placeholder="2">
-            </div>
-            <div class="form-group">
-                <label>Ofertas / Promos</label>
-                <input type="text" id="ofertas" placeholder="Ej. 10% desc sobre 500 un.">
-            </div>
-            <button class="btn-add" onclick="guardarProveedor()">Guardar Proveedor</button>
         </div>
 
         <!-- HERRAMIENTA DE COMPARACIÓN -->
-        <div class="compare-section">
-            <h3>🔍 Comparador de Productos</h3>
+        <div style="background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--cyan-accent); margin-bottom: 25px;">
+            <h3 style="margin-top:0;">🔍 Analizador de Precios</h3>
             <div class="form-group">
-                <label>Buscar Producto para comparar opciones:</label>
-                <input type="text" id="buscarProd" placeholder="Escribe un producto para analizar..." onkeyup="compararProveedores()">
+                <input type="text" id="buscarProd" placeholder="Escribe un producto (ej. Cajas) para buscar la mejor opción..." onkeyup="compararProveedores()">
             </div>
             <div id="recomendacion" style="margin-top: 10px; font-size: 0.95em;"></div>
         </div>
 
         <!-- BASE DE DATOS REGISTRADA -->
-        <h3>📋 Base de Datos de Proveedores</h3>
+        <h3>📋 Directorio General (Productos y Proveedores)</h3>
         <div class="table-responsive">
             <table>
                 <thead>
                     <tr>
+                        <th>Fav</th>
+                        <th>Categoría</th>
+                        <th>Estado</th>
                         <th>Proveedor</th>
                         <th>Ciudad</th>
                         <th>Producto</th>
-                        <th>P. Minorista</th>
                         <th>P. Mayorista</th>
                         <th>Entrega</th>
-                        <th>Ofertas</th>
+                        <th>Oferta</th>
                     </tr>
                 </thead>
-                <tbody id="tablaCuerpo">
-                    <!-- Registros dinámicos -->
+                <tbody id="tablaPrincipal">
+                    <!-- Filas dinámicas -->
                 </tbody>
             </table>
         </div>
     </div>
 
-    <script>
-        let proveedores = [];
+    <!-- MODAL 1: NUEVO PROVEEDOR -->
+    <div class="modal-overlay" id="modalProv">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🏢 Ficha de Nuevo Proveedor</h2>
+                <div class="fav-btn" id="estrellaFav" onclick="toggleFav()">☆</div>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nombre del Proveedor</label>
+                    <input type="text" id="provNombre" placeholder="Ej. Plásticos Mary">
+                </div>
+                <div class="form-group">
+                    <label>Sitio Web</label>
+                    <input type="url" id="provWeb" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Ciudad</label>
+                    <select id="provCiudad">
+                        <option value="Coquimbo">Coquimbo</option>
+                        <option value="La Serena">La Serena</option>
+                        <option value="Santiago">Santiago</option>
+                        <option value="Otra">Otra</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tiempo Entrega a Coquimbo (Días)</label>
+                    <input type="number" id="provTiempo" placeholder="Ej. 2">
+                </div>
+            </div>
 
+            <label>Clasificación de Línea:</label>
+            <div class="radio-group">
+                <label class="radio-label bg-eco"><input type="radio" name="catLinea" value="Eco" checked> Tradicional / Eco</label>
+                <label class="radio-label bg-premium"><input type="radio" name="catLinea" value="Premium"> Sustentable / Premium</label>
+            </div>
+
+            <label>Estado de Proveedor:</label>
+            <div class="radio-group">
+                <label class="radio-label bg-oficial"><input type="radio" name="catEstado" value="Oficial" checked> Actual / Oficial</label>
+                <label class="radio-label bg-posible"><input type="radio" name="catEstado" value="Posible"> Posible Proveedor</label>
+            </div>
+
+            <hr style="border-color: var(--border-color); margin: 20px 0;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0;">📦 Lista de Productos</h3>
+                <button class="btn-primary" style="padding: 5px 15px; font-size: 0.9em;" onclick="abrirModalProd()">+ Agregar Producto</button>
+            </div>
+            
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Minorista</th>
+                            <th>Mayorista</th>
+                            <th>Oferta</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaTempProductos"></tbody>
+                </table>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end;">
+                <button class="btn-secondary" onclick="cerrarModalProv()">Cancelar</button>
+                <button class="btn-primary" onclick="guardarProveedorFinal()">Guardar Proveedor</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: AGREGAR PRODUCTO -->
+    <div class="modal-overlay" id="modalProd">
+        <div class="modal-content" style="max-width: 400px; border-top-color: var(--cyan-accent);">
+            <div class="modal-header">
+                <h2>➕ Detalle del Producto</h2>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Nombre del Producto</label>
+                <input type="text" id="prodNombre" placeholder="Ej. Envase PET 500cc">
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Precio Minorista ($)</label>
+                <input type="number" id="prodMin" placeholder="1500">
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Precio Mayorista ($)</label>
+                <input type="number" id="prodMay" placeholder="1000">
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label>Oferta Especial</label>
+                <input type="text" id="prodOferta" placeholder="Ej. 10% dcto sobre 50 un.">
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn-secondary" onclick="cerrarModalProd()">Cancelar</button>
+                <button class="btn-primary" onclick="guardarProductoTemp()">Agregar a la Lista</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let directorio = []; 
+        let productosTemporales = [];
+        let esFavActual = false;
+
+        // TEMA CLARO/OSCURO
         function toggleTheme() {
-            const currentTheme = document.body.getAttribute('data-theme');
-            if (currentTheme === 'dark') {
-                document.body.removeAttribute('data-theme');
-            } else {
-                document.body.setAttribute('data-theme', 'dark');
-            }
+            const body = document.body;
+            body.getAttribute('data-theme') === 'dark' ? body.removeAttribute('data-theme') : body.setAttribute('data-theme', 'dark');
         }
 
-        function guardarProveedor() {
-            const prov = {
-                nombre: document.getElementById('nombre').value,
-                web: document.getElementById('web').value,
-                ciudad: document.getElementById('ciudad').value,
-                producto: document.getElementById('producto').value,
-                pMinorista: Number(document.getElementById('pMinorista').value),
-                pMayorista: Number(document.getElementById('pMayorista').value),
-                tiempo: Number(document.getElementById('tiempoEntrega').value),
-                ofertas: document.getElementById('ofertas').value || 'Sin promo'
+        // FAVORITOS
+        function toggleFav() {
+            esFavActual = !esFavActual;
+            const estrella = document.getElementById('estrellaFav');
+            estrella.innerHTML = esFavActual ? '★' : '☆';
+            if(esFavActual) estrella.classList.add('fav-active');
+            else estrella.classList.remove('fav-active');
+        }
+
+        // CONTROL DE MODALES
+        function abrirModalProv() {
+            productosTemporales = []; // Limpiamos lista temporal
+            esFavActual = false;
+            document.getElementById('estrellaFav').innerHTML = '☆';
+            document.getElementById('estrellaFav').classList.remove('fav-active');
+            
+            // Limpiar inputs
+            document.getElementById('provNombre').value = '';
+            document.getElementById('provWeb').value = '';
+            document.getElementById('provTiempo').value = '';
+            
+            actualizarTablaTemp();
+            document.getElementById('modalProv').style.display = 'flex';
+        }
+        function cerrarModalProv() { document.getElementById('modalProv').style.display = 'none'; }
+        
+        function abrirModalProd() {
+            document.getElementById('prodNombre').value = '';
+            document.getElementById('prodMin').value = '';
+            document.getElementById('prodMay').value = '';
+            document.getElementById('prodOferta').value = '';
+            document.getElementById('modalProd').style.display = 'flex';
+        }
+        function cerrarModalProd() { document.getElementById('modalProd').style.display = 'none'; }
+
+        // LÓGICA DE DATOS
+        function guardarProductoTemp() {
+            const prod = {
+                nombre: document.getElementById('prodNombre').value,
+                minorista: Number(document.getElementById('prodMin').value),
+                mayorista: Number(document.getElementById('prodMay').value),
+                oferta: document.getElementById('prodOferta').value || '-'
             };
 
-            if (!prov.nombre || !prov.producto || !prov.pMayorista) {
-                alert("Por favor completa al menos Nombre, Producto y Precio Mayorista.");
+            if(!prod.nombre || !prod.mayorista) {
+                alert("Debes ingresar al menos el nombre y el precio mayorista.");
                 return;
             }
 
-            proveedores.push(prov);
-            actualizarTabla();
-            limpiarFormulario();
+            productosTemporales.push(prod);
+            actualizarTablaTemp();
+            cerrarModalProd();
         }
 
-        function actualizarTabla() {
-            const tbody = document.getElementById('tablaCuerpo');
+        function actualizarTablaTemp() {
+            const tbody = document.getElementById('listaTempProductos');
             tbody.innerHTML = '';
-
-            proveedores.forEach(p => {
-                const webLink = p.web ? `<a href="${p.web}" target="_blank" class="prov-link">${p.nombre} 🔗</a>` : p.nombre;
-                const fila = `
-                    <tr>
-                        <td><strong>${webLink}</strong></td>
-                        <td>${p.ciudad}</td>
-                        <td>${p.producto}</td>
-                        <td>$${p.pMinorista.toLocaleString('es-CL')}</td>
-                        <td><strong>$${p.pMayorista.toLocaleString('es-CL')}</strong></td>
-                        <td>${p.tiempo} días</td>
-                        <td><small>${p.ofertas}</small></td>
-                    </tr>
-                `;
-                tbody.innerHTML += fila;
+            productosTemporales.forEach(p => {
+                tbody.innerHTML += `<tr>
+                    <td>${p.nombre}</td>
+                    <td>$${p.minorista.toLocaleString('es-CL')}</td>
+                    <td><strong>$${p.mayorista.toLocaleString('es-CL')}</strong></td>
+                    <td><small>${p.oferta}</small></td>
+                </tr>`;
             });
         }
 
-        function limpiarFormulario() {
-            document.getElementById('nombre').value = '';
-            document.getElementById('web').value = '';
-            document.getElementById('producto').value = '';
-            document.getElementById('pMinorista').value = '';
-            document.getElementById('pMayorista').value = '';
-            document.getElementById('tiempoEntrega').value = '';
-            document.getElementById('ofertas').value = '';
+        function guardarProveedorFinal() {
+            const nombre = document.getElementById('provNombre').value;
+            if(!nombre || productosTemporales.length === 0) {
+                alert("Ingresa el nombre del proveedor y al menos un producto.");
+                return;
+            }
+
+            const proveedor = {
+                nombre: nombre,
+                web: document.getElementById('provWeb').value,
+                ciudad: document.getElementById('provCiudad').value,
+                tiempo: document.getElementById('provTiempo').value,
+                linea: document.querySelector('input[name="catLinea"]:checked').value,
+                estado: document.querySelector('input[name="catEstado"]:checked').value,
+                favorito: esFavActual,
+                productos: [...productosTemporales]
+            };
+
+            directorio.push(proveedor);
+            actualizarTablaPrincipal();
+            cerrarModalProv();
         }
 
+        function actualizarTablaPrincipal() {
+            const tbody = document.getElementById('tablaPrincipal');
+            tbody.innerHTML = '';
+
+            directorio.forEach(prov => {
+                const favIcon = prov.favorito ? '<span style="color:gold; font-size:1.2em;">★</span>' : '<span style="color:gray;">☆</span>';
+                const tagLinea = prov.linea === 'Eco' ? '<span class="tag bg-eco">Eco</span>' : '<span class="tag bg-premium">Premium</span>';
+                const tagEstado = prov.estado === 'Oficial' ? '<span class="tag bg-oficial">Oficial</span>' : '<span class="tag bg-posible">Posible</span>';
+                const webLink = prov.web ? `<a href="${prov.web}" target="_blank" style="color:var(--primary-blue); font-weight:bold;">${prov.nombre}🔗</a>` : `<strong>${prov.nombre}</strong>`;
+
+                prov.productos.forEach(prod => {
+                    tbody.innerHTML += `<tr>
+                        <td style="text-align:center;">${favIcon}</td>
+                        <td>${tagLinea}</td>
+                        <td>${tagEstado}</td>
+                        <td>${webLink}</td>
+                        <td>${prov.ciudad}</td>
+                        <td>${prod.nombre}</td>
+                        <td style="color: #10b981; font-weight: bold;">$${prod.mayorista.toLocaleString('es-CL')}</td>
+                        <td>${prov.tiempo} d.</td>
+                        <td><small>${prod.oferta}</small></td>
+                    </tr>`;
+                });
+            });
+            compararProveedores(); // Refrescar recomendación
+        }
+
+        // BUSCADOR / COMPARADOR INTELIGENTE
         function compararProveedores() {
             const busqueda = document.getElementById('buscarProd').value.toLowerCase().trim();
             const divRec = document.getElementById('recomendacion');
 
-            if (!busqueda) {
+            if (!busqueda || directorio.length === 0) {
                 divRec.innerHTML = '';
                 return;
             }
 
-            const coincidentes = proveedores.filter(p => p.producto.toLowerCase().includes(busqueda));
+            let opcionesEncontradas = [];
+            
+            // Aplanar la lista para buscar producto por producto en todos los proveedores
+            directorio.forEach(prov => {
+                prov.productos.forEach(prod => {
+                    if(prod.nombre.toLowerCase().includes(busqueda)) {
+                        opcionesEncontradas.push({
+                            provNombre: prov.nombre,
+                            prodNombre: prod.nombre,
+                            precio: prod.mayorista,
+                            tiempo: prov.tiempo,
+                            esOficial: prov.estado === 'Oficial',
+                            esFav: prov.favorito
+                        });
+                    }
+                });
+            });
 
-            if (coincidentes.length === 0) {
-                divRec.innerHTML = '<em>No hay proveedores registrados con ese producto.</em>';
+            if (opcionesEncontradas.length === 0) {
+                divRec.innerHTML = '<em>No hay coincidencias en tu base de datos.</em>';
                 return;
             }
 
-            // Algoritmo simple para seleccionar el mejor (menor precio mayorista)
-            let mejor = coincidentes.reduce((prev, curr) => (prev.pMayorista < curr.pMayorista) ? prev : curr);
+            // Encontrar el menor precio
+            let mejor = opcionesEncontradas.reduce((prev, curr) => (prev.precio < curr.precio) ? prev : curr);
 
             divRec.innerHTML = `
-                💡 <strong>Mejor Opción Encontrada:</strong> Comprar a <strong>${mejor.nombre}</strong> 
-                a <strong>$${mejor.pMayorista.toLocaleString('es-CL')}</strong> (Mayorista) 
-                con entrega en <strong>${mejor.tiempo} días</strong> a Coquimbo. <span class="badge-best">RECOMENDADO</span>
+                💡 <strong>Mejor Opción:</strong> 
+                <strong>${mejor.provNombre}</strong> tiene "${mejor.prodNombre}" a 
+                <strong style="color:#10b981;">$${mejor.precio.toLocaleString('es-CL')} (Mayorista)</strong>. 
+                Tiempo estimado: ${mejor.tiempo} días. 
+                ${mejor.esFav ? '⭐(Tu Favorito)' : ''} 
+                ${mejor.esOficial ? '<span class="tag bg-oficial">Prov. Oficial</span>' : ''}
             `;
         }
     </script>
