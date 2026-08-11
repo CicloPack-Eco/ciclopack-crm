@@ -18,6 +18,8 @@
             --rustic-pattern: rgba(2, 62, 138, 0.08);
             --highlight-bg: #f0f9ff;
             --modal-bg: rgba(0,0,0,0.5);
+            --danger: #ef4444;
+            --warning: #f59e0b;
         }
 
         [data-theme="dark"] {
@@ -39,124 +41,73 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-body);
             color: var(--text-color);
-            margin: 0;
-            padding: 3vh 4vw;
-            transition: all 0.3s ease;
-            
+            margin: 0; padding: 3vh 4vw; transition: all 0.3s ease;
             background-image: 
                 linear-gradient(135deg, var(--rustic-pattern) 25%, transparent 25%), 
                 linear-gradient(225deg, var(--rustic-pattern) 25%, transparent 25%), 
                 linear-gradient(45deg, var(--rustic-pattern) 25%, transparent 25%), 
                 linear-gradient(315deg, var(--rustic-pattern) 25%, transparent 25%);
-            background-position: 10px 0, 10px 0, 0 0, 0 0;
-            background-size: 20px 20px;
-            background-repeat: repeat;
+            background-position: 10px 0, 10px 0, 0 0, 0 0; background-size: 20px 20px; background-repeat: repeat;
         }
 
         .main-container {
-            max-width: 1300px;
-            margin: 0 auto;
-            background-color: var(--bg-main);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            border: 1px solid var(--border-color);
-            min-height: 90vh;
+            max-width: 1300px; margin: 0 auto; background-color: var(--bg-main);
+            padding: 30px; border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color); min-height: 90vh;
         }
 
-        .header {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px dashed var(--border-color);
-            padding-bottom: 15px; margin-bottom: 25px;
-        }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed var(--border-color); padding-bottom: 15px; margin-bottom: 25px; }
+        h1 { margin: 0; font-size: 2.2em; background: linear-gradient(45deg, var(--chrome-blue), var(--cyan-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        h1 {
-            margin: 0; font-size: 2.2em;
-            background: linear-gradient(45deg, var(--chrome-blue), var(--cyan-accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .theme-toggle, .btn-primary {
-            background: linear-gradient(135deg, var(--chrome-blue), var(--primary-blue));
-            color: white; border: 1px solid var(--cyan-accent);
-            padding: 10px 20px; border-radius: 8px;
-            cursor: pointer; font-weight: bold; font-size: 1em;
-            box-shadow: 0 0 10px rgba(0, 245, 212, 0.2); transition: 0.3s;
-        }
-        .theme-toggle:hover, .btn-primary:hover { filter: brightness(1.2); box-shadow: 0 0 15px var(--cyan-accent); }
-
-        .btn-secondary {
-            background: #64748b; color: white; border: none;
-            padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;
-        }
+        .btn-primary { background: linear-gradient(135deg, var(--chrome-blue), var(--primary-blue)); color: white; border: 1px solid var(--cyan-accent); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 0 10px rgba(0, 245, 212, 0.2); transition: 0.3s; }
+        .btn-primary:hover { filter: brightness(1.2); box-shadow: 0 0 15px var(--cyan-accent); }
+        .btn-secondary { background: #64748b; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-danger { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8em; font-weight: bold;}
+        .btn-warning { background: var(--warning); color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8em; font-weight: bold; color: #000;}
 
         /* MODALES */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--modal-bg); backdrop-filter: blur(4px);
-            display: none; justify-content: center; align-items: center; z-index: 1000;
-        }
-        .modal-content {
-            background: var(--card-bg); width: 90%; max-width: 750px;
-            border-radius: 12px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            max-height: 90vh; overflow-y: auto; border-top: 5px solid var(--primary-blue);
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-bg); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--card-bg); width: 90%; max-width: 750px; border-radius: 12px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto; border-top: 5px solid var(--primary-blue); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;}
-        .modal-header h2 { margin: 0; color: var(--text-color); }
+        .modal-header h2 { margin: 0; }
         
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 15px; margin-bottom: 15px;}
         .form-group { display: flex; flex-direction: column; }
-        label { font-size: 0.85em; font-weight: bold; margin-bottom: 5px; color: var(--text-color); }
-        
-        /* EFECTO GLOW PARA TODOS LOS INPUTS Y SELECTS */
-        input, select { 
-            padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);
-            background: var(--bg-main); color: var(--text-color); outline: none; transition: 0.3s;
-        }
-        input:focus, select:focus { 
-            border-color: var(--cyan-accent); 
-            box-shadow: 0 0 12px var(--cyan-accent); 
-        }
+        label { font-size: 0.85em; font-weight: bold; margin-bottom: 5px; }
+        input, select { padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-color); outline: none; transition: 0.3s; }
+        input:focus, select:focus { border-color: var(--cyan-accent); box-shadow: 0 0 12px var(--cyan-accent); }
 
-        /* BOTONES DE SELECCIÓN (RADIO) - Transparentes hasta que se seleccionan */
         .radio-group { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;}
-        .radio-label {
-            padding: 8px 12px; border-radius: 20px; font-size: 0.85em; font-weight: bold;
-            cursor: pointer; border: 2px solid var(--border-color);
-            display: flex; align-items: center; gap: 5px; color: var(--text-color);
-            background: transparent; transition: 0.3s;
-        }
+        .radio-label { padding: 8px 12px; border-radius: 20px; font-size: 0.85em; font-weight: bold; cursor: pointer; border: 2px solid var(--border-color); display: flex; align-items: center; gap: 5px; background: transparent; transition: 0.3s; }
         .radio-label input { display: none; }
-        
-        /* Efectos al seleccionar */
         .radio-label:has(input:checked) { color: white; transform: scale(1.05); }
         .opt-eco:has(input:checked) { background-color: #0ea5e9; border-color: #0ea5e9; box-shadow: 0 0 12px #0ea5e9; }
         .opt-premium:has(input:checked) { background-color: #a855f7; border-color: #a855f7; box-shadow: 0 0 12px #a855f7; }
         .opt-oficial:has(input:checked) { background-color: #10b981; border-color: #10b981; box-shadow: 0 0 12px #10b981; }
         .opt-posible:has(input:checked) { background-color: #eab308; border-color: #eab308; box-shadow: 0 0 12px #eab308; }
 
-        .fav-btn { font-size: 2em; cursor: pointer; color: #cbd5e1; user-select: none; transition: 0.3s; }
-        .fav-active { color: #fbbf24; filter: drop-shadow(0 0 8px #fbbf24); }
-
-        /* TABLAS Y FILTROS */
-        .filtros-bar {
-            display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;
-            background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);
-        }
-        .filtros-bar select { padding: 8px; font-size: 0.85em; flex: 1; min-width: 120px;}
-        
-        .table-responsive { overflow-x: auto; margin-top: 15px; }
-        table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 8px; overflow: hidden;}
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 0.9em;}
-        th { background: var(--chrome-blue); color: white; }
-        tr:hover { background: var(--highlight-bg); }
-
-        .tag { padding: 3px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; color: white;}
+        .tag { padding: 4px 10px; border-radius: 6px; font-size: 0.8em; font-weight: bold; color: white; display: inline-block;}
         .tag-eco { background-color: #0ea5e9; }
         .tag-premium { background-color: #a855f7; }
+        .tag-hibrido { background: linear-gradient(90deg, #0ea5e9, #a855f7); box-shadow: 0 0 8px rgba(168, 85, 247, 0.4); }
         .tag-oficial { background-color: #10b981; }
         .tag-posible { background-color: #eab308; }
+
+        /* ACORDEONES (DETAILS/SUMMARY) */
+        details { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+        summary { background: var(--bg-main); padding: 15px; font-weight: bold; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid transparent; transition: 0.3s; }
+        summary::-webkit-details-marker { display: none; }
+        summary:hover { background: var(--highlight-bg); }
+        details[open] summary { border-bottom-color: var(--border-color); }
+        .details-content { padding: 15px; }
+        
+        .cat-details { margin-left: 20px; border-left: 3px solid var(--chrome-blue); }
+        .subcat-details { margin-left: 20px; border-left: 3px solid var(--cyan-accent); }
+
+        .prod-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--highlight-bg); border-radius: 6px; margin-bottom: 5px; border: 1px solid var(--border-color); }
+        
+        .filtros-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .filtros-bar select { padding: 8px; font-size: 0.85em; flex: 1; min-width: 120px;}
     </style>
 </head>
 <body>
@@ -169,65 +120,27 @@
             </div>
             <div>
                 <button class="btn-primary" onclick="abrirModalProv()">+ Nuevo Proveedor</button>
-                <button class="theme-toggle" onclick="toggleTheme()">🌓 Modo</button>
+                <button class="btn-primary" onclick="toggleTheme()" style="background: #334155; border-color: #94a3b8;">🌓 Modo</button>
             </div>
         </div>
 
-        <div style="background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--cyan-accent); margin-bottom: 25px;">
-            <h3 style="margin-top:0;">🔍 Analizador de Precios</h3>
-            <div class="form-group">
-                <input type="text" id="buscarProd" placeholder="Escribe un producto (ej. Cajas) para buscar la mejor opción..." onkeyup="compararProveedores()">
-            </div>
-            <div id="recomendacion" style="margin-top: 10px; font-size: 0.95em;"></div>
-        </div>
-
-        <h3>📋 Directorio General</h3>
-        
-        <!-- BARRA DE FILTROS -->
         <div class="filtros-bar">
-            <select id="filtroFav" onchange="actualizarTablaPrincipal()">
-                <option value="todos">⭐ Todos (Fav y No Fav)</option>
-                <option value="fav">Solo Favoritos</option>
+            <select id="filtroLinea" onchange="renderDirectorio()">
+                <option value="todos">🎨 Todas las Líneas (Prov.)</option>
+                <option value="Eco">Solo Eco</option>
+                <option value="Premium">Solo Premium</option>
+                <option value="Híbrido">Solo Híbrido (Bicolor)</option>
             </select>
-            <select id="filtroCat" onchange="actualizarTablaPrincipal()">
-                <option value="todos">📦 Todas las Categorías</option>
-                <option value="Eco">Tradicional / Eco</option>
-                <option value="Premium">Sustentable / Premium</option>
-            </select>
-            <select id="filtroEst" onchange="actualizarTablaPrincipal()">
+            <select id="filtroEst" onchange="renderDirectorio()">
                 <option value="todos">🟢 Todos los Estados</option>
                 <option value="Oficial">Actual / Oficial</option>
                 <option value="Posible">Posible Proveedor</option>
             </select>
-            <select id="filtroCiu" onchange="actualizarTablaPrincipal()">
-                <option value="todos">📍 Todas las Ciudades</option>
-                <option value="Coquimbo">Coquimbo</option>
-                <option value="La Serena">La Serena</option>
-                <option value="Santiago">Santiago</option>
-                <option value="Otra">Otra</option>
-            </select>
         </div>
 
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Fav</th>
-                        <th>Línea</th>
-                        <th>Estado</th>
-                        <th>Proveedor</th>
-                        <th>Contacto</th>
-                        <th>Ciudad</th>
-                        <th>Producto</th>
-                        <th>P. Mayorista</th>
-                        <th>Entrega</th>
-                        <th>Oferta</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaPrincipal">
-                    <!-- Filas dinámicas -->
-                </tbody>
-            </table>
+        <h3>📋 Directorio General (Agrupado)</h3>
+        <div id="contenedorDirectorio">
+            <!-- Acordeones dinámicos aquí -->
         </div>
     </div>
 
@@ -235,114 +148,104 @@
     <div class="modal-overlay" id="modalProv">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>🏢 Ficha de Nuevo Proveedor</h2>
-                <div class="fav-btn" id="estrellaFav" onclick="toggleFav()">☆</div>
+                <h2>🏢 Ficha de Proveedor</h2>
+                <div style="font-size: 2em; cursor: pointer; color: #cbd5e1;" id="estrellaFav" onclick="toggleFav()">☆</div>
             </div>
             
             <div class="form-grid">
-                <div class="form-group">
-                    <label>Nombre del Proveedor</label>
-                    <input type="text" id="provNombre" placeholder="Ej. Back2Bio">
-                </div>
-                <div class="form-group">
-                    <label>Sitio Web</label>
-                    <input type="url" id="provWeb" placeholder="https://...">
-                </div>
-                <div class="form-group">
-                    <label>Número de Contacto</label>
-                    <input type="tel" id="provContacto" placeholder="Ej. +56 9 1234 5678">
-                </div>
-                <div class="form-group">
-                    <label>Ciudad</label>
-                    <select id="provCiudad">
-                        <option value="Coquimbo">Coquimbo</option>
-                        <option value="La Serena">La Serena</option>
-                        <option value="Santiago">Santiago</option>
-                        <option value="Otra">Otra</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Tiempo Entrega a Coquimbo (Días)</label>
-                    <input type="number" id="provTiempo" placeholder="Ej. 2">
-                </div>
+                <div class="form-group"><label>Nombre</label><input type="text" id="provNombre" placeholder="Ej. Back2Bio"></div>
+                <div class="form-group"><label>Contacto</label><input type="tel" id="provContacto" placeholder="+56 9..."></div>
+                <div class="form-group"><label>Ciudad</label><input type="text" id="provCiudad" placeholder="Ej. Santiago"></div>
             </div>
 
-            <label>Clasificación de Línea:</label>
-            <div class="radio-group">
-                <label class="radio-label opt-eco"><input type="radio" name="catLinea" value="Eco" checked> Tradicional / Eco</label>
-                <label class="radio-label opt-premium"><input type="radio" name="catLinea" value="Premium"> Sustentable / Premium</label>
+            <!-- AUTO-CLASIFICACIÓN -->
+            <div style="background: var(--highlight-bg); padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--cyan-accent); display: flex; align-items: center; gap: 10px;">
+                <strong>Línea del Proveedor (Automática):</strong> 
+                <span id="etiquetaLineaProv" class="tag tag-eco">Sin Productos</span>
+                <small style="opacity: 0.7;">(Se calcula al agregar productos)</small>
             </div>
 
             <label>Estado de Proveedor:</label>
             <div class="radio-group">
-                <label class="radio-label opt-oficial"><input type="radio" name="catEstado" value="Oficial" checked> Actual / Oficial</label>
-                <label class="radio-label opt-posible"><input type="radio" name="catEstado" value="Posible"> Posible Proveedor</label>
-            </div>
-
-            <hr style="border-color: var(--border-color); margin: 20px 0;">
-            
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="margin: 0;">📦 Lista de Productos</h3>
-                <button class="btn-primary" style="padding: 5px 15px; font-size: 0.9em;" onclick="abrirModalProd()">+ Agregar Producto</button>
+                <label class="radio-label opt-oficial"><input type="radio" name="catEstado" value="Oficial" checked> Oficial</label>
+                <label class="radio-label opt-posible"><input type="radio" name="catEstado" value="Posible"> Posible</label>
             </div>
             
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Minorista</th>
-                            <th>Mayorista</th>
-                            <th>Oferta</th>
-                        </tr>
-                    </thead>
-                    <tbody id="listaTempProductos"></tbody>
-                </table>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+                <h3 style="margin: 0;">📦 Productos a agregar</h3>
+                <button class="btn-primary" style="padding: 5px 15px; font-size: 0.9em;" onclick="abrirModalProd()">+ Agregar Prod.</button>
             </div>
+            <div id="listaTempProductos" style="margin-top: 10px;"></div>
 
             <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end;">
-                <button class="btn-secondary" onclick="cerrarModalProv()">Cancelar</button>
-                <button class="btn-primary" onclick="guardarProveedorFinal()">Guardar Proveedor</button>
+                <button class="btn-secondary" onclick="cerrarModal('modalProv')">Cancelar</button>
+                <button class="btn-primary" onclick="guardarProveedor()">Guardar Proveedor</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL 2: AGREGAR PRODUCTO -->
+    <!-- MODAL 2: AGREGAR / EDITAR PRODUCTO -->
     <div class="modal-overlay" id="modalProd">
-        <div class="modal-content" style="max-width: 400px; border-top-color: var(--cyan-accent);">
+        <div class="modal-content" style="max-width: 500px; border-top-color: var(--cyan-accent);">
             <div class="modal-header">
-                <h2>➕ Detalle del Producto</h2>
+                <h2 id="tituloModalProd">➕ Detalle del Producto</h2>
             </div>
             
+            <label>Línea del Producto:</label>
+            <div class="radio-group">
+                <label class="radio-label opt-eco"><input type="radio" name="prodLinea" value="Eco" checked> Tradicional / Eco</label>
+                <label class="radio-label opt-premium"><input type="radio" name="prodLinea" value="Premium"> Sustentable / Premium</label>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select id="prodCatSelect" onchange="checkNuevaCategoria('prodCat')">
+                        <!-- Opciones Dinámicas -->
+                    </select>
+                    <input type="text" id="prodCatNueva" placeholder="Escribe nueva categoría..." style="display:none; margin-top:5px; border-color: var(--warning);">
+                </div>
+                <div class="form-group">
+                    <label>Sub-Categoría</label>
+                    <select id="prodSubSelect" onchange="checkNuevaCategoria('prodSub')">
+                        <!-- Opciones Dinámicas -->
+                    </select>
+                    <input type="text" id="prodSubNueva" placeholder="Escribe nueva sub-categoría..." style="display:none; margin-top:5px; border-color: var(--warning);">
+                </div>
+            </div>
+
             <div class="form-group" style="margin-bottom: 10px;">
                 <label>Nombre del Producto</label>
                 <input type="text" id="prodNombre" placeholder="Ej. Envase PET 500cc">
             </div>
-            <div class="form-group" style="margin-bottom: 10px;">
-                <label>Precio Minorista ($)</label>
-                <input type="number" id="prodMin" placeholder="1500">
-            </div>
-            <div class="form-group" style="margin-bottom: 10px;">
-                <label>Precio Mayorista ($)</label>
-                <input type="number" id="prodMay" placeholder="1000">
-            </div>
-            <div class="form-group" style="margin-bottom: 20px;">
-                <label>Oferta Especial</label>
-                <input type="text" id="prodOferta" placeholder="Ej. 10% dcto sobre 50 un.">
+            <div class="form-grid">
+                <div class="form-group"><label>P. Minorista ($)</label><input type="number" id="prodMin"></div>
+                <div class="form-group"><label>P. Mayorista ($)</label><input type="number" id="prodMay"></div>
             </div>
 
-            <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button class="btn-secondary" onclick="cerrarModalProd()">Cancelar</button>
-                <button class="btn-primary" onclick="guardarProductoTemp()">Agregar a la Lista</button>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button class="btn-secondary" onclick="cerrarModal('modalProd')">Cancelar</button>
+                <button class="btn-primary" onclick="guardarProducto()">Guardar Producto</button>
             </div>
         </div>
     </div>
 
     <script>
+        // --- BASE DE DATOS Y ESTADOS ---
         let directorio = []; 
         let productosTemporales = [];
         let esFavActual = false;
+        
+        // Listas dinámicas para que puedas crear las tuyas
+        let categoriasLista = ["Plástico", "Cartón", "Aluminio", "Papelería", "Biodegradable"];
+        let subcategoriasLista = ["Bolsas camiseta", "Bolsas transparentes/celofán", "Bolsas taco/prepicadas", "Vasos", "Cajas"];
 
+        // Variables de control para saber si editamos o agregamos, y a quién
+        let modoProducto = 'temp'; // 'temp' (nuevo prov), 'add_dir' (prov existente), 'edit_dir'
+        let idProvSeleccionado = null;
+        let idProdSeleccionado = null;
+
+        // --- INICIALIZACIÓN ---
         function toggleTheme() {
             const body = document.body;
             body.getAttribute('data-theme') === 'dark' ? body.removeAttribute('data-theme') : body.setAttribute('data-theme', 'dark');
@@ -352,171 +255,262 @@
             esFavActual = !esFavActual;
             const estrella = document.getElementById('estrellaFav');
             estrella.innerHTML = esFavActual ? '★' : '☆';
-            if(esFavActual) estrella.classList.add('fav-active');
-            else estrella.classList.remove('fav-active');
+            estrella.style.color = esFavActual ? '#fbbf24' : '#cbd5e1';
+            estrella.style.filter = esFavActual ? 'drop-shadow(0 0 8px #fbbf24)' : 'none';
         }
 
+        function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        // --- GESTIÓN DE PROVEEDORES (MODAL) ---
         function abrirModalProv() {
-            productosTemporales = []; 
-            esFavActual = false;
-            document.getElementById('estrellaFav').innerHTML = '☆';
-            document.getElementById('estrellaFav').classList.remove('fav-active');
-            
+            productosTemporales = [];
+            esFavActual = false; toggleFav(); toggleFav(); // Reset visual
             document.getElementById('provNombre').value = '';
-            document.getElementById('provWeb').value = '';
             document.getElementById('provContacto').value = '';
-            document.getElementById('provTiempo').value = '';
-            
-            actualizarTablaTemp();
+            document.getElementById('provCiudad').value = '';
+            actualizarLineaAutomaticaTemp();
+            renderListaTemp();
             document.getElementById('modalProv').style.display = 'flex';
         }
-        function cerrarModalProv() { document.getElementById('modalProv').style.display = 'none'; }
-        
-        function abrirModalProd() {
-            document.getElementById('prodNombre').value = '';
-            document.getElementById('prodMin').value = '';
-            document.getElementById('prodMay').value = '';
-            document.getElementById('prodOferta').value = '';
-            document.getElementById('modalProd').style.display = 'flex';
-        }
-        function cerrarModalProd() { document.getElementById('modalProd').style.display = 'none'; }
 
-        function guardarProductoTemp() {
-            const prod = {
-                nombre: document.getElementById('prodNombre').value,
-                minorista: Number(document.getElementById('prodMin').value),
-                mayorista: Number(document.getElementById('prodMay').value),
-                oferta: document.getElementById('prodOferta').value || '-'
-            };
-            if(!prod.nombre || !prod.mayorista) { alert("Ingresa nombre y precio mayorista."); return; }
-            productosTemporales.push(prod);
-            actualizarTablaTemp();
-            cerrarModalProd();
-        }
-
-        function actualizarTablaTemp() {
-            const tbody = document.getElementById('listaTempProductos');
-            tbody.innerHTML = '';
-            productosTemporales.forEach(p => {
-                tbody.innerHTML += `<tr>
-                    <td>${p.nombre}</td>
-                    <td>$${p.minorista.toLocaleString('es-CL')}</td>
-                    <td><strong>$${p.mayorista.toLocaleString('es-CL')}</strong></td>
-                    <td><small>${p.oferta}</small></td>
-                </tr>`;
-            });
-        }
-
-        function guardarProveedorFinal() {
+        function guardarProveedor() {
             const nombre = document.getElementById('provNombre').value;
-            if(!nombre || productosTemporales.length === 0) {
-                alert("Ingresa el nombre del proveedor y al menos un producto."); return;
-            }
+            if(!nombre) { alert("Ingresa el nombre del proveedor."); return; }
 
             const proveedor = {
+                id: 'prov_' + Date.now(),
                 nombre: nombre,
-                web: document.getElementById('provWeb').value,
                 contacto: document.getElementById('provContacto').value || '-',
-                ciudad: document.getElementById('provCiudad').value,
-                tiempo: document.getElementById('provTiempo').value || '-',
-                linea: document.querySelector('input[name="catLinea"]:checked').value,
+                ciudad: document.getElementById('provCiudad').value || '-',
                 estado: document.querySelector('input[name="catEstado"]:checked').value,
                 favorito: esFavActual,
+                linea: calcularLinea(productosTemporales), // Automático!
                 productos: [...productosTemporales]
             };
 
             directorio.push(proveedor);
-            actualizarTablaPrincipal();
-            cerrarModalProv();
+            renderDirectorio();
+            cerrarModal('modalProv');
         }
 
-        function actualizarTablaPrincipal() {
-            // 1. Obtener los valores de los filtros
-            const fFav = document.getElementById('filtroFav').value;
-            const fCat = document.getElementById('filtroCat').value;
-            const fEst = document.getElementById('filtroEst').value;
-            const fCiu = document.getElementById('filtroCiu').value;
-
-            // 2. Aplicar los filtros a una nueva lista
-            let directorioFiltrado = directorio.filter(prov => {
-                let pasaFav = (fFav === 'todos') || (fFav === 'fav' && prov.favorito);
-                let pasaCat = (fCat === 'todos') || (prov.linea === fCat);
-                let pasaEst = (fEst === 'todos') || (prov.estado === fEst);
-                let pasaCiu = (fCiu === 'todos') || (prov.ciudad === fCiu);
-                return pasaFav && pasaCat && pasaEst && pasaCiu;
-            });
-
-            // 3. Sistema de Ordenamiento: Fav + Oficial primero
-            directorioFiltrado.sort((a, b) => {
-                // Le damos puntuación para ordenarlos: Fav (2 puntos), Oficial (1 punto)
-                let scoreA = (a.favorito ? 2 : 0) + (a.estado === 'Oficial' ? 1 : 0);
-                let scoreB = (b.favorito ? 2 : 0) + (b.estado === 'Oficial' ? 1 : 0);
-                return scoreB - scoreA; // Orden descendente (los de mayor puntaje arriba)
-            });
-
-            // 4. Dibujar la tabla
-            const tbody = document.getElementById('tablaPrincipal');
-            tbody.innerHTML = '';
-
-            directorioFiltrado.forEach(prov => {
-                const favIcon = prov.favorito ? '<span style="color:gold; font-size:1.2em;">★</span>' : '<span style="color:gray;">☆</span>';
-                const tagLinea = prov.linea === 'Eco' ? '<span class="tag tag-eco">Eco</span>' : '<span class="tag tag-premium">Premium</span>';
-                const tagEstado = prov.estado === 'Oficial' ? '<span class="tag tag-oficial">Oficial</span>' : '<span class="tag tag-posible">Posible</span>';
-                const webLink = prov.web ? `<a href="${prov.web}" target="_blank" style="color:var(--primary-blue); font-weight:bold;">${prov.nombre}🔗</a>` : `<strong>${prov.nombre}</strong>`;
-
-                prov.productos.forEach(prod => {
-                    tbody.innerHTML += `<tr>
-                        <td style="text-align:center;">${favIcon}</td>
-                        <td>${tagLinea}</td>
-                        <td>${tagEstado}</td>
-                        <td>${webLink}</td>
-                        <td>${prov.contacto}</td>
-                        <td>${prov.ciudad}</td>
-                        <td>${prod.nombre}</td>
-                        <td style="color: #10b981; font-weight: bold;">$${prod.mayorista.toLocaleString('es-CL')}</td>
-                        <td>${prov.tiempo} d.</td>
-                        <td><small>${prod.oferta}</small></td>
-                    </tr>`;
-                });
-            });
-            compararProveedores();
+        function eliminarProveedor(idProv) {
+            if(confirm("¿Estás seguro de eliminar todo este proveedor y sus productos?")) {
+                directorio = directorio.filter(p => p.id !== idProv);
+                renderDirectorio();
+            }
         }
 
-        function compararProveedores() {
-            const busqueda = document.getElementById('buscarProd').value.toLowerCase().trim();
-            const divRec = document.getElementById('recomendacion');
+        // --- GESTIÓN DE PRODUCTOS (MODAL) ---
+        function cargarOpcionesSelect() {
+            const selCat = document.getElementById('prodCatSelect');
+            const selSub = document.getElementById('prodSubSelect');
+            
+            selCat.innerHTML = categoriasLista.map(c => `<option value="${c}">${c}</option>`).join('') + `<option value="OTRA">➕ Crear Nueva...</option>`;
+            selSub.innerHTML = subcategoriasLista.map(s => `<option value="${s}">${s}</option>`).join('') + `<option value="OTRA">➕ Crear Nueva...</option>`;
+            
+            document.getElementById('prodCatNueva').style.display = 'none';
+            document.getElementById('prodSubNueva').style.display = 'none';
+        }
 
-            if (!busqueda || directorio.length === 0) {
-                divRec.innerHTML = ''; return;
+        function checkNuevaCategoria(tipo) {
+            const select = document.getElementById(tipo + 'Select');
+            const input = document.getElementById(tipo + 'Nueva');
+            input.style.display = select.value === 'OTRA' ? 'block' : 'none';
+            if(select.value === 'OTRA') input.focus();
+        }
+
+        function abrirModalProd(modo = 'temp', idProv = null, idProd = null) {
+            modoProducto = modo; idProvSeleccionado = idProv; idProdSeleccionado = idProd;
+            cargarOpcionesSelect();
+            document.getElementById('tituloModalProd').innerText = modo === 'edit_dir' ? '✏️ Editar Producto' : '➕ Detalle del Producto';
+            
+            document.getElementById('prodNombre').value = '';
+            document.getElementById('prodMin').value = '';
+            document.getElementById('prodMay').value = '';
+            
+            if(modo === 'edit_dir') {
+                const prov = directorio.find(p => p.id === idProv);
+                const prod = prov.productos.find(p => p.id === idProd);
+                document.getElementById('prodNombre').value = prod.nombre;
+                document.getElementById('prodMin').value = prod.minorista;
+                document.getElementById('prodMay').value = prod.mayorista;
+                document.querySelector(`input[name="prodLinea"][value="${prod.linea}"]`).checked = true;
+                
+                if(categoriasLista.includes(prod.categoria)) document.getElementById('prodCatSelect').value = prod.categoria;
+                if(subcategoriasLista.includes(prod.subcategoria)) document.getElementById('prodSubSelect').value = prod.subcategoria;
+            }
+            
+            document.getElementById('modalProd').style.display = 'flex';
+        }
+
+        function guardarProducto() {
+            let cat = document.getElementById('prodCatSelect').value;
+            let sub = document.getElementById('prodSubSelect').value;
+            
+            // Si el usuario creó una nueva, la guardamos en la lista global
+            if(cat === 'OTRA') {
+                cat = document.getElementById('prodCatNueva').value;
+                if(cat && !categoriasLista.includes(cat)) categoriasLista.push(cat);
+            }
+            if(sub === 'OTRA') {
+                sub = document.getElementById('prodSubNueva').value;
+                if(sub && !subcategoriasLista.includes(sub)) subcategoriasLista.push(sub);
             }
 
-            let opciones = [];
-            directorio.forEach(prov => {
+            const nombre = document.getElementById('prodNombre').value;
+            if(!nombre || !cat || !sub) { alert("Completa Nombre, Categoría y Subcategoría"); return; }
+
+            const prodData = {
+                nombre: nombre,
+                linea: document.querySelector('input[name="prodLinea"]:checked').value,
+                categoria: cat, subcategoria: sub,
+                minorista: Number(document.getElementById('prodMin').value),
+                mayorista: Number(document.getElementById('prodMay').value)
+            };
+
+            if(modoProducto === 'temp') {
+                prodData.id = 'temp_' + Date.now();
+                productosTemporales.push(prodData);
+                actualizarLineaAutomaticaTemp();
+                renderListaTemp();
+            } else if (modoProducto === 'add_dir') {
+                prodData.id = 'prod_' + Date.now();
+                const prov = directorio.find(p => p.id === idProvSeleccionado);
+                prov.productos.push(prodData);
+                prov.linea = calcularLinea(prov.productos); // Recalcular línea del proveedor
+                renderDirectorio();
+            } else if (modoProducto === 'edit_dir') {
+                const prov = directorio.find(p => p.id === idProvSeleccionado);
+                let prod = prov.productos.find(p => p.id === idProdSeleccionado);
+                Object.assign(prod, prodData); // Actualiza los datos
+                prov.linea = calcularLinea(prov.productos); // Recalcular
+                renderDirectorio();
+            }
+
+            cerrarModal('modalProd');
+        }
+
+        function eliminarProducto(idProv, idProd) {
+            if(confirm("¿Eliminar producto?")) {
+                const prov = directorio.find(p => p.id === idProv);
+                prov.productos = prov.productos.filter(p => p.id !== idProd);
+                prov.linea = calcularLinea(prov.productos);
+                renderDirectorio();
+            }
+        }
+
+        // --- LÓGICA DE LÍNEA AUTOMÁTICA (HÍBRIDO) ---
+        function calcularLinea(listaProductos) {
+            if(listaProductos.length === 0) return "Sin Productos";
+            const tieneEco = listaProductos.some(p => p.linea === 'Eco');
+            const tienePremium = listaProductos.some(p => p.linea === 'Premium');
+            
+            if(tieneEco && tienePremium) return "Híbrido";
+            if(tieneEco) return "Eco";
+            return "Premium";
+        }
+
+        function actualizarLineaAutomaticaTemp() {
+            const linea = calcularLinea(productosTemporales);
+            const etiqueta = document.getElementById('etiquetaLineaProv');
+            etiqueta.innerText = linea;
+            etiqueta.className = 'tag ' + (linea==='Eco' ? 'tag-eco' : (linea==='Premium' ? 'tag-premium' : (linea==='Híbrido' ? 'tag-hibrido' : '')));
+        }
+
+        function renderListaTemp() {
+            const div = document.getElementById('listaTempProductos');
+            div.innerHTML = productosTemporales.map(p => `
+                <div class="prod-item">
+                    <div>
+                        <span class="tag ${p.linea==='Eco'?'tag-eco':'tag-premium'}">${p.linea}</span>
+                        <strong>${p.nombre}</strong> <small>(${p.categoria} > ${p.subcategoria})</small>
+                    </div>
+                    <strong>$${p.mayorista}</strong>
+                </div>
+            `).join('');
+        }
+
+        // --- RENDERIZADO DEL DIRECTORIO (ACORDEONES ANIDADOS) ---
+        function getClaseTag(linea) {
+            if(linea === 'Eco') return 'tag-eco';
+            if(linea === 'Premium') return 'tag-premium';
+            if(linea === 'Híbrido') return 'tag-hibrido';
+            return '';
+        }
+
+        function renderDirectorio() {
+            const contenedor = document.getElementById('contenedorDirectorio');
+            const filtroLinea = document.getElementById('filtroLinea').value;
+            const filtroEst = document.getElementById('filtroEst').value;
+
+            // Filtrar y ordenar proveedores
+            let provsFiltrados = directorio.filter(prov => {
+                let pasaLinea = (filtroLinea === 'todos') || (prov.linea === filtroLinea);
+                let pasaEst = (filtroEst === 'todos') || (prov.estado === filtroEst);
+                return pasaLinea && pasaEst;
+            }).sort((a,b) => (b.favorito?1:0) - (a.favorito?1:0));
+
+            if(provsFiltrados.length === 0) {
+                contenedor.innerHTML = '<p>No hay proveedores que coincidan con la búsqueda.</p>'; return;
+            }
+
+            let html = '';
+            provsFiltrados.forEach(prov => {
+                const favIcon = prov.favorito ? '⭐' : '';
+                const tagEst = prov.estado === 'Oficial' ? '<span class="tag tag-oficial">Oficial</span>' : '<span class="tag tag-posible">Posible</span>';
+                const tagLineaProv = `<span class="tag ${getClaseTag(prov.linea)}">${prov.linea}</span>`;
+
+                html += `
+                <details class="accordion">
+                    <summary>
+                        <div style="display:flex; gap:15px; align-items:center;">
+                            <span style="font-size:1.2em;">${favIcon} <strong>${prov.nombre}</strong></span>
+                            ${tagLineaProv} ${tagEst}
+                            <small>📍 ${prov.ciudad}</small>
+                        </div>
+                        <div>
+                            <button class="btn-primary" style="padding:4px 8px; font-size:0.8em;" onclick="abrirModalProd('add_dir', '${prov.id}')">+ Prod.</button>
+                            <button class="btn-danger" onclick="eliminarProveedor('${prov.id}')">Eliminar</button>
+                        </div>
+                    </summary>
+                    <div class="details-content">`;
+
+                // Agrupar productos por Categoría -> Subcategoría
+                let agrupado = {};
                 prov.productos.forEach(prod => {
-                    if(prod.nombre.toLowerCase().includes(busqueda)) {
-                        opciones.push({
-                            provNombre: prov.nombre, prodNombre: prod.nombre,
-                            precio: prod.mayorista, tiempo: prov.tiempo,
-                            esOficial: prov.estado === 'Oficial', esFav: prov.favorito
+                    if(!agrupado[prod.categoria]) agrupado[prod.categoria] = {};
+                    if(!agrupado[prod.categoria][prod.subcategoria]) agrupado[prod.categoria][prod.subcategoria] = [];
+                    agrupado[prod.categoria][prod.subcategoria].push(prod);
+                });
+
+                if(Object.keys(agrupado).length === 0) html += `<small>No hay productos registrados.</small>`;
+
+                for(let cat in agrupado) {
+                    html += `<details class="cat-details"><summary>📂 ${cat}</summary><div class="details-content">`;
+                    for(let sub in agrupado[cat]) {
+                        html += `<details class="subcat-details" open><summary>📁 ${sub}</summary><div class="details-content">`;
+                        
+                        agrupado[cat][sub].forEach(prod => {
+                            html += `
+                            <div class="prod-item">
+                                <div>
+                                    <span class="tag ${getClaseTag(prod.linea)}">${prod.linea}</span>
+                                    <span>${prod.nombre}</span>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:15px;">
+                                    <span style="color:#10b981; font-weight:bold;">$${prod.mayorista.toLocaleString('es-CL')} (Mayorista)</span>
+                                    <button class="btn-warning" onclick="abrirModalProd('edit_dir', '${prov.id}', '${prod.id}')">Editar</button>
+                                    <button class="btn-danger" onclick="eliminarProducto('${prov.id}', '${prod.id}')">X</button>
+                                </div>
+                            </div>`;
                         });
+                        html += `</div></details>`; // Cierra subcat
                     }
-                });
+                    html += `</div></details>`; // Cierra cat
+                }
+                html += `</div></details>`; // Cierra proveedor
             });
-
-            if (opciones.length === 0) {
-                divRec.innerHTML = '<em>No hay coincidencias en tu base de datos.</em>'; return;
-            }
-
-            let mejor = opciones.reduce((prev, curr) => (prev.precio < curr.precio) ? prev : curr);
-
-            divRec.innerHTML = `
-                💡 <strong>Mejor Opción:</strong> 
-                <strong>${mejor.provNombre}</strong> tiene "${mejor.prodNombre}" a 
-                <strong style="color:#10b981;">$${mejor.precio.toLocaleString('es-CL')} (Mayorista)</strong>. 
-                Tiempo estimado: ${mejor.tiempo} días. 
-                ${mejor.esFav ? '⭐(Tu Favorito)' : ''} 
-                ${mejor.esOficial ? '<span class="tag tag-oficial">Prov. Oficial</span>' : ''}
-            `;
+            contenedor.innerHTML = html;
         }
     </script>
 </body>
