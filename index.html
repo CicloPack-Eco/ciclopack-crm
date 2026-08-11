@@ -43,7 +43,8 @@
             margin: 0;
             padding: 3vh 4vw;
             transition: color 0.3s ease, background-color 0.3s ease;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='60' viewBox='0 0 40 60'%3E%3Cdefs%3E%3ClinearGradient id='gNight' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%230a1128'/%3E%3Cstop offset='50%25' stop-color='%231c2541'/%3E%3Cstop offset='100%25' stop-color='%230077b6'/%3E%3C/linearGradient%3E%3ClinearGradient id='gBorder' x1='0' y1='1' x2='0' y2='0'%3E%3Cstop offset='0%25' stop-color='%2300b4d8'/%3E%3Cstop offset='50%25' stop-color='%23023e8a'/%3E%3Cstop offset='100%25' stop-color='%230a1128'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='40' height='60' fill='%23ffffff'/%3E%3Cg stroke='url(%23gBorder)' stroke-width='1.8' fill='none'%3E%3Cpolygon points='20,1 38,15 20,29 2,15'/%3E%3Cpolygon points='0,31 18,45 0,59 -18,45'/%3E%3Cpolygon points='40,31 58,45 40,59 22,45'/%3E%3C/g%3E%3Cg fill='url(%23gNight)'%3E%3Cpolygon points='20,5 33,15 20,25 7,15'/%3E%3Cpolygon points='0,35 13,45 0,25 7,15'/%3E%3Cpolygon points='0,35 13,45 0,55 -13,45'/%3E%3Cpolygon points='40,35 53,45 40,55 27,45'/%3E%3C/g%3E%3Cg fill='%23ffffff'%3E%3Cpolygon points='20,10 26,15 20,20 14,15'/%3E%3Cpolygon points='0,40 6,45 0,50 -6,45'/%3E%3Cpolygon points='40,40 46,45 40,50 34,45'/%3E%3C/g%3E%3C/svg%3E");
+            
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='60' viewBox='0 0 40 60'%3E%3Cdefs%3E%3ClinearGradient id='gNight' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%230a1128'/%3E%3Cstop offset='50%25' stop-color='%231c2541'/%3E%3Cstop offset='100%25' stop-color='%230077b6'/%3E%3C/linearGradient%3E%3ClinearGradient id='gBorder' x1='0' y1='1' x2='0' y2='0'%3E%3Cstop offset='0%25' stop-color='%2300b4d8'/%3E%3Cstop offset='50%25' stop-color='%23023e8a'/%3E%3Cstop offset='100%25' stop-color='%230a1128'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='40' height='60' fill='%23ffffff'/%3E%3Cg stroke='url(%23gBorder)' stroke-width='1.8' fill='none'%3E%3Cpolygon points='20,1 38,15 20,29 2,15'/%3E%3Cpolygon points='0,31 18,45 0,59 -18,45'/%3E%3Cpolygon points='40,31 58,45 40,59 22,45'/%3E%3C/g%3E%3Cg fill='url(%23gNight)'%3E%3Cpolygon points='20,5 33,15 20,25 7,15'/%3E%3Cpolygon points='0,35 13,45 0,55 -13,45'/%3E%3Cpolygon points='40,35 53,45 40,55 27,45'/%3E%3C/g%3E%3Cg fill='%23ffffff'%3E%3Cpolygon points='20,10 26,15 20,20 14,15'/%3E%3Cpolygon points='0,40 6,45 0,50 -6,45'/%3E%3Cpolygon points='40,40 46,45 40,50 34,45'/%3E%3C/g%3E%3C/svg%3E");
             background-repeat: repeat;
             background-size: 40px 60px;
             background-attachment: fixed;
@@ -72,10 +73,18 @@
             background: linear-gradient(45deg, #00b4d8, var(--cyan-accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            display: inline-block;
         }
 
-        button { outline: none; transition: all 0.2s ease; }
-        button:active { transform: scale(0.96); }
+        button {
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        button:active, .btn-primary:active, .btn-secondary:active, .btn-warning:active, .btn-danger:active, .btn-iva:active {
+            box-shadow: 0 0 20px var(--cyan-accent), 0 0 8px var(--cyan-accent) !important;
+            transform: scale(0.96);
+        }
 
         .theme-toggle, .btn-primary {
             background: linear-gradient(135deg, var(--chrome-blue), var(--primary-blue));
@@ -84,11 +93,22 @@
             cursor: pointer; font-weight: bold; font-size: 1em;
             box-shadow: 0 0 12px rgba(0, 245, 212, 0.3); transition: 0.3s;
         }
-        .theme-toggle:hover, .btn-primary:hover { filter: brightness(1.2); box-shadow: 0 0 18px var(--cyan-accent); }
+        .theme-toggle:hover, .btn-primary:hover { 
+            filter: brightness(1.2); 
+            box-shadow: 0 0 18px var(--cyan-accent); 
+        }
 
-        .btn-secondary { background: #475569; color: white; border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-secondary {
+            background: #475569; color: white; border: 1px solid var(--border-color);
+            padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;
+        }
+        .btn-secondary:hover { box-shadow: 0 0 10px rgba(0, 245, 212, 0.4); }
+        
         .btn-danger { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8em; font-weight: bold; transition: 0.3s;}
+        .btn-danger:hover { filter: brightness(1.1); box-shadow: 0 0 10px var(--danger); }
+        
         .btn-warning { background: var(--warning); color: #000; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8em; font-weight: bold; transition: 0.3s;}
+        .btn-warning:hover { filter: brightness(1.1); box-shadow: 0 0 10px var(--warning); }
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -102,6 +122,7 @@
             border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);
         }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;}
+        .modal-header h2 { margin: 0; color: var(--text-color); }
         
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 15px;}
         .form-group { display: flex; flex-direction: column; }
@@ -112,7 +133,10 @@
             background: var(--bg-main); color: var(--text-color); outline: none; transition: 0.3s;
             font-family: inherit;
         }
-        input:focus, select:focus, textarea:focus { border-color: var(--cyan-accent); box-shadow: 0 0 14px var(--cyan-accent); }
+        input:focus, select:focus, textarea:focus { 
+            border-color: var(--cyan-accent); 
+            box-shadow: 0 0 14px var(--cyan-accent); 
+        }
 
         .radio-group { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;}
         .radio-label {
@@ -123,11 +147,24 @@
         }
         .radio-label input { display: none; }
         .radio-label:has(input:checked) { color: white; transform: scale(1.05); }
+        .radio-label:active { box-shadow: 0 0 12px var(--cyan-accent); }
+        
+        .opt-eco:has(input:checked) { background-color: #0ea5e9; border-color: #0ea5e9; box-shadow: 0 0 12px #0ea5e9; }
+        .opt-premium:has(input:checked) { background-color: #a855f7; border-color: #a855f7; box-shadow: 0 0 12px #a855f7; }
+        .opt-hibrido:has(input:checked) { background: linear-gradient(90deg, #0ea5e9, #a855f7); border-color: #a855f7; box-shadow: 0 0 12px #a855f7; }
+        .opt-oficial:has(input:checked) { background-color: #10b981; border-color: #10b981; box-shadow: 0 0 12px #10b981; }
+        .opt-posible:has(input:checked) { background-color: #eab308; border-color: #eab308; box-shadow: 0 0 12px #eab308; }
+        .opt-disp:has(input:checked) { background-color: #10b981; border-color: #10b981; box-shadow: 0 0 12px #10b981; }
+        .opt-ultimas:has(input:checked) { background-color: #f59e0b; border-color: #f59e0b; box-shadow: 0 0 12px #f59e0b; color: #000 !important; }
+        .opt-nodisp:has(input:checked) { background-color: #ef4444; border-color: #ef4444; box-shadow: 0 0 12px #ef4444; }
 
         .fav-btn { font-size: 2em; cursor: pointer; color: #cbd5e1; user-select: none; transition: 0.3s; }
         .fav-active { color: #fbbf24; filter: drop-shadow(0 0 8px #fbbf24); }
 
-        .filtros-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .filtros-bar {
+            display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;
+            background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);
+        }
         .filtros-bar select { padding: 8px; font-size: 0.85em; flex: 1; min-width: 120px;}
         
         .table-responsive { overflow-x: auto; margin-top: 15px; }
@@ -139,71 +176,68 @@
         .tag { padding: 3px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; color: white; display: inline-block;}
         .tag-eco { background-color: #0ea5e9; }
         .tag-premium { background-color: #a855f7; }
-        .tag-hibrido { background: linear-gradient(90deg, #0ea5e9, #a855f7); }
+        .tag-hibrido { background: linear-gradient(90deg, #0ea5e9, #a855f7); box-shadow: 0 0 8px rgba(168, 85, 247, 0.4); }
         .tag-oficial { background-color: #10b981; }
         .tag-posible { background-color: #eab308; color: #000; }
+        
         .tag-disponible { background-color: var(--success); }
         .tag-ultimas { background-color: var(--warning); color: #000; }
         .tag-nodisponible { background-color: var(--danger); }
 
         details { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
-        summary { background: var(--bg-main); padding: 15px; font-weight: bold; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; color: var(--text-color); }
+        summary { 
+            background: var(--bg-main); padding: 15px; font-weight: bold; cursor: pointer; list-style: none; 
+            display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid transparent; transition: 0.3s; color: var(--text-color);
+        }
+        summary::-webkit-details-marker { display: none; }
         summary:hover { background: var(--highlight-bg); }
+        details[open] > summary { border-bottom-color: var(--border-color); background: var(--highlight-bg); }
         .details-content { padding: 15px; background: var(--card-bg); }
         
-        .prod-item-dir { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--highlight-bg); border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border-color); flex-wrap: wrap; gap: 12px; }
-        .prod-img-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.7em; color: gray; }
-        .btn-iva { background: linear-gradient(45deg, #10b981, #059669); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; height: 100%; display: flex; align-items: center; justify-content: center; }
+        .cat-details { margin-left: 20px; border-left: 3px solid var(--chrome-blue); margin-top: 10px; }
+        .subcat-details { margin-left: 20px; border-left: 3px solid var(--cyan-accent); margin-top: 10px; }
 
-        #cloudStatus { font-size: 0.8em; font-weight: bold; padding: 4px 8px; border-radius: 6px; background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid var(--success); display: inline-flex; align-items: center; gap: 5px; }
+        .prod-item-dir { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 10px; background: var(--highlight-bg); border-radius: 8px; 
+            margin-bottom: 8px; border: 1px solid var(--border-color); flex-wrap: wrap; gap: 12px;
+        }
+        
+        .prod-img-thumb {
+            width: 65px; height: 65px; object-fit: cover; border-radius: 8px;
+            border: 1px solid var(--border-color); background: var(--card-bg); flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 0.7em; color: gray;
+        }
+        
+        .btn-iva {
+            background: linear-gradient(45deg, #10b981, #059669); color: white; 
+            border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); transition: 0.3s; height: 100%; display: flex; align-items: center; justify-content: center;
+        }
+        .btn-iva:hover { filter: brightness(1.1); box-shadow: 0 0 15px #10b981; }
 
-        /* Estilo para Pantalla de Login */
-        .login-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: var(--bg-main); z-index: 2000; display: flex; justify-content: center; align-items: center;
-        }
-        .login-box {
-            background: var(--card-bg); padding: 35px; border-radius: 16px; width: 90%; max-width: 400px;
-            border: 2px solid var(--cyan-accent); box-shadow: 0 0 25px rgba(0, 245, 212, 0.2); text-align: center;
-        }
     </style>
 </head>
 <body>
 
-    <!-- MODAL DE LOGIN (SE MUESTRA SI NO ESTÁS AUTENTICADO) -->
-    <div id="loginOverlay" class="login-overlay">
-        <div class="login-box">
-            <h2>🔐 CicloPack Bio</h2>
-            <p style="font-size: 0.9em; opacity: 0.8;">Acceso Restringido al CRM</p>
-            <form id="loginForm" onsubmit="iniciarSesion(event)" style="display:flex; flex-direction:column; gap:15px; margin-top:20px;">
-                <div class="form-group" style="text-align:left;">
-                    <label>Correo Electrónico</label>
-                    <input type="email" id="loginEmail" placeholder="admin@ciclopack.cl" required>
-                </div>
-                <div class="form-group" style="text-align:left;">
-                    <label>Contraseña</label>
-                    <input type="password" id="loginPass" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="btn-primary" style="margin-top:10px;">Ingresar al Sistema</button>
-                <div id="loginError" style="color:var(--danger); font-size:0.85em; font-weight:bold; display:none;"></div>
-            </form>
-        </div>
-    </div>
-
-    <!-- CONTENEDOR PRINCIPAL CRM -->
-    <div class="main-container" id="appContent" style="display:none;">
+    <div class="main-container">
         <div class="header">
             <div>
-                <h1>CicloPack Bio</h1>
+                <h1 style="display:inline-block; margin-right:10px;">CicloPack Bio</h1>
+                <span id="cloudStatus" class="tag tag-ultimas">☁️ Conectando...</span>
+                <br>
                 <small>Sistema CRM - Gestión de Proveedores</small>
-                <div id="cloudStatus" style="margin-left: 10px;">☁️ Conectando con Cloud...</div>
             </div>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-                <button type="button" class="btn-warning" onclick="buscarRescateLocalStorage()">🔍 Rescatar Datos Locales</button>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <!-- BOTÓN RESCATAR (Se oculta hasta loguearse) -->
+                <button type="button" class="btn-warning" id="btnRescatar" style="display:none; padding: 10px 20px;">📥 Rescatar Datos Locales</button>
+                
                 <button type="button" class="btn-primary" onclick="abrirModalProv()">+ Nuevo Proveedor</button>
                 <button type="button" class="btn-secondary" onclick="abrirModalCatSub()">⚙️ Categorías</button>
                 <button type="button" class="theme-toggle" onclick="toggleTheme()">🌓 Modo</button>
-                <button type="button" class="btn-danger" onclick="cerrarSesion()">🚪 Salir</button>
+                
+                <!-- BOTÓN SALIR (Se oculta hasta loguearse) -->
+                <button type="button" class="btn-danger" id="btnLogout" style="display:none; padding: 10px 20px;">🚪 Salir</button>
             </div>
         </div>
 
@@ -253,19 +287,50 @@
         </div>
     </div>
 
-    <!-- MODAL 1: PROVEEDOR -->
+    <!-- OVERLAY DE LOGIN DE FIREBASE -->
+    <div class="modal-overlay" id="loginOverlay" style="display: flex;">
+        <div class="modal-content" style="max-width: 400px; text-align: center; border-top-color: var(--primary-blue);">
+            <h2 style="margin-bottom: 25px;">🔐 Acceso Seguro CRM</h2>
+            <div class="form-group" style="text-align: left; margin-bottom: 15px;">
+                <label>Correo Electrónico</label>
+                <input type="email" id="loginEmail" placeholder="ejemplo@correo.com">
+            </div>
+            <div class="form-group" style="text-align: left; margin-bottom: 25px;">
+                <label>Contraseña</label>
+                <input type="password" id="loginPass" placeholder="••••••••">
+            </div>
+            <button type="button" class="btn-primary" id="btnLogin" style="width: 100%; padding: 12px; font-size: 1.1em;">Iniciar Sesión</button>
+            <p id="loginError" style="color: var(--danger); margin-top: 15px; display: none; font-weight: bold; font-size: 0.9em;"></p>
+        </div>
+    </div>
+
+    <!-- MODAL 1: PROVEEDOR (NUEVO O EDITAR) -->
     <div class="modal-overlay" id="modalProv">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="tituloModalProv">🏢 Ficha de Proveedor</h2>
                 <div class="fav-btn" id="estrellaFav" onclick="toggleFav()">☆</div>
             </div>
+            
             <div class="form-grid">
-                <div class="form-group"><label>Nombre del Proveedor</label><input type="text" id="provNombre" placeholder="Ej. Back2Bio"></div>
-                <div class="form-group"><label>Sitio Web</label><input type="url" id="provWeb" placeholder="https://..."></div>
-                <div class="form-group"><label>Número de Contacto</label><input type="tel" id="provContacto" placeholder="Ej. +56 9 1234 5678"></div>
-                <div class="form-group"><label>Email de Contacto</label><input type="email" id="provEmail" placeholder="contacto@proveedor.cl"></div>
-                <div class="form-group"><label>Ciudad</label>
+                <div class="form-group">
+                    <label>Nombre del Proveedor</label>
+                    <input type="text" id="provNombre" placeholder="Ej. Back2Bio">
+                </div>
+                <div class="form-group">
+                    <label>Sitio Web</label>
+                    <input type="url" id="provWeb" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Número de Contacto</label>
+                    <input type="tel" id="provContacto" placeholder="Ej. +56 9 1234 5678">
+                </div>
+                <div class="form-group">
+                    <label>Email de Contacto</label>
+                    <input type="email" id="provEmail" placeholder="contacto@proveedor.cl">
+                </div>
+                <div class="form-group">
+                    <label>Ciudad</label>
                     <select id="provCiudad">
                         <option value="Coquimbo">Coquimbo</option>
                         <option value="La Serena">La Serena</option>
@@ -273,30 +338,48 @@
                         <option value="Otra">Otra</option>
                     </select>
                 </div>
-                <div class="form-group"><label>Tiempo Entrega a Coquimbo (Días)</label><input type="number" id="provTiempo" placeholder="Ej. 2"></div>
+                <div class="form-group">
+                    <label>Tiempo Entrega a Coquimbo (Días)</label>
+                    <input type="number" id="provTiempo" placeholder="Ej. 2">
+                </div>
             </div>
+
             <div style="background: var(--highlight-bg); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed var(--border-color); display: flex; align-items: center; gap: 10px;">
                 <label style="margin:0;">Clasificación de Línea (Automática):</label> 
                 <span id="etiquetaLineaProv" class="tag" style="background:#64748b;">Sin Productos</span>
             </div>
+
             <label>Estado de Proveedor:</label>
             <div class="radio-group">
                 <label class="radio-label opt-oficial"><input type="radio" name="catEstado" value="Oficial" checked> Actual / Oficial</label>
                 <label class="radio-label opt-posible"><input type="radio" name="catEstado" value="Posible"> Posible Proveedor</label>
             </div>
+
             <hr style="border-color: var(--border-color); margin: 20px 0;">
+            
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h3 style="margin: 0;">📦 Lista de Productos</h3>
                 <button type="button" class="btn-primary" style="padding: 5px 15px; font-size: 0.9em;" onclick="abrirModalProd('temp')">+ Agregar Producto</button>
             </div>
+            
             <div class="table-responsive">
                 <table>
                     <thead>
-                        <tr><th>Img</th><th>Línea</th><th>Producto</th><th>Stock</th><th>Uni</th><th>Min</th><th>May (Caja)</th><th>Acción</th></tr>
+                        <tr>
+                            <th>Img</th>
+                            <th>Línea</th>
+                            <th>Producto</th>
+                            <th>Stock</th>
+                            <th>Uni</th>
+                            <th>Min</th>
+                            <th>May (Caja)</th>
+                            <th>Acción</th>
+                        </tr>
                     </thead>
                     <tbody id="listaTempProductos"></tbody>
                 </table>
             </div>
+
             <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end;">
                 <button type="button" class="btn-secondary" onclick="cerrarModalProv()">Cancelar</button>
                 <button type="button" class="btn-primary" onclick="guardarProveedorFinal()">Guardar Proveedor</button>
@@ -304,10 +387,13 @@
         </div>
     </div>
 
-    <!-- MODAL 2: PRODUCTO -->
+    <!-- MODAL 2: PRODUCTO (NUEVO O EDITAR) -->
     <div class="modal-overlay" id="modalProd">
         <div class="modal-content" style="max-width: 750px; border-top-color: var(--cyan-accent);">
-            <div class="modal-header"><h2 id="tituloModalProd">➕ Detalle del Producto</h2></div>
+            <div class="modal-header">
+                <h2 id="tituloModalProd">➕ Detalle del Producto</h2>
+            </div>
+            
             <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 15px;">
                 <div style="flex: 1;">
                     <label>Línea del Producto:</label>
@@ -317,6 +403,7 @@
                         <label class="radio-label opt-hibrido"><input type="radio" name="prodLinea" value="Híbrido"> Híbrido (Bicolor/Mixto)</label>
                     </div>
                 </div>
+
                 <div style="flex: 1;">
                     <label>Estado del Producto (Disponibilidad):</label>
                     <div class="radio-group">
@@ -326,39 +413,96 @@
                     </div>
                 </div>
             </div>
+
             <div class="form-grid">
-                <div class="form-group"><label>Categoría</label><select id="prodCatSelect" onchange="verificarCategoria('Cat')"></select><input type="text" id="prodCatNueva" placeholder="Escribe nueva categoría..." style="display:none; margin-top:5px;"></div>
-                <div class="form-group"><label>Sub-Categoría</label><select id="prodSubSelect" onchange="verificarCategoria('Sub')"></select><input type="text" id="prodSubNueva" placeholder="Escribe nueva sub-categoría..." style="display:none; margin-top:5px;"></div>
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select id="prodCatSelect" onchange="verificarCategoria('Cat')"></select>
+                    <input type="text" id="prodCatNueva" placeholder="Escribe nueva categoría..." style="display:none; margin-top:5px; border-color: var(--warning);">
+                </div>
+                <div class="form-group">
+                    <label>Sub-Categoría</label>
+                    <select id="prodSubSelect" onchange="verificarCategoria('Sub')"></select>
+                    <input type="text" id="prodSubNueva" placeholder="Escribe nueva sub-categoría..." style="display:none; margin-top:5px; border-color: var(--warning);">
+                </div>
             </div>
+
             <div class="form-grid">
-                <div class="form-group"><label>Nombre del Producto</label><input type="text" id="prodNombre" placeholder="Ej. Envase PET 500cc"></div>
-                <div class="form-group"><label>Enlace Web</label><input type="url" id="prodLink" placeholder="https://..."></div>
+                <div class="form-group" style="grid-column: span 1;">
+                    <label>Nombre del Producto</label>
+                    <input type="text" id="prodNombre" placeholder="Ej. Envase PET 500cc">
+                </div>
+                <div class="form-group" style="grid-column: span 1;">
+                    <label>Enlace Web (URL Ficha/Compra)</label>
+                    <input type="url" id="prodLink" placeholder="https://...">
+                </div>
             </div>
-            <div class="form-group" style="margin-bottom: 15px; background: var(--highlight-bg); padding: 12px; border-radius: 8px;">
-                <label>📷 Imagen de Referencia</label>
+
+            <!-- MODIFICACIÓN HÍBRIDA: IMAGEN POR ARCHIVO O URL -->
+            <div class="form-group" style="margin-bottom: 15px; background: var(--highlight-bg); padding: 12px; border-radius: 8px; border: 1px dashed var(--border-color);">
+                <label>📷 Imagen de Referencia (Forma Híbrida: Archivo o URL)</label>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 5px;">
-                    <input type="file" id="prodImagenInput" accept="image/*" onchange="procesarImagenSeleccionada(event)" style="font-size: 0.8em; flex:1;">
-                    <input type="url" id="prodImagenUrl" placeholder="https://ejemplo.com/imagen.jpg" oninput="procesarUrlImagen(this.value)" style="font-size: 0.85em; flex:1; padding: 6px;">
+                    <div style="flex: 1; min-width: 180px;">
+                        <small style="display:block; opacity:0.8; margin-bottom:2px;">Subir archivo local:</small>
+                        <input type="file" id="prodImagenInput" accept="image/*" onchange="procesarImagenSeleccionada(event)" style="font-size: 0.8em; width: 100%;">
+                    </div>
+                    <div style="flex: 1; min-width: 180px;">
+                        <small style="display:block; opacity:0.8; margin-bottom:2px;">O pegar URL directa de imagen:</small>
+                        <input type="url" id="prodImagenUrl" placeholder="https://ejemplo.com/imagen.jpg" oninput="procesarUrlImagen(this.value)" style="font-size: 0.85em; padding: 6px;">
+                    </div>
                     <div id="previewBox" class="prod-img-thumb" style="width: 50px; height: 50px;">Sin foto</div>
-                    <button type="button" class="btn-danger" onclick="limpiarImagen()">Quitar</button>
+                    <button type="button" class="btn-danger" onclick="limpiarImagen()" style="padding: 6px 10px;">Quitar</button>
                 </div>
             </div>
-            <div class="form-group" style="margin-bottom: 15px;"><label>Descripción</label><textarea id="prodDesc" rows="2"></textarea></div>
-            <div class="form-grid" style="align-items: end; background: var(--highlight-bg); padding: 15px; border-radius: 8px;">
-                <div class="form-group"><label>Mayorista neto ($)</label><input type="number" id="prodMay" oninput="calcularUnitarioAuto()"></div>
-                <div class="form-group"><label>Unidades x Caja</label><input type="number" id="prodCantCaja" oninput="calcularUnitarioAuto(); SincronizarStockWeb('cajas');"></div>
-                <div class="form-group"><label>Unitario neto ($)</label><input type="number" id="prodUni"></div>
-                <div class="form-group"><label>Minorista neto ($)</label><input type="number" id="prodMin"></div>
-                <div class="form-group" style="grid-column: span 2;"><button type="button" class="btn-iva" onclick="sumarIVA()">➕ Sumar IVA (19%)</button></div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Descripción</label>
+                <textarea id="prodDesc" rows="2" placeholder="Detalles técnicos, material, dimensiones..."></textarea>
             </div>
-            <div style="background: var(--highlight-bg); padding: 15px; border-radius: 8px; margin-top: 15px; margin-bottom: 15px;">
-                <label>🌐 Stock Disponible Publicado en Web:</label>
-                <div class="form-grid">
-                    <div class="form-group"><label>Unidades Disponibles</label><input type="number" id="prodStockUnid" oninput="SincronizarStockWeb('unid')"></div>
-                    <div class="form-group"><label>Cajas Disponibles</label><input type="number" id="prodStockCajas" oninput="SincronizarStockWeb('cajas')"></div>
+
+            <!-- PRECIOS Y UNIDADES POR CAJA -->
+            <div class="form-grid" style="align-items: end; background: var(--highlight-bg); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);">
+                <div class="form-group">
+                    <label style="color: var(--cyan-accent);">Mayorista neto ($)</label>
+                    <input type="number" id="prodMay" placeholder="30000" oninput="calcularUnitarioAuto()" style="border-color: var(--cyan-accent);">
+                </div>
+                <div class="form-group">
+                    <label style="color: var(--cyan-accent);">Unidades x Caja</label>
+                    <input type="number" id="prodCantCaja" placeholder="100" oninput="calcularUnitarioAuto(); SincronizarStockWeb('cajas');" style="border-color: var(--cyan-accent);">
+                </div>
+                <div class="form-group">
+                    <label>Unitario neto ($) <small style="opacity:0.7;">(Auto ⚡)</small></label>
+                    <input type="number" id="prodUni" placeholder="Calculado aut.">
+                </div>
+                <div class="form-group">
+                    <label>Minorista neto ($)</label>
+                    <input type="number" id="prodMin" placeholder="450">
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <button type="button" class="btn-iva" onclick="sumarIVA()">➕ Sumar IVA (19%) a Precios</button>
                 </div>
             </div>
-            <div class="form-group" style="margin-bottom: 20px;"><label>Oferta Especial</label><input type="text" id="prodOferta"></div>
+
+            <!-- STOCK PUBLICADO EN WEB DEL PROVEEDOR -->
+            <div style="background: var(--highlight-bg); padding: 15px; border-radius: 8px; border: 1px dashed var(--warning); margin-top: 15px; margin-bottom: 15px;">
+                <label style="color: var(--warning); display: block; margin-bottom: 8px;">🌐 Stock Disponible Publicado en Web del Proveedor:</label>
+                <div class="form-grid" style="margin-bottom: 0;">
+                    <div class="form-group">
+                        <label>Unidades Disponibles (Web)</label>
+                        <input type="number" id="prodStockUnid" placeholder="Ej. 500" oninput="SincronizarStockWeb('unid')">
+                    </div>
+                    <div class="form-group">
+                        <label>Cajas Disponibles (Web)</label>
+                        <input type="number" id="prodStockCajas" placeholder="Ej. 5" oninput="SincronizarStockWeb('cajas')">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label>Oferta Especial</label>
+                <input type="text" id="prodOferta" placeholder="Ej. 10% dcto sobre 50 un.">
+            </div>
+
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
                 <button type="button" class="btn-secondary" onclick="cerrarModalProd()">Cancelar</button>
                 <button type="button" class="btn-primary" onclick="procesarGuardadoProducto()">Guardar Producto</button>
@@ -366,152 +510,84 @@
         </div>
     </div>
 
-    <!-- MODAL 3: GESTIÓN CATEGORÍAS -->
+    <!-- MODAL 3: GESTIÓN DE CATEGORÍAS Y SUBCATEGORÍAS -->
     <div class="modal-overlay" id="modalCatSub">
         <div class="modal-content" style="max-width: 650px;">
-            <div class="modal-header"><h2>⚙️ Gestión de Categorías</h2></div>
-            <div class="form-grid">
-                <div><h3>📂 Categorías</h3><div id="listaCategoriasManager"></div></div>
-                <div><h3>📁 Sub-Categorías</h3><div id="listaSubcategoriasManager"></div></div>
+            <div class="modal-header">
+                <h2>⚙️ Gestión de Categorías y Sub-Categorías</h2>
             </div>
+            
+            <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div>
+                    <h3 style="margin-top:0;">📂 Categorías</h3>
+                    <div id="listaCategoriasManager" style="display:flex; flex-direction:column; gap:8px;"></div>
+                </div>
+                <div>
+                    <h3 style="margin-top:0;">📁 Sub-Categorías</h3>
+                    <div id="listaSubcategoriasManager" style="display:flex; flex-direction:column; gap:8px;"></div>
+                </div>
+            </div>
+
             <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end;">
                 <button type="button" class="btn-secondary" onclick="cerrarModalCatSub()">Cerrar</button>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT FIREBASE Y LÓGICA CRM -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    <!-- SCRIPT 1: LÓGICA DE LA INTERFAZ Y EL CRM (Globales para que funcionen los botones) -->
+    <script>
+        // Usamos "var" para que Firebase pueda acceder a estas variables globalmente (window.directorio)
+        var directorio = []; 
+        var productosTemporales = [];
+        var esFavActual = false;
+        var idProveedorEnEdicion = null;
+        var imagenTempBase64 = ""; 
+        
+        var categoriasBase = ["Plástico", "Cartón", "Aluminio", "Papelería", "Biodegradable"];
+        var subcategoriasBase = ["Bolsas camiseta", "Bolsas transparentes/celofán", "Bolsas taco/prepicadas", "Vasos", "Cajas"];
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBTVITP2g-4Sy_ccaFnd7o5bkeWlgTa7Sc",
-            authDomain: "ciclopack-eco.firebaseapp.com",
-            projectId: "ciclopack-eco",
-            storageBucket: "ciclopack-eco.firebasestorage.app",
-            messagingSenderId: "587485375626",
-            appId: "1:587485375626:web:a2625a13f4ea9689add173"
-        };
+        var contextoProducto = { modo: 'temp', idProv: null, idProd: null }; 
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        // --- SISTEMA DE AUTENTICACIÓN ---
-        onAuthStateChanged(auth, (user) => {
-            const loginOverlay = document.getElementById('loginOverlay');
-            const appContent = document.getElementById('appContent');
-            if (user) {
-                loginOverlay.style.display = 'none';
-                appContent.style.display = 'block';
-                iniciarEscuchasCloud();
-            } else {
-                loginOverlay.style.display = 'flex';
-                appContent.style.display = 'none';
-            }
-        });
-
-        window.iniciarSesion = async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const pass = document.getElementById('loginPass').value;
-            const errDiv = document.getElementById('loginError');
-            errDiv.style.display = 'none';
-
+        // --- PERSISTENCIA HÍBRIDA ---
+        function cargarDatosLocal() {
             try {
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch (err) {
-                errDiv.innerText = "Error: Credenciales incorrectas o usuario no registrado en Firebase.";
-                errDiv.style.display = 'block';
+                const dataDir = localStorage.getItem('cicloPackBio_directorio') || localStorage.getItem('cicloPack_directorio');
+                const dataCat = localStorage.getItem('cicloPackBio_categorias') || localStorage.getItem('cicloPack_categorias');
+                const dataSub = localStorage.getItem('cicloPackBio_subcategorias') || localStorage.getItem('cicloPack_subcategorias');
+                const theme = localStorage.getItem('cicloPackBio_theme') || localStorage.getItem('cicloPack_theme');
+
+                if(dataDir) directorio = JSON.parse(dataDir);
+                if(dataCat) categoriasBase = JSON.parse(dataCat);
+                if(dataSub) subcategoriasBase = JSON.parse(dataSub);
+                if(theme === 'dark') document.body.setAttribute('data-theme', 'dark');
+            } catch (e) {
+                console.error("Error al cargar datos locales:", e);
             }
-        };
-
-        window.cerrarSesion = function() {
-            signOut(auth);
-        };
-
-        // --- RESCATE DE DATOS DESDE LOCALSTORAGE (TABLET) ---
-        window.buscarRescateLocalStorage = async function() {
-            let recuperados = 0;
-            try {
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key.includes('cicloPack') || key.includes('directorio') || key.includes('prov')) {
-                        const val = localStorage.getItem(key);
-                        try {
-                            const parsed = JSON.parse(val);
-                            if (Array.isArray(parsed) && parsed.length > 0) {
-                                for (let p of parsed) {
-                                    if (p.nombre) {
-                                        p.id = p.id || ('prov_' + window.generarId());
-                                        await setDoc(doc(db, "proveedores", p.id), p);
-                                        recuperados++;
-                                    }
-                                }
-                            }
-                        } catch(e) {}
-                    }
-                }
-                if (recuperados > 0) {
-                    alert(`🎉 ¡Excelente noticia! Se encontraron y recuperaron ${recuperados} registros del almacenamiento local de tu tablet.`);
-                } else {
-                    alert("No se encontraron registros antiguos guardados localmente en esta tablet.");
-                }
-            } catch (err) {
-                alert("Ocurrió un error al intentar leer el LocalStorage: " + err.message);
-            }
-        };
-
-        // --- ESTADOS Y VARIABLES GLOBALES ---
-        window.directorio = []; 
-        window.productosTemporales = [];
-        window.esFavActual = false;
-        window.idProveedorEnEdicion = null;
-        window.imagenTempBase64 = ""; 
-        window.categoriasBase = ["Plástico", "Cartón", "Aluminio", "Papelería", "Biodegradable"];
-        window.subcategoriasBase = ["Bolsas camiseta", "Bolsas transparentes/celofán", "Bolsas taco/prepicadas", "Vasos", "Cajas"];
-        window.contextoProducto = { modo: 'temp', idProv: null, idProd: null }; 
-
-        function iniciarEscuchasCloud() {
-            const cloudStatus = document.getElementById('cloudStatus');
-            onSnapshot(collection(db, "proveedores"), (snapshot) => {
-                window.directorio = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                cloudStatus.innerHTML = "☁️ Cloud Sincronizado";
-                cloudStatus.style.borderColor = "var(--success)";
-                cloudStatus.style.color = "var(--success)";
-                window.actualizarDirectorio();
-            }, (error) => {
-                cloudStatus.innerHTML = "⚠️ Error de Conexión";
-                cloudStatus.style.borderColor = "var(--danger)";
-                cloudStatus.style.color = "var(--danger)";
-            });
-
-            onSnapshot(doc(db, "configuracion", "listas"), (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    if (data.categorias) window.categoriasBase = data.categorias;
-                    if (data.subcategorias) window.subcategoriasBase = data.subcategorias;
-                } else {
-                    window.guardarConfiguracionCloud();
-                }
-            });
+            actualizarDirectorio();
         }
 
-        window.guardarProveedorCloud = async function(provData) {
-            try { await setDoc(doc(db, "proveedores", provData.id), provData); } catch (e) { alert("Error al guardar: " + e.message); }
-        };
+        // Guarda localmente y luego intenta sincronizar con la nube
+        function guardarDatos() {
+            guardarLocalSolo();
+            if (window.sincronizarHaciaNube) {
+                window.sincronizarHaciaNube();
+            }
+        }
 
-        window.eliminarProveedorCloud = async function(idProv) {
-            try { await deleteDoc(doc(db, "proveedores", idProv)); } catch (e) { alert("Error al eliminar: " + e.message); }
-        };
+        // Exclusivo para guardar local
+        function guardarLocalSolo() {
+            try {
+                localStorage.setItem('cicloPackBio_directorio', JSON.stringify(directorio));
+                localStorage.setItem('cicloPackBio_categorias', JSON.stringify(categoriasBase));
+                localStorage.setItem('cicloPackBio_subcategorias', JSON.stringify(subcategoriasBase));
+            } catch (e) {
+                console.error("Error guardando datos en localStorage:", e);
+                alert("⚠️ Atención: La memoria del navegador está llena. Se recomienda usar URLs de imágenes para optimizar espacio.");
+            }
+        }
 
-        window.guardarConfiguracionCloud = async function() {
-            try { await setDoc(doc(db, "configuracion", "listas"), { categorias: window.categoriasBase, subcategorias: window.subcategoriasBase }); } catch (e) {}
-        };
-
-        window.toggleTheme = function() {
+        // --- UTILIDADES ---
+        function toggleTheme() {
             const body = document.body;
             if(body.getAttribute('data-theme') === 'dark') {
                 body.removeAttribute('data-theme');
@@ -520,125 +596,169 @@
                 body.setAttribute('data-theme', 'dark');
                 localStorage.setItem('cicloPackBio_theme', 'dark');
             }
-        };
+        }
 
-        if(localStorage.getItem('cicloPackBio_theme') === 'dark') { document.body.setAttribute('data-theme', 'dark'); }
-
-        window.toggleFav = function() {
-            window.esFavActual = !window.esFavActual;
+        function toggleFav() {
+            esFavActual = !esFavActual;
             const estrella = document.getElementById('estrellaFav');
-            estrella.innerHTML = window.esFavActual ? '★' : '☆';
-            if(window.esFavActual) estrella.classList.add('fav-active');
+            estrella.innerHTML = esFavActual ? '★' : '☆';
+            if(esFavActual) estrella.classList.add('fav-active');
             else estrella.classList.remove('fav-active');
-        };
+        }
 
-        window.generarId = function() { return Date.now().toString(36) + Math.random().toString(36).substr(2); };
+        function generarId() { return Date.now().toString(36) + Math.random().toString(36).substr(2); }
 
-        window.determinarLineaProveedor = function(productos) {
+        function determinarLineaProveedor(productos) {
             if(!productos || productos.length === 0) return "Sin Productos";
             const tieneEco = productos.some(p => p.linea === 'Eco');
             const tienePremium = productos.some(p => p.linea === 'Premium');
             const tieneHibrido = productos.some(p => p.linea === 'Híbrido');
+            
             if((tieneEco && tienePremium) || tieneHibrido) return "Híbrido";
             if(tieneEco) return "Eco";
             return "Premium";
-        };
+        }
 
-        window.getClaseTag = function(linea) {
+        function getClaseTag(linea) {
             if(linea === 'Eco') return 'tag-eco';
             if(linea === 'Premium') return 'tag-premium';
             if(linea === 'Híbrido') return 'tag-hibrido';
             return '';
-        };
+        }
 
-        window.fNum = function(num) { return Number(num || 0).toLocaleString('es-CL'); };
+        function fNum(num) {
+            return Number(num || 0).toLocaleString('es-CL');
+        }
 
-        window.calcularUnitarioAuto = function() {
+        // CÁLCULOS AUTOMÁTICOS DE FORMULARIO
+        function calcularUnitarioAuto() {
             const may = parseFloat(document.getElementById('prodMay').value);
             const cantCaja = parseFloat(document.getElementById('prodCantCaja').value);
             const inputUni = document.getElementById('prodUni');
-            if (!isNaN(may) && !isNaN(cantCaja) && cantCaja > 0) { inputUni.value = Math.round(may / cantCaja); }
-        };
 
-        window.SincronizarStockWeb = function(origen) {
+            if (!isNaN(may) && !isNaN(cantCaja) && cantCaja > 0) {
+                inputUni.value = Math.round(may / cantCaja);
+            }
+        }
+
+        function SincronizarStockWeb(origen) {
             const cantCaja = parseFloat(document.getElementById('prodCantCaja').value);
             const inputUnid = document.getElementById('prodStockUnid');
             const inputCajas = document.getElementById('prodStockCajas');
 
             if (origen === 'unid') {
                 const unid = parseFloat(inputUnid.value);
-                if (!isNaN(unid) && !isNaN(cantCaja) && cantCaja > 0) { inputCajas.value = (unid / cantCaja).toFixed(1).replace('.0', ''); }
+                if (!isNaN(unid) && !isNaN(cantCaja) && cantCaja > 0) {
+                    inputCajas.value = (unid / cantCaja).toFixed(1).replace('.0', '');
+                }
             } else if (origen === 'cajas') {
                 const cajas = parseFloat(inputCajas.value);
-                if (!isNaN(cajas) && !isNaN(cantCaja) && cantCaja > 0) { inputUnid.value = Math.round(cajas * cantCaja); }
+                if (!isNaN(cajas) && !isNaN(cantCaja) && cantCaja > 0) {
+                    inputUnid.value = Math.round(cajas * cantCaja);
+                }
             }
-        };
+        }
 
-        window.renderStockTag = function(p) {
+        function renderStockTag(p) {
             const estado = p.estado || 'Disponible';
             let infoStock = '';
-            if (p.stockUnid !== null && p.stockUnid !== undefined && p.stockUnid !== '') { infoStock = ` (${window.fNum(p.stockUnid)} un / ${p.stockCajas || 0} cjas)`; }
-            if (estado === 'No disponible') return `<span class="tag tag-nodisponible">🔴 No disponible</span>`;
-            if (estado === 'Últimas Unidades') return `<span class="tag tag-ultimas">🟠 Últimas Unidades${infoStock}</span>`;
-            return `<span class="tag tag-disponible">🟢 Disponible${infoStock}</span>`;
-        };
+            
+            if (p.stockUnid !== null && p.stockUnid !== undefined && p.stockUnid !== '') {
+                infoStock = ` (${fNum(p.stockUnid)} un / ${p.stockCajas || 0} cjas)`;
+            }
 
-        window.procesarUrlImagen = function(url) {
+            if (estado === 'No disponible') {
+                return `<span class="tag tag-nodisponible">🔴 No disponible</span>`;
+            } else if (estado === 'Últimas Unidades') {
+                return `<span class="tag tag-ultimas">🟠 Últimas Unidades${infoStock}</span>`;
+            } else {
+                return `<span class="tag tag-disponible">🟢 Disponible${infoStock}</span>`;
+            }
+        }
+
+        // --- PROCESAMIENTO HÍBRIDO DE IMAGEN ---
+        function procesarUrlImagen(url) {
             const urlLimpia = url.trim();
             if(urlLimpia !== "") {
-                document.getElementById('prodImagenInput').value = "";
-                window.imagenTempBase64 = urlLimpia;
-                document.getElementById('previewBox').innerHTML = `<img src="${urlLimpia}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;">`;
-            } else { if(!document.getElementById('prodImagenInput').value) window.limpiarImagen(); }
-        };
+                document.getElementById('prodImagenInput').value = ""; 
+                imagenTempBase64 = urlLimpia;
+                document.getElementById('previewBox').innerHTML = `<img src="${urlLimpia}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;" onerror="this.onerror=null; this.parentElement.innerHTML='❌ Error URL';">`;
+            } else {
+                if(!document.getElementById('prodImagenInput').value) {
+                    limpiarImagen();
+                }
+            }
+        }
 
-        window.procesarImagenSeleccionada = function(e) {
+        function procesarImagenSeleccionada(e) {
             const file = e.target.files[0];
             if (!file) return;
-            document.getElementById('prodImagenUrl').value = "";
+
+            document.getElementById('prodImagenUrl').value = ""; 
+
             const reader = new FileReader();
             reader.onload = function(evt) {
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
                     const maxDim = 300;
-                    let width = img.width, height = img.height;
-                    if (width > height) { if (width > maxDim) { height = Math.round((height * maxDim) / width); width = maxDim; } }
-                    else { if (height > maxDim) { width = Math.round((width * maxDim) / height); height = maxDim; } }
-                    canvas.width = width; canvas.height = height;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxDim) {
+                            height = Math.round((height * maxDim) / width);
+                            width = maxDim;
+                        }
+                    } else {
+                        if (height > maxDim) {
+                            width = Math.round((width * maxDim) / height);
+                            height = maxDim;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-                    window.imagenTempBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                    document.getElementById('previewBox').innerHTML = `<img src="${window.imagenTempBase64}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;">`;
+
+                    imagenTempBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    const previewBox = document.getElementById('previewBox');
+                    previewBox.innerHTML = `<img src="${imagenTempBase64}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;">`;
                 };
                 img.src = evt.target.result;
             };
             reader.readAsDataURL(file);
-        };
+        }
 
-        window.limpiarImagen = function() {
-            window.imagenTempBase64 = "";
+        function limpiarImagen() {
+            imagenTempBase64 = "";
             document.getElementById('prodImagenInput').value = "";
             document.getElementById('prodImagenUrl').value = "";
             document.getElementById('previewBox').innerHTML = "Sin foto";
-        };
+        }
 
-        window.abrirModalProv = function(idProv = null) {
-            window.idProveedorEnEdicion = idProv;
+        // --- MODAL PROVEEDOR ---
+        function abrirModalProv(idProv = null) {
+            idProveedorEnEdicion = idProv;
             const titulo = document.getElementById('tituloModalProv');
+
             if (idProv) {
                 titulo.innerText = "✏️ Editar Proveedor";
-                const prov = window.directorio.find(p => p.id === idProv);
+                const prov = directorio.find(p => p.id === idProv);
+                
                 document.getElementById('provNombre').value = prov.nombre;
                 document.getElementById('provWeb').value = prov.web || '';
                 document.getElementById('provContacto').value = prov.contacto || '';
                 document.getElementById('provEmail').value = prov.email || '';
                 document.getElementById('provCiudad').value = prov.ciudad || 'Otra';
                 document.getElementById('provTiempo').value = prov.tiempo !== '-' ? prov.tiempo : '';
+                
                 const radioEstado = document.querySelector(`input[name="catEstado"][value="${prov.estado}"]`);
                 if(radioEstado) radioEstado.checked = true;
-                window.esFavActual = prov.favorito;
-                window.productosTemporales = JSON.parse(JSON.stringify(prov.productos || []));
+
+                esFavActual = prov.favorito;
+                productosTemporales = JSON.parse(JSON.stringify(prov.productos || []));
             } else {
                 titulo.innerText = "🏢 Ficha de Nuevo Proveedor";
                 document.getElementById('provNombre').value = '';
@@ -646,44 +766,52 @@
                 document.getElementById('provContacto').value = '';
                 document.getElementById('provEmail').value = '';
                 document.getElementById('provTiempo').value = '';
+                
                 const radioOficial = document.querySelector('input[name="catEstado"][value="Oficial"]');
                 if(radioOficial) radioOficial.checked = true;
-                window.esFavActual = false;
-                window.productosTemporales = []; 
+
+                esFavActual = false;
+                productosTemporales = []; 
             }
+
             const estrella = document.getElementById('estrellaFav');
-            estrella.innerHTML = window.esFavActual ? '★' : '☆';
-            if(window.esFavActual) estrella.classList.add('fav-active');
+            estrella.innerHTML = esFavActual ? '★' : '☆';
+            if(esFavActual) estrella.classList.add('fav-active');
             else estrella.classList.remove('fav-active');
-            window.actualizarLineaTemp();
-            window.actualizarTablaTemp();
+            
+            actualizarLineaTemp();
+            actualizarTablaTemp();
             document.getElementById('modalProv').style.display = 'flex';
-        };
+        }
 
-        window.cerrarModalProv = function() { document.getElementById('modalProv').style.display = 'none'; };
+        function cerrarModalProv() { document.getElementById('modalProv').style.display = 'none'; }
 
-        window.actualizarLineaTemp = function() {
-            const linea = window.determinarLineaProveedor(window.productosTemporales);
+        function actualizarLineaTemp() {
+            const linea = determinarLineaProveedor(productosTemporales);
             const etiqueta = document.getElementById('etiquetaLineaProv');
             etiqueta.innerText = linea;
-            etiqueta.className = 'tag ' + window.getClaseTag(linea);
+            etiqueta.className = 'tag ' + getClaseTag(linea);
             if(linea === 'Sin Productos') etiqueta.style.background = '#64748b';
-        };
+        }
 
-        window.actualizarTablaTemp = function() {
+        function actualizarTablaTemp() {
             const tbody = document.getElementById('listaTempProductos');
             tbody.innerHTML = '';
-            window.productosTemporales.forEach(p => {
-                const imgHTML = p.imagen ? `<img src="${p.imagen}" style="width:35px; height:35px; object-fit:cover; border-radius:4px;">` : `<span style="opacity:0.4;">📷</span>`;
-                const cantCajaTxt = p.cantCaja ? `<br><small style="opacity:0.8; font-size:0.75em;">📦 ${window.fNum(p.cantCaja)} un/caja</small>` : '';
+            productosTemporales.forEach(p => {
+                const imgHTML = p.imagen 
+                    ? `<img src="${p.imagen}" style="width:35px; height:35px; object-fit:cover; border-radius:4px;" onerror="this.onerror=null; this.parentElement.innerHTML='📷';">` 
+                    : `<span style="opacity:0.4;">📷</span>`;
+                
+                const cantCajaTxt = p.cantCaja ? `<br><small style="opacity:0.8; font-size:0.75em;">📦 ${fNum(p.cantCaja)} un/caja</small>` : '';
+
                 tbody.innerHTML += `<tr>
                     <td>${imgHTML}</td>
-                    <td><span class="tag ${window.getClaseTag(p.linea)}">${p.linea}</span></td>
+                    <td><span class="tag ${getClaseTag(p.linea)}">${p.linea}</span></td>
                     <td><strong>${p.nombre}</strong><br><small>${p.categoria} > ${p.subcategoria}</small></td>
-                    <td>${window.renderStockTag(p)}</td>
-                    <td>$${window.fNum(p.unitario)}</td>
-                    <td>$${window.fNum(p.minorista)}</td>
-                    <td><strong>$${window.fNum(p.mayorista)}</strong>${cantCajaTxt}</td>
+                    <td>${renderStockTag(p)}</td>
+                    <td>$${fNum(p.unitario)}</td>
+                    <td>$${fNum(p.minorista)}</td>
+                    <td><strong>$${fNum(p.mayorista)}</strong>${cantCajaTxt}</td>
                     <td>
                         <div style="display:flex; gap:4px;">
                             <button type="button" class="btn-warning" style="padding:2px 6px; font-size:0.8em;" onclick="abrirModalProd('edit_temp', null, '${p.id}')">✏️</button>
@@ -692,69 +820,95 @@
                     </td>
                 </tr>`;
             });
-        };
+        }
 
-        window.eliminarProdTemp = function(id) {
-            window.productosTemporales = window.productosTemporales.filter(p => p.id !== id);
-            window.actualizarLineaTemp();
-            window.actualizarTablaTemp();
-        };
+        function eliminarProdTemp(id) {
+            productosTemporales = productosTemporales.filter(p => p.id !== id);
+            actualizarLineaTemp();
+            actualizarTablaTemp();
+        }
 
-        window.guardarProveedorFinal = function() {
+        function guardarProveedorFinal() {
             const nombre = document.getElementById('provNombre').value.trim();
-            if(!nombre || window.productosTemporales.length === 0) { alert("Ingresa el nombre del proveedor y al menos un producto."); return; }
+            if(!nombre || productosTemporales.length === 0) {
+                alert("Ingresa el nombre del proveedor y al menos un producto."); return;
+            }
+
             const estadoRadio = document.querySelector('input[name="catEstado"]:checked');
+
             const datosProveedor = {
-                id: window.idProveedorEnEdicion || ('prov_' + window.generarId()),
                 nombre: nombre,
                 web: document.getElementById('provWeb').value.trim(),
                 contacto: document.getElementById('provContacto').value.trim() || '-',
                 email: document.getElementById('provEmail').value.trim() || '-',
                 ciudad: document.getElementById('provCiudad').value,
                 tiempo: document.getElementById('provTiempo').value.trim() || '-',
-                linea: window.determinarLineaProveedor(window.productosTemporales),
+                linea: determinarLineaProveedor(productosTemporales),
                 estado: estadoRadio ? estadoRadio.value : 'Oficial',
-                favorito: window.esFavActual,
-                productos: [...window.productosTemporales]
+                favorito: esFavActual,
+                productos: [...productosTemporales]
             };
-            window.guardarProveedorCloud(datosProveedor);
-            window.cerrarModalProv();
-        };
 
-        window.eliminarProveedor = function(idProv) {
-            if(confirm("¿Estás seguro de eliminar este proveedor?")) { window.eliminarProveedorCloud(idProv); }
-        };
+            if (idProveedorEnEdicion) {
+                const indice = directorio.findIndex(p => p.id === idProveedorEnEdicion);
+                if (indice !== -1) {
+                    datosProveedor.id = idProveedorEnEdicion;
+                    directorio[indice] = datosProveedor;
+                }
+            } else {
+                datosProveedor.id = 'prov_' + generarId();
+                directorio.push(datosProveedor);
+            }
 
-        window.cargarSelectsCategoria = function() {
+            guardarDatos();
+            actualizarDirectorio();
+            cerrarModalProv();
+        }
+
+        function eliminarProveedor(idProv) {
+            if(confirm("¿Estás seguro de eliminar este proveedor y todos sus productos? Esta acción no se puede deshacer.")) {
+                directorio = directorio.filter(p => p.id !== idProv);
+                guardarDatos();
+                actualizarDirectorio();
+            }
+        }
+
+        // --- MODAL PRODUCTO ---
+        function cargarSelectsCategoria() {
             const sCat = document.getElementById('prodCatSelect');
             const sSub = document.getElementById('prodSubSelect');
-            sCat.innerHTML = window.categoriasBase.map(c => `<option value="${c}">${c}</option>`).join('') + `<option value="OTRA">➕ Crear Nueva...</option>`;
-            sSub.innerHTML = window.subcategoriasBase.map(s => `<option value="${s}">${s}</option>`).join('') + `<option value="OTRA">➕ Crear Nueva...</option>`;
+            
+            sCat.innerHTML = categoriasBase.map(c => `<option value="${c}">${c}</option>`).join('') + `<option value="OTRA">➕ Crear Nueva...</option>`;
+            sSub.innerHTML = subcategoriasBase.map(s => `<option value="${s}">${s}</option>`).join('') + `<option value="OTRA">➕ Crear Nueva...</option>`;
+            
             document.getElementById('prodCatNueva').style.display = 'none';
             document.getElementById('prodSubNueva').style.display = 'none';
-        };
+        }
 
-        window.verificarCategoria = function(tipo) {
+        function verificarCategoria(tipo) {
             const select = document.getElementById('prod' + tipo + 'Select');
             const input = document.getElementById('prod' + tipo + 'Nueva');
             input.style.display = select.value === 'OTRA' ? 'block' : 'none';
             if(select.value === 'OTRA') input.focus();
-        };
+        }
 
-        window.sumarIVA = function() {
+        function sumarIVA() {
             const iUni = document.getElementById('prodUni');
             const iMin = document.getElementById('prodMin');
             const iMay = document.getElementById('prodMay');
+            
             if(iUni.value) iUni.value = Math.round(Number(iUni.value) * 1.19);
             if(iMin.value) iMin.value = Math.round(Number(iMin.value) * 1.19);
             if(iMay.value) iMay.value = Math.round(Number(iMay.value) * 1.19);
-        };
+        }
 
-        window.abrirModalProd = function(modo, idProv = null, idProd = null) {
-            window.contextoProducto = { modo, idProv, idProd };
-            window.cargarSelectsCategoria();
-            window.limpiarImagen();
+        function abrirModalProd(modo, idProv = null, idProd = null) {
+            contextoProducto = { modo, idProv, idProd };
+            cargarSelectsCategoria();
+            limpiarImagen();
+            
             document.getElementById('tituloModalProd').innerText = (modo === 'edit' || modo === 'edit_temp') ? '✏️ Editar Producto' : '➕ Detalle del Producto';
+            
             document.getElementById('prodNombre').value = '';
             document.getElementById('prodLink').value = '';
             document.getElementById('prodDesc').value = '';
@@ -765,13 +919,19 @@
             document.getElementById('prodStockUnid').value = '';
             document.getElementById('prodStockCajas').value = '';
             document.getElementById('prodOferta').value = '';
+            
+            const defaultLinea = document.querySelector('input[name="prodLinea"][value="Eco"]');
+            if(defaultLinea) defaultLinea.checked = true;
+            
+            const defaultEstado = document.querySelector('input[name="prodEstado"][value="Disponible"]');
+            if(defaultEstado) defaultEstado.checked = true;
 
             let prod = null;
             if(modo === 'edit' && idProv && idProd) {
-                const prov = window.directorio.find(p => p.id === idProv);
+                const prov = directorio.find(p => p.id === idProv);
                 if(prov) prod = prov.productos.find(p => p.id === idProd);
             } else if(modo === 'edit_temp' && idProd) {
-                prod = window.productosTemporales.find(p => p.id === idProd);
+                prod = productosTemporales.find(p => p.id === idProd);
             }
 
             if(prod) {
@@ -785,96 +945,605 @@
                 document.getElementById('prodStockUnid').value = (prod.stockUnid !== undefined && prod.stockUnid !== null) ? prod.stockUnid : '';
                 document.getElementById('prodStockCajas').value = (prod.stockCajas !== undefined && prod.stockCajas !== null) ? prod.stockCajas : '';
                 document.getElementById('prodOferta').value = prod.oferta || '';
+                
+                const rLinea = document.querySelector(`input[name="prodLinea"][value="${prod.linea}"]`);
+                if(rLinea) rLinea.checked = true;
+
+                const rEstado = document.querySelector(`input[name="prodEstado"][value="${prod.estado || 'Disponible'}"]`);
+                if(rEstado) rEstado.checked = true;
+
                 if(prod.imagen) {
-                    window.imagenTempBase64 = prod.imagen;
-                    document.getElementById('previewBox').innerHTML = `<img src="${prod.imagen}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;">`;
+                    imagenTempBase64 = prod.imagen;
+                    if(prod.imagen.startsWith('http://') || prod.imagen.startsWith('https://')) {
+                        document.getElementById('prodImagenUrl').value = prod.imagen;
+                    }
+                    document.getElementById('previewBox').innerHTML = `<img src="${prod.imagen}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;" onerror="this.onerror=null; this.parentElement.innerHTML='❌ Error URL';">`;
+                }
+
+                if(prod.categoria) {
+                    if(!categoriasBase.includes(prod.categoria)) {
+                        categoriasBase.push(prod.categoria);
+                        cargarSelectsCategoria();
+                    }
+                    document.getElementById('prodCatSelect').value = prod.categoria;
+                }
+
+                if(prod.subcategoria) {
+                    if(!subcategoriasBase.includes(prod.subcategoria)) {
+                        subcategoriasBase.push(prod.subcategoria);
+                        cargarSelectsCategoria();
+                    }
+                    document.getElementById('prodSubSelect').value = prod.subcategoria;
                 }
             }
+            
             document.getElementById('modalProd').style.display = 'flex';
-        };
+        }
 
-        window.cerrarModalProd = function() { document.getElementById('modalProd').style.display = 'none'; };
+        function cerrarModalProd() { document.getElementById('modalProd').style.display = 'none'; }
 
-        window.procesarGuardadoProducto = function() {
-            let cat = document.getElementById('prodCatSelect').value;
-            let sub = document.getElementById('prodSubSelect').value;
-            if(cat === 'OTRA') cat = document.getElementById('prodCatNueva').value.trim();
-            if(sub === 'OTRA') sub = document.getElementById('prodSubNueva').value.trim();
+        function procesarGuardadoProducto() {
+            try {
+                let cat = document.getElementById('prodCatSelect').value;
+                let sub = document.getElementById('prodSubSelect').value;
+                
+                if(cat === 'OTRA') {
+                    cat = document.getElementById('prodCatNueva').value.trim();
+                    if(cat && !categoriasBase.includes(cat)) categoriasBase.push(cat);
+                }
+                if(sub === 'OTRA') {
+                    sub = document.getElementById('prodSubNueva').value.trim();
+                    if(sub && !subcategoriasBase.includes(sub)) subcategoriasBase.push(sub);
+                }
 
-            const rLinea = document.querySelector('input[name="prodLinea"]:checked');
-            const rEstado = document.querySelector('input[name="prodEstado"]:checked');
+                const cantCajaVal = document.getElementById('prodCantCaja').value;
+                const stockUnidVal = document.getElementById('prodStockUnid').value;
+                const stockCajasVal = document.getElementById('prodStockCajas').value;
 
-            const prod = {
-                nombre: document.getElementById('prodNombre').value.trim(),
-                link: document.getElementById('prodLink').value.trim(),
-                descripcion: document.getElementById('prodDesc').value.trim(),
-                linea: rLinea ? rLinea.value : 'Eco',
-                estado: rEstado ? rEstado.value : 'Disponible',
-                imagen: window.imagenTempBase64,
-                categoria: cat || 'Sin Categoría',
-                subcategoria: sub || 'Sin Subcategoría',
-                unitario: Number(document.getElementById('prodUni').value) || 0,
-                minorista: Number(document.getElementById('prodMin').value) || 0,
-                mayorista: Number(document.getElementById('prodMay').value) || 0,
-                cantCaja: Number(document.getElementById('prodCantCaja').value) || null,
-                stockUnid: Number(document.getElementById('prodStockUnid').value) || null,
-                stockCajas: Number(document.getElementById('prodStockCajas').value) || null,
-                oferta: document.getElementById('prodOferta').value.trim() || '-'
-            };
+                const rLinea = document.querySelector('input[name="prodLinea"]:checked');
+                const rEstado = document.querySelector('input[name="prodEstado"]:checked');
 
-            if(!prod.nombre || !prod.mayorista) { alert("Ingresa nombre y precio mayorista."); return; }
+                const prod = {
+                    nombre: document.getElementById('prodNombre').value.trim(),
+                    link: document.getElementById('prodLink').value.trim(),
+                    descripcion: document.getElementById('prodDesc').value.trim(),
+                    linea: rLinea ? rLinea.value : 'Eco',
+                    estado: rEstado ? rEstado.value : 'Disponible',
+                    imagen: imagenTempBase64,
+                    categoria: cat || 'Sin Categoría',
+                    subcategoria: sub || 'Sin Subcategoría',
+                    unitario: Number(document.getElementById('prodUni').value) || 0,
+                    minorista: Number(document.getElementById('prodMin').value) || 0,
+                    mayorista: Number(document.getElementById('prodMay').value) || 0,
+                    cantCaja: cantCajaVal ? Number(cantCajaVal) : null,
+                    stockUnid: stockUnidVal !== "" ? Number(stockUnidVal) : null,
+                    stockCajas: stockCajasVal !== "" ? Number(stockCajasVal) : null,
+                    oferta: document.getElementById('prodOferta').value.trim() || '-'
+                };
 
-            const { modo, idProv, idProd } = window.contextoProducto;
-            if(modo === 'temp') {
-                prod.id = 'temp_' + window.generarId();
-                window.productosTemporales.push(prod);
-                window.actualizarLineaTemp(); window.actualizarTablaTemp();
-            } else if(modo === 'add_dir' || modo === 'edit') {
-                const prov = window.directorio.find(p => p.id === idProv);
+                if(!prod.nombre || !prod.mayorista) { 
+                    alert("Ingresa al menos el nombre del producto y el precio mayorista."); 
+                    return; 
+                }
+
+                if(contextoProducto.modo === 'temp') {
+                    prod.id = 'temp_' + generarId();
+                    productosTemporales.push(prod);
+                    actualizarLineaTemp();
+                    actualizarTablaTemp();
+                } else if(contextoProducto.modo === 'edit_temp') {
+                    const idx = productosTemporales.findIndex(p => p.id === contextoProducto.idProd);
+                    if(idx !== -1) {
+                        prod.id = contextoProducto.idProd;
+                        productosTemporales[idx] = prod;
+                        actualizarLineaTemp();
+                        actualizarTablaTemp();
+                    }
+                } else if (contextoProducto.modo === 'add_dir') {
+                    prod.id = 'prod_' + generarId();
+                    const prov = directorio.find(p => p.id === contextoProducto.idProv);
+                    if(prov) {
+                        if(!prov.productos) prov.productos = [];
+                        prov.productos.push(prod);
+                        prov.linea = determinarLineaProveedor(prov.productos);
+                        guardarDatos();
+                        actualizarDirectorio();
+                    }
+                } else if (contextoProducto.modo === 'edit') {
+                    const prov = directorio.find(p => p.id === contextoProducto.idProv);
+                    if(prov && prov.productos) {
+                        const indice = prov.productos.findIndex(p => p.id === contextoProducto.idProd);
+                        if(indice !== -1) {
+                            prod.id = contextoProducto.idProd;
+                            prov.productos[indice] = prod;
+                            prov.linea = determinarLineaProveedor(prov.productos);
+                            guardarDatos();
+                            actualizarDirectorio();
+                        }
+                    }
+                }
+
+                cerrarModalProd();
+            } catch (err) {
+                console.error("Error al procesar producto:", err);
+                alert("Ocurrió un error al guardar el producto: " + err.message);
+            }
+        }
+
+        function eliminarProductoDir(idProv, idProd) {
+            if(confirm("¿Eliminar este producto?")) {
+                const prov = directorio.find(p => p.id === idProv);
                 if(prov) {
-                    let copiaProductos = [...(prov.productos || [])];
-                    if (modo === 'add_dir') { prod.id = 'prod_' + window.generarId(); copiaProductos.push(prod); }
-                    else { const idx = copiaProductos.findIndex(p => p.id === idProd); if(idx !== -1) { prod.id = idProd; copiaProductos[idx] = prod; } }
-                    window.guardarProveedorCloud({ ...prov, productos: copiaProductos, linea: window.determinarLineaProveedor(copiaProductos) });
+                    prov.productos = prov.productos.filter(p => p.id !== idProd);
+                    prov.linea = determinarLineaProveedor(prov.productos);
+                    guardarDatos();
+                    actualizarDirectorio();
                 }
             }
-            window.cerrarModalProd();
-        };
+        }
 
-        window.abrirModalCatSub = function() { window.renderizarListaCatSub(); document.getElementById('modalCatSub').style.display = 'flex'; };
-        window.cerrarModalCatSub = function() { document.getElementById('modalCatSub').style.display = 'none'; };
+        // --- GESTIÓN DE CATEGORÍAS Y SUBCATEGORÍAS ---
+        function abrirModalCatSub() {
+            renderizarListaCatSub();
+            document.getElementById('modalCatSub').style.display = 'flex';
+        }
 
-        window.renderizarListaCatSub = function() {
-            document.getElementById('listaCategoriasManager').innerHTML = window.categoriasBase.map(c => `<div><strong>${c}</strong></div>`).join('');
-            document.getElementById('listaSubcategoriasManager').innerHTML = window.subcategoriasBase.map(s => `<div><strong>${s}</strong></div>`).join('');
-        };
+        function cerrarModalCatSub() {
+            document.getElementById('modalCatSub').style.display = 'none';
+        }
 
-        window.actualizarDirectorio = function() {
+        function renderizarListaCatSub() {
+            const divCat = document.getElementById('listaCategoriasManager');
+            const divSub = document.getElementById('listaSubcategoriasManager');
+
+            divCat.innerHTML = categoriasBase.length === 0 ? '<em>No hay categorías registradas.</em>' : 
+                categoriasBase.map((cat, idx) => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--highlight-bg); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color);">
+                        <strong style="font-size:0.9em;">${cat}</strong>
+                        <div style="display:flex; gap:5px;">
+                            <button type="button" class="btn-warning" style="padding:2px 6px; font-size:0.75em;" onclick="editarCategoria(${idx})">✏️</button>
+                            <button type="button" class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="eliminarCategoria(${idx})">🗑️</button>
+                        </div>
+                    </div>
+                `).join('');
+
+            divSub.innerHTML = subcategoriasBase.length === 0 ? '<em>No hay sub-categorías registradas.</em>' : 
+                subcategoriasBase.map((sub, idx) => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--highlight-bg); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color);">
+                        <strong style="font-size:0.9em;">${sub}</strong>
+                        <div style="display:flex; gap:5px;">
+                            <button type="button" class="btn-warning" style="padding:2px 6px; font-size:0.75em;" onclick="editarSubcategoria(${idx})">✏️</button>
+                            <button type="button" class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="eliminarSubcategoria(${idx})">🗑️</button>
+                        </div>
+                    </div>
+                `).join('');
+        }
+
+        function editarCategoria(index) {
+            const nombreViejo = categoriasBase[index];
+            const nuevoNombre = prompt("Modificar nombre de la Categoría:", nombreViejo);
+            
+            if (nuevoNombre && nuevoNombre.trim() !== "" && nuevoNombre !== nombreViejo) {
+                const nombreLimpio = nuevoNombre.trim();
+                categoriasBase[index] = nombreLimpio;
+
+                directorio.forEach(prov => {
+                    if(prov.productos) {
+                        prov.productos.forEach(prod => {
+                            if (prod.categoria === nombreViejo) prod.categoria = nombreLimpio;
+                        });
+                    }
+                });
+
+                guardarDatos();
+                renderizarListaCatSub();
+                actualizarDirectorio();
+            }
+        }
+
+        function eliminarCategoria(index) {
+            const catNombre = categoriasBase[index];
+            if (confirm(`¿Eliminar la categoría "${catNombre}"? Los productos asignados a ella cambiarán a "Sin Categoría".`)) {
+                categoriasBase.splice(index, 1);
+
+                directorio.forEach(prov => {
+                    if(prov.productos) {
+                        prov.productos.forEach(prod => {
+                            if (prod.categoria === catNombre) prod.categoria = "Sin Categoría";
+                        });
+                    }
+                });
+
+                guardarDatos();
+                renderizarListaCatSub();
+                actualizarDirectorio();
+            }
+        }
+
+        function editarSubcategoria(index) {
+            const nombreViejo = subcategoriasBase[index];
+            const nuevoNombre = prompt("Modificar nombre de la Sub-Categoría:", nombreViejo);
+            
+            if (nuevoNombre && nuevoNombre.trim() !== "" && nuevoNombre !== nombreViejo) {
+                const nombreLimpio = nuevoNombre.trim();
+                subcategoriasBase[index] = nombreLimpio;
+
+                directorio.forEach(prov => {
+                    if(prov.productos) {
+                        prov.productos.forEach(prod => {
+                            if (prod.subcategoria === nombreViejo) prod.subcategoria = nombreLimpio;
+                        });
+                    }
+                });
+
+                guardarDatos();
+                renderizarListaCatSub();
+                actualizarDirectorio();
+            }
+        }
+
+        function eliminarSubcategoria(index) {
+            const subNombre = subcategoriasBase[index];
+            if (confirm(`¿Eliminar la sub-categoría "${subNombre}"? Los productos asignados a ella cambiarán a "Sin Subcategoría".`)) {
+                subcategoriasBase.splice(index, 1);
+
+                directorio.forEach(prov => {
+                    if(prov.productos) {
+                        prov.productos.forEach(prod => {
+                            if (prod.subcategoria === subNombre) prod.subcategoria = "Sin Subcategoría";
+                        });
+                    }
+                });
+
+                guardarDatos();
+                renderizarListaCatSub();
+                actualizarDirectorio();
+            }
+        }
+
+        // --- RENDERIZADO DIRECTORIO (EL ACORDEÓN ORIGINAL Y PERFECTO) ---
+        function actualizarDirectorio() {
+            const fFav = document.getElementById('filtroFav').value;
+            const fCat = document.getElementById('filtroCat').value;
+            const fEst = document.getElementById('filtroEst').value;
+            const fDisp = document.getElementById('filtroDisp').value;
+            const fCiu = document.getElementById('filtroCiu').value;
+
+            let directorioFiltrado = directorio.map(prov => {
+                let copyProv = JSON.parse(JSON.stringify(prov));
+                if(!copyProv.productos) copyProv.productos = [];
+                if (fDisp !== 'todos') {
+                    copyProv.productos = copyProv.productos.filter(p => (p.estado || 'Disponible') === fDisp);
+                }
+                return copyProv;
+            }).filter(prov => {
+                let pasaFav = (fFav === 'todos') || (fFav === 'fav' && prov.favorito);
+                let pasaCat = (fCat === 'todos') || (prov.linea === fCat);
+                let pasaEst = (fEst === 'todos') || (prov.estado === fEst);
+                let pasaCiu = (fCiu === 'todos') || (prov.ciudad === fCiu);
+                let tieneProductos = (prov.productos && prov.productos.length > 0) || fDisp === 'todos';
+                return pasaFav && pasaCat && pasaEst && pasaCiu && tieneProductos;
+            });
+
+            directorioFiltrado.sort((a, b) => {
+                let scoreA = (a.favorito ? 2 : 0) + (a.estado === 'Oficial' ? 1 : 0);
+                let scoreB = (b.favorito ? 2 : 0) + (b.estado === 'Oficial' ? 1 : 0);
+                return scoreB - scoreA; 
+            });
+
             const contenedor = document.getElementById('contenedorDirectorio');
             contenedor.innerHTML = '';
-            if(window.directorio.length === 0) {
-                contenedor.innerHTML = '<p>No hay datos registrados en Firebase o que coincidan con tu búsqueda.</p>';
+
+            if(directorioFiltrado.length === 0) {
+                contenedor.innerHTML = '<p>No hay datos que coincidan con tu búsqueda.</p>';
+                compararProveedores();
                 return;
             }
-            window.directorio.forEach(prov => {
-                contenedor.innerHTML += `
+
+            directorioFiltrado.forEach(prov => {
+                const favIcon = prov.favorito ? '<span style="color:gold; font-size:1.2em; filter:drop-shadow(0 0 5px gold);">★</span>' : '<span style="color:gray;">☆</span>';
+                const tagLinea = `<span class="tag ${getClaseTag(prov.linea)}">${prov.linea}</span>`;
+                const tagEstado = prov.estado === 'Oficial' ? '<span class="tag tag-oficial">Oficial</span>' : '<span class="tag tag-posible">Posible</span>';
+                const webLink = prov.web ? `<a href="${prov.web}" target="_blank" style="color:var(--primary-blue); font-weight:bold; margin-left:10px;">🔗 Web</a>` : ``;
+                const mailInfo = prov.email && prov.email !== '-' ? ` | ✉️ ${prov.email}` : '';
+
+                let htmlProv = `
                 <details>
                     <summary>
-                        <strong>${prov.nombre}</strong> (${prov.linea}) - ${prov.ciudad}
-                        <div>
-                            <button class="btn-primary" onclick="abrirModalProd('add_dir', '${prov.id}')">+ Prod</button>
-                            <button class="btn-warning" onclick="abrirModalProv('${prov.id}')">Editar</button>
-                            <button class="btn-danger" onclick="eliminarProveedor('${prov.id}')">X</button>
+                        <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
+                            ${favIcon} <strong style="font-size:1.1em;">${prov.nombre}</strong>
+                            ${tagLinea} ${tagEstado}
+                            <span style="font-size:0.85em; opacity:0.8;">📍 ${prov.ciudad} | 📞 ${prov.contacto} ${mailInfo} | 🚚 ${prov.tiempo}d.</span>
+                            ${webLink}
+                        </div>
+                        <div style="display:flex; gap:10px; margin-top:5px;">
+                            <button type="button" class="btn-primary" style="padding:4px 10px; font-size:0.8em;" onclick="abrirModalProd('add_dir', '${prov.id}')">+ Añadir Prod.</button>
+                            <button type="button" class="btn-warning" onclick="abrirModalProv('${prov.id}')">Editar Prov.</button>
+                            <button type="button" class="btn-danger" onclick="eliminarProveedor('${prov.id}')">X Eliminar</button>
                         </div>
                     </summary>
                     <div class="details-content">
-                        ${(prov.productos || []).map(p => `<div>• ${p.nombre} - $${window.fNum(p.mayorista)}</div>`).join('')}
-                    </div>
-                </details>`;
+                `;
+
+                let agrupado = {};
+                (prov.productos || []).forEach(prod => {
+                    const cName = prod.categoria || 'Sin Categoría';
+                    const sName = prod.subcategoria || 'Sin Subcategoría';
+                    if(!agrupado[cName]) agrupado[cName] = {};
+                    if(!agrupado[cName][sName]) agrupado[cName][sName] = [];
+                    agrupado[cName][sName].push(prod);
+                });
+
+                if(Object.keys(agrupado).length === 0) {
+                    htmlProv += `<em>Este proveedor no tiene productos registrados.</em>`;
+                }
+
+                for(let cat in agrupado) {
+                    htmlProv += `<details class="cat-details"><summary>📂 ${cat}</summary><div class="details-content">`;
+                    for(let sub in agrupado[cat]) {
+                        htmlProv += `<details class="subcat-details" open><summary>📁 ${sub}</summary><div class="details-content">`;
+                        
+                        agrupado[cat][sub].forEach(prod => {
+                            const descInfo = prod.descripcion ? `<br><small style="opacity:0.8;"><em>${prod.descripcion}</em></small>` : '';
+                            const prodWebLink = prod.link ? `<a href="${prod.link}" target="_blank" style="font-size: 0.8em; margin-left:10px; color:var(--primary-blue);">🔗 Ver en Web</a>` : '';
+                            
+                            const imgThumb = prod.imagen 
+                                ? `<img src="${prod.imagen}" class="prod-img-thumb" alt="${prod.nombre}" onerror="this.onerror=null; this.parentElement.innerHTML='📷 Sin Foto';">` 
+                                : `<div class="prod-img-thumb">📷 Sin Foto</div>`;
+
+                            const tagDisp = renderStockTag(prod);
+                            const cantCajaTag = prod.cantCaja ? `<small style="display:block; font-size:0.78em; color:var(--cyan-accent); font-weight:bold;">📦 ${fNum(prod.cantCaja)} un/caja</small>` : '';
+
+                            htmlProv += `
+                            <div class="prod-item-dir">
+                                <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:250px;">
+                                    ${imgThumb}
+                                    <div style="display:flex; flex-direction:column; gap:4px;">
+                                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                            <span class="tag ${getClaseTag(prod.linea)}">${prod.linea}</span>
+                                            ${tagDisp}
+                                            <strong style="font-size:1em;">${prod.nombre}</strong> ${prodWebLink}
+                                        </div>
+                                        <small style="opacity:0.75;">Oferta: ${prod.oferta}</small>
+                                        ${descInfo}
+                                    </div>
+                                </div>
+
+                                <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:flex-end;">
+                                    <span style="font-size:0.85em; opacity:0.8;">Uni: $${fNum(prod.unitario)}</span>
+                                    <span style="font-size:0.85em;">Min: $${fNum(prod.minorista)}</span>
+                                    <div style="text-align:right;">
+                                        <span style="color:#10b981; font-weight:bold; font-size:1.1em;">May: $${fNum(prod.mayorista)}</span>
+                                        ${cantCajaTag}
+                                    </div>
+                                    <button type="button" class="btn-warning" onclick="abrirModalProd('edit', '${prov.id}', '${prod.id}')">Editar</button>
+                                    <button type="button" class="btn-danger" onclick="eliminarProductoDir('${prov.id}', '${prod.id}')">X</button>
+                                </div>
+                            </div>`;
+                        });
+                        htmlProv += `</div></details>`;
+                    }
+                    htmlProv += `</div></details>`;
+                }
+
+                htmlProv += `</div></details>`;
+                contenedor.innerHTML += htmlProv;
             });
+            
+            compararProveedores();
+        }
+
+        // --- EVALUADOR Y COMPARADOR ---
+        function compararProveedores() {
+            const inputBusqueda = document.getElementById('buscarProd');
+            if(!inputBusqueda) return;
+
+            const busqueda = inputBusqueda.value.toLowerCase().trim();
+            const divRec = document.getElementById('recomendacion');
+
+            if (!busqueda || directorio.length === 0) {
+                if(divRec) divRec.innerHTML = ''; return;
+            }
+
+            let opciones = [];
+            directorio.forEach(prov => {
+                if(prov.productos) {
+                    prov.productos.forEach(prod => {
+                        if(prod.nombre.toLowerCase().includes(busqueda) || 
+                           prod.categoria.toLowerCase().includes(busqueda) || 
+                           prod.subcategoria.toLowerCase().includes(busqueda) || 
+                           (prod.descripcion && prod.descripcion.toLowerCase().includes(busqueda))) {
+                            opciones.push({
+                                provNombre: prov.nombre, prodNombre: prod.nombre,
+                                precio: prod.mayorista, cantCaja: prod.cantCaja, tiempo: prov.tiempo,
+                                esOficial: prov.estado === 'Oficial', esFav: prov.favorito,
+                                estado: prod.estado || 'Disponible',
+                                stockUnid: prod.stockUnid,
+                                stockCajas: prod.stockCajas
+                            });
+                        }
+                    });
+                }
+            });
+
+            if (opciones.length === 0) {
+                if(divRec) divRec.innerHTML = '<em>No hay coincidencias en tu base de datos.</em>'; return;
+            }
+
+            let disponibles = opciones.filter(o => o.estado !== 'No disponible');
+            
+            if (disponibles.length > 0) {
+                let mejor = disponibles.reduce((prev, curr) => (prev.precio < curr.precio) ? prev : curr);
+                const infoCaja = mejor.cantCaja ? ` (${fNum(mejor.cantCaja)} un/caja)` : '';
+                
+                let tagStock = `<span class="tag tag-disponible">🟢 En Stock</span>`;
+                let alertStockTxt = '';
+
+                if (mejor.estado === 'Últimas Unidades') {
+                    let stockTxt = (mejor.stockUnid !== null && mejor.stockUnid !== undefined) 
+                        ? ` (${fNum(mejor.stockUnid)} un / ${mejor.stockCajas || 0} cjas)` 
+                        : '';
+                    tagStock = `<span class="tag tag-ultimas">🟠 Últimas Unidades${stockTxt}</span>`;
+                    alertStockTxt = ` <strong style="color:var(--warning);">(⚠️ Quedan pocas unidades en la web del proveedor)</strong>`;
+                }
+
+                if(divRec) {
+                    divRec.innerHTML = `
+                        💡 <strong>Mejor Opción Disponible:</strong> 
+                        <strong>${mejor.provNombre}</strong> tiene "${mejor.prodNombre}" a 
+                        <strong style="color:#10b981;">$${fNum(mejor.precio)} (Mayorista${infoCaja})</strong>. 
+                        Tiempo estimado: ${mejor.tiempo} días. 
+                        ${tagStock} ${alertStockTxt}
+                        ${mejor.esFav ? '⭐(Tu Favorito)' : ''} 
+                        ${mejor.esOficial ? '<span class="tag tag-oficial">Prov. Oficial</span>' : ''}
+                    `;
+                }
+            } else {
+                let mejorSinStock = opciones.reduce((prev, curr) => (prev.precio < curr.precio) ? prev : curr);
+                if(divRec) {
+                    divRec.innerHTML = `
+                        ⚠️ <strong>Atención:</strong> Se encontró "${mejorSinStock.prodNombre}" en 
+                        <strong>${mejorSinStock.provNombre}</strong> a <strong style="color:#ef4444;">$${fNum(mejorSinStock.precio)}</strong>, 
+                        pero figura como <span class="tag tag-nodisponible">🔴 No disponible</span>. Consulta disponibilidad directamente con el proveedor.
+                    `;
+                }
+            }
+        }
+    </script>
+
+    <!-- SCRIPT 2: INTEGRACIÓN FIREBASE (Módulo separado para no romper nada del código original) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // Tu configuración exacta
+        const firebaseConfig = {
+            apiKey: "AIzaSyBTVITP2g-4Sy_ccaFnd7o5bkeWlgTa7Sc",
+            authDomain: "ciclopack-eco.firebaseapp.com",
+            projectId: "ciclopack-eco",
+            storageBucket: "ciclopack-eco.firebasestorage.app",
+            messagingSenderId: "587485375626",
+            appId: "1:587485375626:web:a2625a13f4ea9689add173"
         };
 
-        window.compararProveedores = function() {};
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Referencias a los elementos de la UI
+        const loginOverlay = document.getElementById('loginOverlay');
+        const loginError = document.getElementById('loginError');
+        const cloudStatus = document.getElementById('cloudStatus');
+        const btnLogout = document.getElementById('btnLogout');
+        const btnRescatar = document.getElementById('btnRescatar');
+
+        let usuarioActual = null;
+
+        // 1. Manejo del Login
+        document.getElementById('btnLogin').addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+            try {
+                loginError.style.display = 'none';
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (error) {
+                loginError.style.display = 'block';
+                loginError.innerText = "Error: Credenciales incorrectas.";
+                console.error(error);
+            }
+        });
+
+        // 2. Manejo del Logout
+        btnLogout.addEventListener('click', () => {
+            signOut(auth);
+        });
+
+        // 3. Vigilar el estado de la sesión
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                usuarioActual = user;
+                loginOverlay.style.display = 'none';
+                btnLogout.style.display = 'inline-block';
+                btnRescatar.style.display = 'inline-block';
+                cloudStatus.innerHTML = "☁️ Conectado, buscando datos...";
+                cloudStatus.className = "tag tag-ultimas";
+                
+                // Si el usuario entra, cargamos su info de Firestore
+                await cargarDatosDesdeNube();
+            } else {
+                usuarioActual = null;
+                loginOverlay.style.display = 'flex'; // Vuelve a mostrar el login
+                btnLogout.style.display = 'none';
+                btnRescatar.style.display = 'none';
+                cloudStatus.innerHTML = "☁️ Desconectado";
+                cloudStatus.className = "tag tag-nodisponible";
+            }
+        });
+
+        // 4. Leer de Firestore
+        async function cargarDatosDesdeNube() {
+            if (!usuarioActual) return;
+            try {
+                const docRef = doc(db, "usuarios", usuarioActual.uid);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.directorio) window.directorio = data.directorio;
+                    if (data.categoriasBase) window.categoriasBase = data.categoriasBase;
+                    if (data.subcategoriasBase) window.subcategoriasBase = data.subcategoriasBase;
+                    
+                    // Al descargar de la nube, aseguramos un backup local
+                    window.guardarLocalSolo();
+                    window.actualizarDirectorio();
+
+                    cloudStatus.innerHTML = "☁️ Cloud Sincronizado";
+                    cloudStatus.className = "tag tag-disponible";
+                } else {
+                    // Si no hay datos en la nube para este usuario, cargamos los locales como base
+                    window.cargarDatosLocal();
+                    cloudStatus.innerHTML = "☁️ Nube vacía (Cargado Local)";
+                    cloudStatus.className = "tag tag-posible";
+                }
+            } catch (error) {
+                console.error("Error al cargar de Firestore:", error);
+                cloudStatus.innerHTML = "⚠️ Error de red";
+                cloudStatus.className = "tag tag-nodisponible";
+                window.cargarDatosLocal(); // Fallback si falla el internet
+            }
+        }
+
+        // 5. Función inyectada para guardar hacia la nube (usada por guardarDatos)
+        window.sincronizarHaciaNube = async function() {
+            if (!usuarioActual) return;
+            cloudStatus.innerHTML = "☁️ Guardando...";
+            cloudStatus.className = "tag tag-ultimas";
+            
+            try {
+                await setDoc(doc(db, "usuarios", usuarioActual.uid), {
+                    directorio: window.directorio,
+                    categoriasBase: window.categoriasBase,
+                    subcategoriasBase: window.subcategoriasBase,
+                    ultimaModificacion: new Date().toISOString()
+                });
+                cloudStatus.innerHTML = "☁️ Cloud Sincronizado";
+                cloudStatus.className = "tag tag-disponible";
+            } catch (error) {
+                console.error("Error al guardar en Firestore:", error);
+                cloudStatus.innerHTML = "⚠️ Error de Sincronización";
+                cloudStatus.className = "tag tag-nodisponible";
+            }
+        };
+
+        // 6. Botón de Rescate (Lee forzosamente la caché local y la tira a la nube)
+        btnRescatar.addEventListener('click', () => {
+            if(confirm("¿Estás seguro que deseas rescatar los datos locales? Esto sobreescribirá lo que esté en la nube actualmente.")){
+                window.cargarDatosLocal();
+                window.sincronizarHaciaNube();
+                alert("🎉 ¡Datos locales rescatados y enviados a la nube exitosamente!");
+            }
+        });
     </script>
 </body>
 </html>
