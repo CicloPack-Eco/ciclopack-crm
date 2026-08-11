@@ -6,35 +6,33 @@
     <title>CicloPack Eco - CRM Proveedores</title>
     <style>
         :root {
-            /* MODO CLARO */
-            --bg-body: #e2e8f0;
-            --bg-main: #f8fafc;
+            /* MODO CLARO - Inspirado en tonos textiles y azul noche */
+            --bg-body: #ffffff;
+            --bg-main: #f0f4f8;
             --card-bg: #ffffff;
-            --text-color: #1e293b;
+            --text-color: #0c1427;
             --primary-blue: #1d4ed8;
-            --chrome-blue: #023e8a;
+            --chrome-blue: #0b132b;
             --cyan-accent: #00f5d4;
-            --border-color: #cbd5e1;
-            --rustic-pattern: rgba(2, 62, 138, 0.08);
-            --highlight-bg: #f0f9ff;
-            --modal-bg: rgba(0,0,0,0.5);
+            --border-color: #94a3b8;
+            --highlight-bg: #e2e8f0;
+            --modal-bg: rgba(11, 19, 43, 0.65);
             --danger: #ef4444;
             --warning: #f59e0b;
         }
 
         [data-theme="dark"] {
-            /* MODO OSCURO */
-            --bg-body: #020617;
-            --bg-main: #0f172a;
-            --card-bg: #1e293b;
+            /* MODO OSCURO - Base Azul Noche Chalequero */
+            --bg-body: #ffffff;
+            --bg-main: #0c1427;
+            --card-bg: #142038;
             --text-color: #f1f5f9;
-            --primary-blue: #3b82f6;
-            --chrome-blue: #0ea5e9;
+            --primary-blue: #2563eb;
+            --chrome-blue: #0284c7;
             --cyan-accent: #00f5d4;
-            --border-color: #334155;
-            --rustic-pattern: rgba(0, 245, 212, 0.08);
-            --highlight-bg: #172554;
-            --modal-bg: rgba(0,0,0,0.7);
+            --border-color: #2a3a5c;
+            --highlight-bg: #1c2a47;
+            --modal-bg: rgba(2, 6, 23, 0.85);
         }
 
         body {
@@ -43,16 +41,13 @@
             color: var(--text-color);
             margin: 0;
             padding: 3vh 4vw;
-            transition: all 0.3s ease;
+            transition: color 0.3s ease, background-color 0.3s ease;
             
-            background-image: 
-                linear-gradient(135deg, var(--rustic-pattern) 25%, transparent 25%), 
-                linear-gradient(225deg, var(--rustic-pattern) 25%, transparent 25%), 
-                linear-gradient(45deg, var(--rustic-pattern) 25%, transparent 25%), 
-                linear-gradient(315deg, var(--rustic-pattern) 25%, transparent 25%);
-            background-position: 10px 0, 10px 0, 0 0, 0 0;
-            background-size: 20px 20px;
+            /* DISEÑO EXACTO: Rombos azul noche, fondo blanco y bordes gradientes azul (Franja del chaleco) */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='60' viewBox='0 0 40 60'%3E%3Cdefs%3E%3ClinearGradient id='gNight' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%230a1128'/%3E%3Cstop offset='50%25' stop-color='%231c2541'/%3E%3Cstop offset='100%25' stop-color='%230077b6'/%3E%3C/linearGradient%3E%3ClinearGradient id='gBorder' x1='0' y1='1' x2='0' y2='0'%3E%3Cstop offset='0%25' stop-color='%2300b4d8'/%3E%3Cstop offset='50%25' stop-color='%23023e8a'/%3E%3Cstop offset='100%25' stop-color='%230a1128'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='40' height='60' fill='%23ffffff'/%3E%3Cg stroke='url(%23gBorder)' stroke-width='1.8' fill='none'%3E%3Cpolygon points='20,1 38,15 20,29 2,15'/%3E%3Cpolygon points='0,31 18,45 0,59 -18,45'/%3E%3Cpolygon points='40,31 58,45 40,59 22,45'/%3E%3C/g%3E%3Cg fill='url(%23gNight)'%3E%3Cpolygon points='20,5 33,15 20,25 7,15'/%3E%3Cpolygon points='0,35 13,45 0,55 -13,45'/%3E%3Cpolygon points='40,35 53,45 40,55 27,45'/%3E%3C/g%3E%3Cg fill='%23ffffff'%3E%3Cpolygon points='20,10 26,15 20,20 14,15'/%3E%3Cpolygon points='0,40 6,45 0,50 -6,45'/%3E%3Cpolygon points='40,40 46,45 40,50 34,45'/%3E%3C/g%3E%3C/svg%3E");
             background-repeat: repeat;
+            background-size: 40px 60px;
+            background-attachment: fixed;
         }
 
         .main-container {
@@ -61,8 +56,8 @@
             background-color: var(--bg-main);
             padding: 30px;
             border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            border: 1px solid var(--border-color);
+            box-shadow: 0 15px 35px rgba(10, 17, 40, 0.35);
+            border: 2px solid var(--border-color);
             min-height: 90vh;
         }
 
@@ -74,9 +69,20 @@
 
         h1 {
             margin: 0; font-size: 2.2em;
-            background: linear-gradient(45deg, var(--chrome-blue), var(--cyan-accent));
+            background: linear-gradient(45deg, #00b4d8, var(--cyan-accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+
+        /* BOTONES Y EFECTOS NEÓN / HALO VERDOSO AL HACER CLICK */
+        button {
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        button:active, .btn-primary:active, .btn-secondary:active, .btn-warning:active, .btn-danger:active, .btn-iva:active {
+            box-shadow: 0 0 20px var(--cyan-accent), 0 0 8px var(--cyan-accent) !important;
+            transform: scale(0.96);
         }
 
         .theme-toggle, .btn-primary {
@@ -84,31 +90,36 @@
             color: white; border: 1px solid var(--cyan-accent);
             padding: 10px 20px; border-radius: 8px;
             cursor: pointer; font-weight: bold; font-size: 1em;
-            box-shadow: 0 0 10px rgba(0, 245, 212, 0.2); transition: 0.3s;
+            box-shadow: 0 0 12px rgba(0, 245, 212, 0.3); transition: 0.3s;
         }
-        .theme-toggle:hover, .btn-primary:hover { filter: brightness(1.2); box-shadow: 0 0 15px var(--cyan-accent); }
+        .theme-toggle:hover, .btn-primary:hover { 
+            filter: brightness(1.2); 
+            box-shadow: 0 0 18px var(--cyan-accent); 
+        }
 
         .btn-secondary {
-            background: #64748b; color: white; border: none;
+            background: #475569; color: white; border: 1px solid var(--border-color);
             padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;
         }
+        .btn-secondary:hover { box-shadow: 0 0 10px rgba(0, 245, 212, 0.4); }
         
         .btn-danger { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8em; font-weight: bold; transition: 0.3s;}
-        .btn-danger:hover { filter: brightness(0.9); }
+        .btn-danger:hover { filter: brightness(1.1); box-shadow: 0 0 10px var(--danger); }
         
         .btn-warning { background: var(--warning); color: #000; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8em; font-weight: bold; transition: 0.3s;}
-        .btn-warning:hover { filter: brightness(0.9); }
+        .btn-warning:hover { filter: brightness(1.1); box-shadow: 0 0 10px var(--warning); }
 
         /* MODALES */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--modal-bg); backdrop-filter: blur(4px);
+            background: var(--modal-bg); backdrop-filter: blur(5px);
             display: none; justify-content: center; align-items: center; z-index: 1000;
         }
         .modal-content {
             background: var(--card-bg); width: 90%; max-width: 850px;
-            border-radius: 12px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            max-height: 90vh; overflow-y: auto; border-top: 5px solid var(--primary-blue);
+            border-radius: 12px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            max-height: 90vh; overflow-y: auto; border-top: 5px solid var(--cyan-accent);
+            border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);
         }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;}
         .modal-header h2 { margin: 0; color: var(--text-color); }
@@ -124,7 +135,7 @@
         }
         input:focus, select:focus, textarea:focus { 
             border-color: var(--cyan-accent); 
-            box-shadow: 0 0 12px var(--cyan-accent); 
+            box-shadow: 0 0 14px var(--cyan-accent); 
         }
 
         .radio-group { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;}
@@ -136,6 +147,7 @@
         }
         .radio-label input { display: none; }
         .radio-label:has(input:checked) { color: white; transform: scale(1.05); }
+        .radio-label:active { box-shadow: 0 0 12px var(--cyan-accent); }
         .opt-eco:has(input:checked) { background-color: #0ea5e9; border-color: #0ea5e9; box-shadow: 0 0 12px #0ea5e9; }
         .opt-premium:has(input:checked) { background-color: #a855f7; border-color: #a855f7; box-shadow: 0 0 12px #a855f7; }
         .opt-oficial:has(input:checked) { background-color: #10b981; border-color: #10b981; box-shadow: 0 0 12px #10b981; }
@@ -205,7 +217,7 @@
             </div>
         </div>
 
-        <div style="background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--cyan-accent); margin-bottom: 25px;">
+        <div style="background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--cyan-accent); margin-bottom: 25px; box-shadow: 0 0 10px rgba(0,245,212,0.15);">
             <h3 style="margin-top:0;">🔍 Analizador de Precios</h3>
             <div class="form-group">
                 <input type="text" id="buscarProd" placeholder="Escribe un producto (ej. Cajas) para buscar la mejor opción..." onkeyup="compararProveedores()">
