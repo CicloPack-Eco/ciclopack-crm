@@ -122,7 +122,7 @@
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;}
         .modal-header h2 { margin: 0; color: var(--text-color); }
         
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;}
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 15px;}
         .form-group { display: flex; flex-direction: column; }
         label { font-size: 0.85em; font-weight: bold; margin-bottom: 5px; color: var(--text-color); }
         
@@ -342,7 +342,7 @@
                             <th>Stock</th>
                             <th>Uni</th>
                             <th>Min</th>
-                            <th>May</th>
+                            <th>May (Caja)</th>
                             <th>Acción</th>
                         </tr>
                     </thead>
@@ -359,7 +359,7 @@
 
     <!-- MODAL 2: PRODUCTO (NUEVO O EDITAR) -->
     <div class="modal-overlay" id="modalProd">
-        <div class="modal-content" style="max-width: 650px; border-top-color: var(--cyan-accent);">
+        <div class="modal-content" style="max-width: 700px; border-top-color: var(--cyan-accent);">
             <div class="modal-header">
                 <h2 id="tituloModalProd">➕ Detalle del Producto</h2>
             </div>
@@ -435,6 +435,10 @@
                     <input type="number" id="prodMay" placeholder="300">
                 </div>
                 <div class="form-group">
+                    <label style="color: var(--cyan-accent);">Unidades x Caja (May.)</label>
+                    <input type="number" id="prodCantCaja" placeholder="Ej. 100" style="border-color: var(--cyan-accent);">
+                </div>
+                <div class="form-group" style="grid-column: span 1;">
                     <button class="btn-iva" onclick="sumarIVA()">➕ Sumar IVA (19%)</button>
                 </div>
             </div>
@@ -607,6 +611,7 @@
                 
                 const estadoClass = p.estado === 'No disponible' ? 'tag-nodisponible' : 'tag-disponible';
                 const estadoTxt = p.estado === 'No disponible' ? 'No Disp.' : 'Disp.';
+                const cantCajaTxt = p.cantCaja ? `<br><small style="opacity:0.8; font-size:0.75em;">📦 ${fNum(p.cantCaja)} un/caja</small>` : '';
 
                 tbody.innerHTML += `<tr>
                     <td>${imgHTML}</td>
@@ -615,7 +620,7 @@
                     <td><span class="tag ${estadoClass}">${estadoTxt}</span></td>
                     <td>$${fNum(p.unitario)}</td>
                     <td>$${fNum(p.minorista)}</td>
-                    <td><strong>$${fNum(p.mayorista)}</strong></td>
+                    <td><strong>$${fNum(p.mayorista)}</strong>${cantCajaTxt}</td>
                     <td><button class="btn-danger" onclick="eliminarProdTemp('${p.id}')">X</button></td>
                 </tr>`;
             });
@@ -710,6 +715,7 @@
             document.getElementById('prodUni').value = '';
             document.getElementById('prodMin').value = '';
             document.getElementById('prodMay').value = '';
+            document.getElementById('prodCantCaja').value = '';
             document.getElementById('prodOferta').value = '';
             document.querySelector('input[name="prodLinea"][value="Eco"]').checked = true;
             document.querySelector('input[name="prodEstado"][value="Disponible"]').checked = true;
@@ -724,6 +730,7 @@
                 document.getElementById('prodUni').value = prod.unitario || '';
                 document.getElementById('prodMin').value = prod.minorista;
                 document.getElementById('prodMay').value = prod.mayorista;
+                document.getElementById('prodCantCaja').value = prod.cantCaja || '';
                 document.getElementById('prodOferta').value = prod.oferta;
                 
                 document.querySelector(`input[name="prodLinea"][value="${prod.linea}"]`).checked = true;
@@ -755,6 +762,8 @@
                 if(sub && !subcategoriasBase.includes(sub)) subcategoriasBase.push(sub);
             }
 
+            const cantCajaVal = document.getElementById('prodCantCaja').value;
+
             const prod = {
                 nombre: document.getElementById('prodNombre').value,
                 link: document.getElementById('prodLink').value,
@@ -767,6 +776,7 @@
                 unitario: Number(document.getElementById('prodUni').value),
                 minorista: Number(document.getElementById('prodMin').value),
                 mayorista: Number(document.getElementById('prodMay').value),
+                cantCaja: cantCajaVal ? Number(cantCajaVal) : null,
                 oferta: document.getElementById('prodOferta').value || '-'
             };
 
@@ -902,6 +912,9 @@
                                 ? `<span class="tag tag-disponible">🟢 Disponible</span>` 
                                 : `<span class="tag tag-nodisponible">🔴 No disponible</span>`;
 
+                            // TEXTO CANTIDAD POR CAJA
+                            const cantCajaTag = prod.cantCaja ? `<small style="display:block; font-size:0.78em; color:var(--cyan-accent); font-weight:bold;">📦 ${fNum(prod.cantCaja)} un/caja</small>` : '';
+
                             htmlProv += `
                             <div class="prod-item-dir">
                                 <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:250px;">
@@ -920,7 +933,10 @@
                                 <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:flex-end;">
                                     <span style="font-size:0.85em; opacity:0.8;">Uni: $${fNum(prod.unitario)}</span>
                                     <span style="font-size:0.85em;">Min: $${fNum(prod.minorista)}</span>
-                                    <span style="color:#10b981; font-weight:bold; font-size:1.1em;">May: $${fNum(prod.mayorista)}</span>
+                                    <div style="text-align:right;">
+                                        <span style="color:#10b981; font-weight:bold; font-size:1.1em;">May: $${fNum(prod.mayorista)}</span>
+                                        ${cantCajaTag}
+                                    </div>
                                     <button class="btn-warning" onclick="abrirModalProd('edit', '${prov.id}', '${prod.id}')">Editar</button>
                                     <button class="btn-danger" onclick="eliminarProductoDir('${prov.id}', '${prod.id}')">X</button>
                                 </div>
@@ -953,7 +969,7 @@
                     if(prod.nombre.toLowerCase().includes(busqueda) || prod.categoria.toLowerCase().includes(busqueda) || prod.subcategoria.toLowerCase().includes(busqueda) || (prod.descripcion && prod.descripcion.toLowerCase().includes(busqueda))) {
                         opciones.push({
                             provNombre: prov.nombre, prodNombre: prod.nombre,
-                            precio: prod.mayorista, tiempo: prov.tiempo,
+                            precio: prod.mayorista, cantCaja: prod.cantCaja, tiempo: prov.tiempo,
                             esOficial: prov.estado === 'Oficial', esFav: prov.favorito,
                             disponible: prod.estado !== 'No disponible'
                         });
@@ -970,10 +986,11 @@
             
             if (disponibles.length > 0) {
                 let mejor = disponibles.reduce((prev, curr) => (prev.precio < curr.precio) ? prev : curr);
+                const infoCaja = mejor.cantCaja ? ` (${fNum(mejor.cantCaja)} un/caja)` : '';
                 divRec.innerHTML = `
                     💡 <strong>Mejor Opción Disponible:</strong> 
                     <strong>${mejor.provNombre}</strong> tiene "${mejor.prodNombre}" a 
-                    <strong style="color:#10b981;">$${fNum(mejor.precio)} (Mayorista)</strong>. 
+                    <strong style="color:#10b981;">$${fNum(mejor.precio)} (Mayorista${infoCaja})</strong>. 
                     Tiempo estimado: ${mejor.tiempo} días. 
                     <span class="tag tag-disponible">🟢 En Stock</span>
                     ${mejor.esFav ? '⭐(Tu Favorito)' : ''} 
