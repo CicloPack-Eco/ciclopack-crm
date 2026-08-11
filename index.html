@@ -106,28 +106,27 @@
             display: none; justify-content: center; align-items: center; z-index: 1000;
         }
         .modal-content {
-            background: var(--card-bg); width: 90%; max-width: 800px;
+            background: var(--card-bg); width: 90%; max-width: 850px;
             border-radius: 12px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             max-height: 90vh; overflow-y: auto; border-top: 5px solid var(--primary-blue);
         }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;}
         .modal-header h2 { margin: 0; color: var(--text-color); }
         
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 15px; margin-bottom: 15px;}
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;}
         .form-group { display: flex; flex-direction: column; }
         label { font-size: 0.85em; font-weight: bold; margin-bottom: 5px; color: var(--text-color); }
         
-        /* EFECTO GLOW PARA TODOS LOS INPUTS Y SELECTS */
-        input, select { 
+        input, select, textarea { 
             padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);
             background: var(--bg-main); color: var(--text-color); outline: none; transition: 0.3s;
+            font-family: inherit;
         }
-        input:focus, select:focus { 
+        input:focus, select:focus, textarea:focus { 
             border-color: var(--cyan-accent); 
             box-shadow: 0 0 12px var(--cyan-accent); 
         }
 
-        /* BOTONES DE SELECCIÓN (RADIO) */
         .radio-group { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;}
         .radio-label {
             padding: 8px 12px; border-radius: 20px; font-size: 0.85em; font-weight: bold;
@@ -136,7 +135,6 @@
             background: transparent; transition: 0.3s;
         }
         .radio-label input { display: none; }
-        
         .radio-label:has(input:checked) { color: white; transform: scale(1.05); }
         .opt-eco:has(input:checked) { background-color: #0ea5e9; border-color: #0ea5e9; box-shadow: 0 0 12px #0ea5e9; }
         .opt-premium:has(input:checked) { background-color: #a855f7; border-color: #a855f7; box-shadow: 0 0 12px #a855f7; }
@@ -146,7 +144,6 @@
         .fav-btn { font-size: 2em; cursor: pointer; color: #cbd5e1; user-select: none; transition: 0.3s; }
         .fav-active { color: #fbbf24; filter: drop-shadow(0 0 8px #fbbf24); }
 
-        /* TABLAS Y FILTROS */
         .filtros-bar {
             display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;
             background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);
@@ -159,7 +156,6 @@
         th { background: var(--chrome-blue); color: white; }
         tr:hover { background: var(--highlight-bg); }
 
-        /* ETIQUETAS */
         .tag { padding: 3px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; color: white;}
         .tag-eco { background-color: #0ea5e9; }
         .tag-premium { background-color: #a855f7; }
@@ -167,7 +163,6 @@
         .tag-oficial { background-color: #10b981; }
         .tag-posible { background-color: #eab308; }
 
-        /* ACORDEONES DIRECTORIO GENERAL */
         details { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
         summary { 
             background: var(--bg-main); padding: 15px; font-weight: bold; cursor: pointer; list-style: none; 
@@ -178,7 +173,6 @@
         details[open] > summary { border-bottom-color: var(--border-color); background: var(--highlight-bg); }
         .details-content { padding: 15px; background: var(--card-bg); }
         
-        /* Niveles de anidación */
         .cat-details { margin-left: 20px; border-left: 3px solid var(--chrome-blue); margin-top: 10px; }
         .subcat-details { margin-left: 20px; border-left: 3px solid var(--cyan-accent); margin-top: 10px; }
 
@@ -187,6 +181,13 @@
             padding: 10px; background: var(--highlight-bg); border-radius: 6px; 
             margin-bottom: 5px; border: 1px solid var(--border-color); flex-wrap: wrap; gap: 10px;
         }
+        
+        .btn-iva {
+            background: linear-gradient(45deg, #10b981, #059669); color: white; 
+            border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); transition: 0.3s; height: 100%; display: flex; align-items: center; justify-content: center;
+        }
+        .btn-iva:hover { filter: brightness(1.1); box-shadow: 0 0 15px #10b981; }
 
     </style>
 </head>
@@ -214,7 +215,6 @@
 
         <h3>📋 Directorio General</h3>
         
-        <!-- BARRA DE FILTROS -->
         <div class="filtros-bar">
             <select id="filtroFav" onchange="actualizarDirectorio()">
                 <option value="todos">⭐ Todos (Fav y No Fav)</option>
@@ -240,17 +240,16 @@
             </select>
         </div>
 
-        <!-- CONTENEDOR DE ACORDEONES -->
         <div id="contenedorDirectorio">
             <!-- Proveedores dinámicos -->
         </div>
     </div>
 
-    <!-- MODAL 1: NUEVO PROVEEDOR -->
+    <!-- MODAL 1: PROVEEDOR (NUEVO O EDITAR) -->
     <div class="modal-overlay" id="modalProv">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>🏢 Ficha de Nuevo Proveedor</h2>
+                <h2 id="tituloModalProv">🏢 Ficha de Proveedor</h2>
                 <div class="fav-btn" id="estrellaFav" onclick="toggleFav()">☆</div>
             </div>
             
@@ -268,6 +267,10 @@
                     <input type="tel" id="provContacto" placeholder="Ej. +56 9 1234 5678">
                 </div>
                 <div class="form-group">
+                    <label>Email de Contacto</label>
+                    <input type="email" id="provEmail" placeholder="contacto@proveedor.cl">
+                </div>
+                <div class="form-group">
                     <label>Ciudad</label>
                     <select id="provCiudad">
                         <option value="Coquimbo">Coquimbo</option>
@@ -282,7 +285,6 @@
                 </div>
             </div>
 
-            <!-- LÍNEA AUTOMÁTICA -->
             <div style="background: var(--highlight-bg); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed var(--border-color); display: flex; align-items: center; gap: 10px;">
                 <label style="margin:0;">Clasificación de Línea (Automática):</label> 
                 <span id="etiquetaLineaProv" class="tag" style="background:#64748b;">Sin Productos</span>
@@ -306,11 +308,10 @@
                     <thead>
                         <tr>
                             <th>Línea</th>
-                            <th>Categoría</th>
                             <th>Producto</th>
-                            <th>Minorista</th>
-                            <th>Mayorista</th>
-                            <th>Oferta</th>
+                            <th>Uni</th>
+                            <th>Min</th>
+                            <th>May</th>
                             <th>Acción</th>
                         </tr>
                     </thead>
@@ -325,9 +326,9 @@
         </div>
     </div>
 
-    <!-- MODAL 2: AGREGAR / EDITAR PRODUCTO -->
+    <!-- MODAL 2: PRODUCTO (NUEVO O EDITAR) -->
     <div class="modal-overlay" id="modalProd">
-        <div class="modal-content" style="max-width: 550px; border-top-color: var(--cyan-accent);">
+        <div class="modal-content" style="max-width: 650px; border-top-color: var(--cyan-accent);">
             <div class="modal-header">
                 <h2 id="tituloModalProd">➕ Detalle del Producto</h2>
             </div>
@@ -351,21 +352,41 @@
                 </div>
             </div>
 
-            <div class="form-group" style="margin-bottom: 10px;">
-                <label>Nombre del Producto</label>
-                <input type="text" id="prodNombre" placeholder="Ej. Envase PET 500cc">
-            </div>
             <div class="form-grid">
-                <div class="form-group">
-                    <label>Precio Minorista ($)</label>
-                    <input type="number" id="prodMin" placeholder="1500">
+                <div class="form-group" style="grid-column: span 1;">
+                    <label>Nombre del Producto</label>
+                    <input type="text" id="prodNombre" placeholder="Ej. Envase PET 500cc">
                 </div>
-                <div class="form-group">
-                    <label>Precio Mayorista ($)</label>
-                    <input type="number" id="prodMay" placeholder="1000">
+                <div class="form-group" style="grid-column: span 1;">
+                    <label>Enlace Web (URL)</label>
+                    <input type="url" id="prodLink" placeholder="https://...">
                 </div>
             </div>
-            <div class="form-group" style="margin-bottom: 20px;">
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Descripción</label>
+                <textarea id="prodDesc" rows="2" placeholder="Detalles técnicos, material, dimensiones..."></textarea>
+            </div>
+
+            <div class="form-grid" style="align-items: end; background: var(--highlight-bg); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);">
+                <div class="form-group">
+                    <label>Unitario neto ($)</label>
+                    <input type="number" id="prodUni" placeholder="500">
+                </div>
+                <div class="form-group">
+                    <label>Minorista neto ($)</label>
+                    <input type="number" id="prodMin" placeholder="450">
+                </div>
+                <div class="form-group">
+                    <label>Mayorista neto ($)</label>
+                    <input type="number" id="prodMay" placeholder="300">
+                </div>
+                <div class="form-group">
+                    <button class="btn-iva" onclick="sumarIVA()">➕ Sumar IVA (19%)</button>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px; margin-top: 15px;">
                 <label>Oferta Especial</label>
                 <input type="text" id="prodOferta" placeholder="Ej. 10% dcto sobre 50 un.">
             </div>
@@ -382,13 +403,14 @@
         let directorio = []; 
         let productosTemporales = [];
         let esFavActual = false;
+        let idProveedorEnEdicion = null; // Controla si estamos editando un proveedor completo
         
         let categoriasBase = ["Plástico", "Cartón", "Aluminio", "Papelería", "Biodegradable"];
         let subcategoriasBase = ["Bolsas camiseta", "Bolsas transparentes/celofán", "Bolsas taco/prepicadas", "Vasos", "Cajas"];
 
-        let contextoProducto = { modo: 'temp', idProv: null, idProd: null }; // Controla si creamos o editamos
+        let contextoProducto = { modo: 'temp', idProv: null, idProd: null }; 
 
-        // --- PERSISTENCIA DE DATOS (LOCALSTORAGE) ---
+        // --- PERSISTENCIA ---
         function cargarDatos() {
             const dataDir = localStorage.getItem('cicloPack_directorio');
             const dataCat = localStorage.getItem('cicloPack_categorias');
@@ -447,17 +469,46 @@
             return '';
         }
 
+        // FORMATO NÚMEROS A CHILENOS
+        function fNum(num) {
+            return Number(num || 0).toLocaleString('es-CL');
+        }
+
         // --- MODAL PROVEEDOR ---
-        function abrirModalProv() {
-            productosTemporales = []; 
-            esFavActual = false;
-            document.getElementById('estrellaFav').innerHTML = '☆';
-            document.getElementById('estrellaFav').classList.remove('fav-active');
-            
-            document.getElementById('provNombre').value = '';
-            document.getElementById('provWeb').value = '';
-            document.getElementById('provContacto').value = '';
-            document.getElementById('provTiempo').value = '';
+        function abrirModalProv(idProv = null) {
+            idProveedorEnEdicion = idProv;
+            const titulo = document.getElementById('tituloModalProv');
+
+            if (idProv) {
+                titulo.innerText = "✏️ Editar Proveedor";
+                const prov = directorio.find(p => p.id === idProv);
+                
+                document.getElementById('provNombre').value = prov.nombre;
+                document.getElementById('provWeb').value = prov.web || '';
+                document.getElementById('provContacto').value = prov.contacto || '';
+                document.getElementById('provEmail').value = prov.email || '';
+                document.getElementById('provCiudad').value = prov.ciudad || 'Otra';
+                document.getElementById('provTiempo').value = prov.tiempo !== '-' ? prov.tiempo : '';
+                document.querySelector(`input[name="catEstado"][value="${prov.estado}"]`).checked = true;
+                
+                esFavActual = prov.favorito;
+                productosTemporales = JSON.parse(JSON.stringify(prov.productos)); // Copia profunda
+            } else {
+                titulo.innerText = "🏢 Ficha de Nuevo Proveedor";
+                document.getElementById('provNombre').value = '';
+                document.getElementById('provWeb').value = '';
+                document.getElementById('provContacto').value = '';
+                document.getElementById('provEmail').value = '';
+                document.getElementById('provTiempo').value = '';
+                document.querySelector('input[name="catEstado"][value="Oficial"]').checked = true;
+                esFavActual = false;
+                productosTemporales = []; 
+            }
+
+            const estrella = document.getElementById('estrellaFav');
+            estrella.innerHTML = esFavActual ? '★' : '☆';
+            if(esFavActual) estrella.classList.add('fav-active');
+            else estrella.classList.remove('fav-active');
             
             actualizarLineaTemp();
             actualizarTablaTemp();
@@ -479,11 +530,10 @@
             productosTemporales.forEach(p => {
                 tbody.innerHTML += `<tr>
                     <td><span class="tag ${getClaseTag(p.linea)}">${p.linea}</span></td>
-                    <td><small>${p.categoria} > ${p.subcategoria}</small></td>
-                    <td>${p.nombre}</td>
-                    <td>$${p.minorista.toLocaleString('es-CL')}</td>
-                    <td><strong>$${p.mayorista.toLocaleString('es-CL')}</strong></td>
-                    <td><small>${p.oferta}</small></td>
+                    <td><strong>${p.nombre}</strong><br><small>${p.categoria} > ${p.subcategoria}</small></td>
+                    <td>$${fNum(p.unitario)}</td>
+                    <td>$${fNum(p.minorista)}</td>
+                    <td><strong>$${fNum(p.mayorista)}</strong></td>
                     <td><button class="btn-danger" onclick="eliminarProdTemp('${p.id}')">X</button></td>
                 </tr>`;
             });
@@ -501,11 +551,11 @@
                 alert("Ingresa el nombre del proveedor y al menos un producto."); return;
             }
 
-            const proveedor = {
-                id: 'prov_' + generarId(),
+            const datosProveedor = {
                 nombre: nombre,
                 web: document.getElementById('provWeb').value,
                 contacto: document.getElementById('provContacto').value || '-',
+                email: document.getElementById('provEmail').value || '-',
                 ciudad: document.getElementById('provCiudad').value,
                 tiempo: document.getElementById('provTiempo').value || '-',
                 linea: determinarLineaProveedor(productosTemporales),
@@ -514,14 +564,24 @@
                 productos: [...productosTemporales]
             };
 
-            directorio.push(proveedor);
+            if (idProveedorEnEdicion) {
+                // Actualizar existente
+                const indice = directorio.findIndex(p => p.id === idProveedorEnEdicion);
+                datosProveedor.id = idProveedorEnEdicion;
+                directorio[indice] = datosProveedor;
+            } else {
+                // Crear nuevo
+                datosProveedor.id = 'prov_' + generarId();
+                directorio.push(datosProveedor);
+            }
+
             guardarDatos();
             actualizarDirectorio();
             cerrarModalProv();
         }
 
         function eliminarProveedor(idProv) {
-            if(confirm("¿Eliminar este proveedor y todos sus productos definitivamente?")) {
+            if(confirm("¿Estás seguro de eliminar este proveedor y todos sus productos? Esta acción no se puede deshacer.")) {
                 directorio = directorio.filter(p => p.id !== idProv);
                 guardarDatos();
                 actualizarDirectorio();
@@ -547,6 +607,17 @@
             if(select.value === 'OTRA') input.focus();
         }
 
+        // BOTÓN SUMAR IVA
+        function sumarIVA() {
+            const iUni = document.getElementById('prodUni');
+            const iMin = document.getElementById('prodMin');
+            const iMay = document.getElementById('prodMay');
+            
+            if(iUni.value) iUni.value = Math.round(Number(iUni.value) * 1.19);
+            if(iMin.value) iMin.value = Math.round(Number(iMin.value) * 1.19);
+            if(iMay.value) iMay.value = Math.round(Number(iMay.value) * 1.19);
+        }
+
         function abrirModalProd(modo, idProv = null, idProd = null) {
             contextoProducto = { modo, idProv, idProd };
             cargarSelectsCategoria();
@@ -555,6 +626,9 @@
             
             // Limpiar
             document.getElementById('prodNombre').value = '';
+            document.getElementById('prodLink').value = '';
+            document.getElementById('prodDesc').value = '';
+            document.getElementById('prodUni').value = '';
             document.getElementById('prodMin').value = '';
             document.getElementById('prodMay').value = '';
             document.getElementById('prodOferta').value = '';
@@ -566,6 +640,9 @@
                 const prod = prov.productos.find(p => p.id === idProd);
                 
                 document.getElementById('prodNombre').value = prod.nombre;
+                document.getElementById('prodLink').value = prod.link || '';
+                document.getElementById('prodDesc').value = prod.descripcion || '';
+                document.getElementById('prodUni').value = prod.unitario || '';
                 document.getElementById('prodMin').value = prod.minorista;
                 document.getElementById('prodMay').value = prod.mayorista;
                 document.getElementById('prodOferta').value = prod.oferta;
@@ -594,15 +671,18 @@
 
             const prod = {
                 nombre: document.getElementById('prodNombre').value,
+                link: document.getElementById('prodLink').value,
+                descripcion: document.getElementById('prodDesc').value,
                 linea: document.querySelector('input[name="prodLinea"]:checked').value,
                 categoria: cat || 'Sin Categoría',
                 subcategoria: sub || 'Sin Subcategoría',
+                unitario: Number(document.getElementById('prodUni').value),
                 minorista: Number(document.getElementById('prodMin').value),
                 mayorista: Number(document.getElementById('prodMay').value),
                 oferta: document.getElementById('prodOferta').value || '-'
             };
 
-            if(!prod.nombre || !prod.mayorista) { alert("Ingresa nombre y precio mayorista."); return; }
+            if(!prod.nombre || !prod.mayorista) { alert("Ingresa nombre y al menos el precio mayorista."); return; }
 
             if(contextoProducto.modo === 'temp') {
                 prod.id = 'temp_' + generarId();
@@ -674,26 +754,26 @@
                 const tagLinea = `<span class="tag ${getClaseTag(prov.linea)}">${prov.linea}</span>`;
                 const tagEstado = prov.estado === 'Oficial' ? '<span class="tag tag-oficial">Oficial</span>' : '<span class="tag tag-posible">Posible</span>';
                 const webLink = prov.web ? `<a href="${prov.web}" target="_blank" style="color:var(--primary-blue); font-weight:bold; margin-left:10px;">🔗 Web</a>` : ``;
+                const mailInfo = prov.email && prov.email !== '-' ? ` | ✉️ ${prov.email}` : '';
 
-                // Construir el contenedor del proveedor
                 let htmlProv = `
                 <details>
                     <summary>
                         <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
                             ${favIcon} <strong style="font-size:1.1em;">${prov.nombre}</strong>
                             ${tagLinea} ${tagEstado}
-                            <span style="font-size:0.85em; opacity:0.8;">📍 ${prov.ciudad} | 📞 ${prov.contacto} | 🚚 ${prov.tiempo}d.</span>
+                            <span style="font-size:0.85em; opacity:0.8;">📍 ${prov.ciudad} | 📞 ${prov.contacto} ${mailInfo} | 🚚 ${prov.tiempo}d.</span>
                             ${webLink}
                         </div>
                         <div style="display:flex; gap:10px; margin-top:5px;">
                             <button class="btn-primary" style="padding:4px 10px; font-size:0.8em;" onclick="abrirModalProd('add_dir', '${prov.id}')">+ Añadir Prod.</button>
-                            <button class="btn-danger" onclick="eliminarProveedor('${prov.id}')">Eliminar Prov.</button>
+                            <button class="btn-warning" onclick="abrirModalProv('${prov.id}')">Editar Prov.</button>
+                            <button class="btn-danger" onclick="eliminarProveedor('${prov.id}')">X Eliminar</button>
                         </div>
                     </summary>
                     <div class="details-content">
                 `;
 
-                // Agrupar productos
                 let agrupado = {};
                 prov.productos.forEach(prod => {
                     if(!agrupado[prod.categoria]) agrupado[prod.categoria] = {};
@@ -705,23 +785,29 @@
                     htmlProv += `<em>Este proveedor no tiene productos registrados.</em>`;
                 }
 
-                // Renderizar anidamiento
                 for(let cat in agrupado) {
                     htmlProv += `<details class="cat-details"><summary>📂 ${cat}</summary><div class="details-content">`;
                     for(let sub in agrupado[cat]) {
                         htmlProv += `<details class="subcat-details" open><summary>📁 ${sub}</summary><div class="details-content">`;
                         
                         agrupado[cat][sub].forEach(prod => {
+                            const descInfo = prod.descripcion ? `<br><small style="opacity:0.8;"><em>${prod.descripcion}</em></small>` : '';
+                            const prodWebLink = prod.link ? `<a href="${prod.link}" target="_blank" style="font-size: 0.8em; margin-left:10px; color:var(--primary-blue);">🔗 Ver en Web</a>` : '';
+                            
                             htmlProv += `
                             <div class="prod-item-dir">
-                                <div style="display:flex; align-items:center; gap:10px;">
-                                    <span class="tag ${getClaseTag(prod.linea)}">${prod.linea}</span>
-                                    <strong>${prod.nombre}</strong>
-                                    <small style="opacity:0.7;">(Oferta: ${prod.oferta})</small>
+                                <div style="display:flex; flex-direction:column; gap:5px; max-width:40%;">
+                                    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                                        <span class="tag ${getClaseTag(prod.linea)}">${prod.linea}</span>
+                                        <strong>${prod.nombre}</strong> ${prodWebLink}
+                                    </div>
+                                    <small style="opacity:0.7;">Oferta: ${prod.oferta}</small>
+                                    ${descInfo}
                                 </div>
                                 <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
-                                    <span style="font-size:0.9em;">Min: $${prod.minorista.toLocaleString('es-CL')}</span>
-                                    <span style="color:#10b981; font-weight:bold; font-size:1.1em;">May: $${prod.mayorista.toLocaleString('es-CL')}</span>
+                                    <span style="font-size:0.9em; opacity:0.8;">Uni: $${fNum(prod.unitario)}</span>
+                                    <span style="font-size:0.9em;">Min: $${fNum(prod.minorista)}</span>
+                                    <span style="color:#10b981; font-weight:bold; font-size:1.1em;">May: $${fNum(prod.mayorista)}</span>
                                     <button class="btn-warning" onclick="abrirModalProd('edit', '${prov.id}', '${prod.id}')">Editar</button>
                                     <button class="btn-danger" onclick="eliminarProductoDir('${prov.id}', '${prod.id}')">X</button>
                                 </div>
@@ -750,7 +836,7 @@
             let opciones = [];
             directorio.forEach(prov => {
                 prov.productos.forEach(prod => {
-                    if(prod.nombre.toLowerCase().includes(busqueda) || prod.categoria.toLowerCase().includes(busqueda) || prod.subcategoria.toLowerCase().includes(busqueda)) {
+                    if(prod.nombre.toLowerCase().includes(busqueda) || prod.categoria.toLowerCase().includes(busqueda) || prod.subcategoria.toLowerCase().includes(busqueda) || (prod.descripcion && prod.descripcion.toLowerCase().includes(busqueda))) {
                         opciones.push({
                             provNombre: prov.nombre, prodNombre: prod.nombre,
                             precio: prod.mayorista, tiempo: prov.tiempo,
@@ -769,7 +855,7 @@
             divRec.innerHTML = `
                 💡 <strong>Mejor Opción:</strong> 
                 <strong>${mejor.provNombre}</strong> tiene "${mejor.prodNombre}" a 
-                <strong style="color:#10b981;">$${mejor.precio.toLocaleString('es-CL')} (Mayorista)</strong>. 
+                <strong style="color:#10b981;">$${fNum(mejor.precio)} (Mayorista)</strong>. 
                 Tiempo estimado: ${mejor.tiempo} días. 
                 ${mejor.esFav ? '⭐(Tu Favorito)' : ''} 
                 ${mejor.esOficial ? '<span class="tag tag-oficial">Prov. Oficial</span>' : ''}
