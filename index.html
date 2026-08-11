@@ -225,9 +225,9 @@
                 <small>Sistema CRM - Gestión de Proveedores</small>
             </div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <button class="btn-primary" onclick="abrirModalProv()">+ Nuevo Proveedor</button>
-                <button class="btn-secondary" onclick="abrirModalCatSub()">⚙️ Categorías</button>
-                <button class="theme-toggle" onclick="toggleTheme()">🌓 Modo</button>
+                <button type="button" class="btn-primary" onclick="abrirModalProv()">+ Nuevo Proveedor</button>
+                <button type="button" class="btn-secondary" onclick="abrirModalCatSub()">⚙️ Categorías</button>
+                <button type="button" class="theme-toggle" onclick="toggleTheme()">🌓 Modo</button>
             </div>
         </div>
 
@@ -332,7 +332,7 @@
             
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h3 style="margin: 0;">📦 Lista de Productos</h3>
-                <button class="btn-primary" style="padding: 5px 15px; font-size: 0.9em;" onclick="abrirModalProd('temp')">+ Agregar Producto</button>
+                <button type="button" class="btn-primary" style="padding: 5px 15px; font-size: 0.9em;" onclick="abrirModalProd('temp')">+ Agregar Producto</button>
             </div>
             
             <div class="table-responsive">
@@ -354,8 +354,8 @@
             </div>
 
             <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end;">
-                <button class="btn-secondary" onclick="cerrarModalProv()">Cancelar</button>
-                <button class="btn-primary" onclick="guardarProveedorFinal()">Guardar Proveedor</button>
+                <button type="button" class="btn-secondary" onclick="cerrarModalProv()">Cancelar</button>
+                <button type="button" class="btn-primary" onclick="guardarProveedorFinal()">Guardar Proveedor</button>
             </div>
         </div>
     </div>
@@ -443,7 +443,7 @@
                     <input type="number" id="prodMin" placeholder="450">
                 </div>
                 <div class="form-group" style="grid-column: span 2;">
-                    <button class="btn-iva" onclick="sumarIVA()">➕ Sumar IVA (19%) a Precios</button>
+                    <button type="button" class="btn-iva" onclick="sumarIVA()">➕ Sumar IVA (19%) a Precios</button>
                 </div>
             </div>
 
@@ -468,8 +468,8 @@
             </div>
 
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button class="btn-secondary" onclick="cerrarModalProd()">Cancelar</button>
-                <button class="btn-primary" onclick="procesarGuardadoProducto()">Guardar Producto</button>
+                <button type="button" class="btn-secondary" onclick="cerrarModalProd()">Cancelar</button>
+                <button type="button" class="btn-primary" onclick="procesarGuardadoProducto()">Guardar Producto</button>
             </div>
         </div>
     </div>
@@ -493,7 +493,7 @@
             </div>
 
             <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end;">
-                <button class="btn-secondary" onclick="cerrarModalCatSub()">Cerrar</button>
+                <button type="button" class="btn-secondary" onclick="cerrarModalCatSub()">Cerrar</button>
             </div>
         </div>
     </div>
@@ -511,7 +511,7 @@
 
         let contextoProducto = { modo: 'temp', idProv: null, idProd: null }; 
 
-        // --- PERSISTENCIA ---
+        // --- PERSISTENCIA Y VALIDACIÓN ---
         function cargarDatos() {
             const dataDir = localStorage.getItem('cicloPackBio_directorio') || localStorage.getItem('cicloPack_directorio');
             const dataCat = localStorage.getItem('cicloPackBio_categorias') || localStorage.getItem('cicloPack_categorias');
@@ -522,6 +522,18 @@
             if(dataCat) categoriasBase = JSON.parse(dataCat);
             if(dataSub) subcategoriasBase = JSON.parse(dataSub);
             if(theme === 'dark') document.body.setAttribute('data-theme', 'dark');
+
+            // Asegurar que todos los proveedores y productos tengan un ID único asignado
+            directorio.forEach(prov => {
+                if (!prov.id) prov.id = 'prov_' + generarId();
+                if (Array.isArray(prov.productos)) {
+                    prov.productos.forEach(prod => {
+                        if (!prod.id) prod.id = 'prod_' + generarId();
+                    });
+                } else {
+                    prov.productos = [];
+                }
+            });
 
             actualizarDirectorio();
         }
@@ -649,16 +661,18 @@
                 titulo.innerText = "✏️ Editar Proveedor";
                 const prov = directorio.find(p => p.id === idProv);
                 
-                document.getElementById('provNombre').value = prov.nombre;
+                document.getElementById('provNombre').value = prov.nombre || '';
                 document.getElementById('provWeb').value = prov.web || '';
                 document.getElementById('provContacto').value = prov.contacto || '';
                 document.getElementById('provEmail').value = prov.email || '';
                 document.getElementById('provCiudad').value = prov.ciudad || 'Otra';
                 document.getElementById('provTiempo').value = prov.tiempo !== '-' ? prov.tiempo : '';
-                document.querySelector(`input[name="catEstado"][value="${prov.estado}"]`).checked = true;
                 
-                esFavActual = prov.favorito;
-                productosTemporales = JSON.parse(JSON.stringify(prov.productos));
+                const radioEstado = document.querySelector(`input[name="catEstado"][value="${prov.estado}"]`);
+                if (radioEstado) radioEstado.checked = true;
+                
+                esFavActual = !!prov.favorito;
+                productosTemporales = JSON.parse(JSON.stringify(prov.productos || []));
             } else {
                 titulo.innerText = "🏢 Ficha de Nuevo Proveedor";
                 document.getElementById('provNombre').value = '';
@@ -666,7 +680,10 @@
                 document.getElementById('provContacto').value = '';
                 document.getElementById('provEmail').value = '';
                 document.getElementById('provTiempo').value = '';
-                document.querySelector('input[name="catEstado"][value="Oficial"]').checked = true;
+                
+                const radioEstadoDefault = document.querySelector('input[name="catEstado"][value="Oficial"]');
+                if (radioEstadoDefault) radioEstadoDefault.checked = true;
+                
                 esFavActual = false;
                 productosTemporales = []; 
             }
@@ -708,7 +725,10 @@
                     <td>$${fNum(p.unitario)}</td>
                     <td>$${fNum(p.minorista)}</td>
                     <td><strong>$${fNum(p.mayorista)}</strong>${cantCajaTxt}</td>
-                    <td><button class="btn-danger" onclick="eliminarProdTemp('${p.id}')">X</button></td>
+                    <td>
+                        <button type="button" class="btn-warning" onclick="abrirModalProd('edit_temp', null, '${p.id}')">✏️</button>
+                        <button type="button" class="btn-danger" onclick="eliminarProdTemp('${p.id}')">X</button>
+                    </td>
                 </tr>`;
             });
         }
@@ -720,20 +740,22 @@
         }
 
         function guardarProveedorFinal() {
-            const nombre = document.getElementById('provNombre').value;
+            const nombre = document.getElementById('provNombre').value.trim();
             if(!nombre || productosTemporales.length === 0) {
                 alert("Ingresa el nombre del proveedor y al menos un producto."); return;
             }
 
+            const radioEstado = document.querySelector('input[name="catEstado"]:checked');
+
             const datosProveedor = {
                 nombre: nombre,
-                web: document.getElementById('provWeb').value,
-                contacto: document.getElementById('provContacto').value || '-',
-                email: document.getElementById('provEmail').value || '-',
+                web: document.getElementById('provWeb').value.trim(),
+                contacto: document.getElementById('provContacto').value.trim() || '-',
+                email: document.getElementById('provEmail').value.trim() || '-',
                 ciudad: document.getElementById('provCiudad').value,
-                tiempo: document.getElementById('provTiempo').value || '-',
+                tiempo: document.getElementById('provTiempo').value.trim() || '-',
                 linea: determinarLineaProveedor(productosTemporales),
-                estado: document.querySelector('input[name="catEstado"]:checked').value,
+                estado: radioEstado ? radioEstado.value : 'Oficial',
                 favorito: esFavActual,
                 productos: [...productosTemporales]
             };
@@ -741,7 +763,11 @@
             if (idProveedorEnEdicion) {
                 const indice = directorio.findIndex(p => p.id === idProveedorEnEdicion);
                 datosProveedor.id = idProveedorEnEdicion;
-                directorio[indice] = datosProveedor;
+                if (indice !== -1) {
+                    directorio[indice] = datosProveedor;
+                } else {
+                    directorio.push(datosProveedor);
+                }
             } else {
                 datosProveedor.id = 'prov_' + generarId();
                 directorio.push(datosProveedor);
@@ -761,10 +787,17 @@
         }
 
         // --- MODAL PRODUCTO ---
-        function cargarSelectsCategoria() {
+        function cargarSelectsCategoria(catSeleccionada = null, subSeleccionada = null) {
             const sCat = document.getElementById('prodCatSelect');
             const sSub = document.getElementById('prodSubSelect');
             
+            if (catSeleccionada && catSeleccionada !== 'Sin Categoría' && !categoriasBase.includes(catSeleccionada)) {
+                categoriasBase.push(catSeleccionada);
+            }
+            if (subSeleccionada && subSeleccionada !== 'Sin Subcategoría' && !subcategoriasBase.includes(subSeleccionada)) {
+                subcategoriasBase.push(subSeleccionada);
+            }
+
             sCat.innerHTML = categoriasBase.map(c => `<option value="${c}">${c}</option>`).join('') + `<option value="OTRA">➕ Crear Nueva...</option>`;
             sSub.innerHTML = subcategoriasBase.map(s => `<option value="${s}">${s}</option>`).join('') + `<option value="OTRA">➕ Crear Nueva...</option>`;
             
@@ -791,10 +824,9 @@
 
         function abrirModalProd(modo, idProv = null, idProd = null) {
             contextoProducto = { modo, idProv, idProd };
-            cargarSelectsCategoria();
             limpiarImagen();
             
-            document.getElementById('tituloModalProd').innerText = modo === 'edit' ? '✏️ Editar Producto' : '➕ Detalle del Producto';
+            document.getElementById('tituloModalProd').innerText = (modo === 'edit' || modo === 'edit_temp') ? '✏️ Editar Producto' : '➕ Detalle del Producto';
             
             document.getElementById('prodNombre').value = '';
             document.getElementById('prodLink').value = '';
@@ -806,34 +838,83 @@
             document.getElementById('prodStockUnid').value = '';
             document.getElementById('prodStockCajas').value = '';
             document.getElementById('prodOferta').value = '';
-            document.querySelector('input[name="prodLinea"][value="Eco"]').checked = true;
-            document.querySelector('input[name="prodEstado"][value="Disponible"]').checked = true;
 
-            if(modo === 'edit') {
+            const radioEco = document.querySelector('input[name="prodLinea"][value="Eco"]');
+            if (radioEco) radioEco.checked = true;
+
+            const radioDisp = document.querySelector('input[name="prodEstado"][value="Disponible"]');
+            if (radioDisp) radioDisp.checked = true;
+
+            let catSeleccionada = null;
+            let subSeleccionada = null;
+
+            if (modo === 'edit') {
                 const prov = directorio.find(p => p.id === idProv);
-                const prod = prov.productos.find(p => p.id === idProd);
-                
-                document.getElementById('prodNombre').value = prod.nombre;
-                document.getElementById('prodLink').value = prod.link || '';
-                document.getElementById('prodDesc').value = prod.descripcion || '';
-                document.getElementById('prodUni').value = prod.unitario || '';
-                document.getElementById('prodMin').value = prod.minorista;
-                document.getElementById('prodMay').value = prod.mayorista;
-                document.getElementById('prodCantCaja').value = prod.cantCaja || '';
-                document.getElementById('prodStockUnid').value = prod.stockUnid !== undefined && prod.stockUnid !== null ? prod.stockUnid : '';
-                document.getElementById('prodStockCajas').value = prod.stockCajas !== undefined && prod.stockCajas !== null ? prod.stockCajas : '';
-                document.getElementById('prodOferta').value = prod.oferta;
-                
-                document.querySelector(`input[name="prodLinea"][value="${prod.linea}"]`).checked = true;
-                document.querySelector(`input[name="prodEstado"][value="${prod.estado || 'Disponible'}"]`).checked = true;
+                if (prov) {
+                    const prod = prov.productos.find(p => p.id === idProd);
+                    if (prod) {
+                        document.getElementById('prodNombre').value = prod.nombre || '';
+                        document.getElementById('prodLink').value = prod.link || '';
+                        document.getElementById('prodDesc').value = prod.descripcion || '';
+                        document.getElementById('prodUni').value = prod.unitario !== undefined && prod.unitario !== null ? prod.unitario : '';
+                        document.getElementById('prodMin').value = prod.minorista !== undefined && prod.minorista !== null ? prod.minorista : '';
+                        document.getElementById('prodMay').value = prod.mayorista !== undefined && prod.mayorista !== null ? prod.mayorista : '';
+                        document.getElementById('prodCantCaja').value = prod.cantCaja !== undefined && prod.cantCaja !== null ? prod.cantCaja : '';
+                        document.getElementById('prodStockUnid').value = prod.stockUnid !== undefined && prod.stockUnid !== null ? prod.stockUnid : '';
+                        document.getElementById('prodStockCajas').value = prod.stockCajas !== undefined && prod.stockCajas !== null ? prod.stockCajas : '';
+                        document.getElementById('prodOferta').value = prod.oferta !== '-' ? (prod.oferta || '') : '';
+                        
+                        const rLinea = document.querySelector(`input[name="prodLinea"][value="${prod.linea}"]`);
+                        if (rLinea) rLinea.checked = true;
 
-                if(prod.imagen) {
-                    imagenTempBase64 = prod.imagen;
-                    document.getElementById('previewBox').innerHTML = `<img src="${prod.imagen}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;">`;
+                        const rEstado = document.querySelector(`input[name="prodEstado"][value="${prod.estado || 'Disponible'}"]`);
+                        if (rEstado) rEstado.checked = true;
+
+                        if (prod.imagen) {
+                            imagenTempBase64 = prod.imagen;
+                            document.getElementById('previewBox').innerHTML = `<img src="${prod.imagen}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;">`;
+                        }
+
+                        catSeleccionada = prod.categoria;
+                        subSeleccionada = prod.subcategoria;
+                    }
                 }
+            } else if (modo === 'edit_temp') {
+                const prod = productosTemporales.find(p => p.id === idProd);
+                if (prod) {
+                    document.getElementById('prodNombre').value = prod.nombre || '';
+                    document.getElementById('prodLink').value = prod.link || '';
+                    document.getElementById('prodDesc').value = prod.descripcion || '';
+                    document.getElementById('prodUni').value = prod.unitario !== undefined && prod.unitario !== null ? prod.unitario : '';
+                    document.getElementById('prodMin').value = prod.minorista !== undefined && prod.minorista !== null ? prod.minorista : '';
+                    document.getElementById('prodMay').value = prod.mayorista !== undefined && prod.mayorista !== null ? prod.mayorista : '';
+                    document.getElementById('prodCantCaja').value = prod.cantCaja !== undefined && prod.cantCaja !== null ? prod.cantCaja : '';
+                    document.getElementById('prodStockUnid').value = prod.stockUnid !== undefined && prod.stockUnid !== null ? prod.stockUnid : '';
+                    document.getElementById('prodStockCajas').value = prod.stockCajas !== undefined && prod.stockCajas !== null ? prod.stockCajas : '';
+                    document.getElementById('prodOferta').value = prod.oferta !== '-' ? (prod.oferta || '') : '';
+                    
+                    const rLinea = document.querySelector(`input[name="prodLinea"][value="${prod.linea}"]`);
+                    if (rLinea) rLinea.checked = true;
 
-                if(categoriasBase.includes(prod.categoria)) document.getElementById('prodCatSelect').value = prod.categoria;
-                if(subcategoriasBase.includes(prod.subcategoria)) document.getElementById('prodSubSelect').value = prod.subcategoria;
+                    const rEstado = document.querySelector(`input[name="prodEstado"][value="${prod.estado || 'Disponible'}"]`);
+                    if (rEstado) rEstado.checked = true;
+
+                    if (prod.imagen) {
+                        imagenTempBase64 = prod.imagen;
+                        document.getElementById('previewBox').innerHTML = `<img src="${prod.imagen}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;">`;
+                    }
+
+                    catSeleccionada = prod.categoria;
+                    subSeleccionada = prod.subcategoria;
+                }
+            }
+
+            cargarSelectsCategoria(catSeleccionada, subSeleccionada);
+            if (catSeleccionada && categoriasBase.includes(catSeleccionada)) {
+                document.getElementById('prodCatSelect').value = catSeleccionada;
+            }
+            if (subSeleccionada && subcategoriasBase.includes(subSeleccionada)) {
+                document.getElementById('prodSubSelect').value = subSeleccionada;
             }
             
             document.getElementById('modalProd').style.display = 'flex';
@@ -846,57 +927,86 @@
             
             if(cat === 'OTRA') {
                 cat = document.getElementById('prodCatNueva').value.trim();
-                if(cat && !categoriasBase.includes(cat)) categoriasBase.push(cat);
+                if(cat && !categoriasBase.includes(cat)) {
+                    categoriasBase.push(cat);
+                    guardarDatos();
+                }
             }
             if(sub === 'OTRA') {
                 sub = document.getElementById('prodSubNueva').value.trim();
-                if(sub && !subcategoriasBase.includes(sub)) subcategoriasBase.push(sub);
+                if(sub && !subcategoriasBase.includes(sub)) {
+                    subcategoriasBase.push(sub);
+                    guardarDatos();
+                }
             }
 
             const cantCajaVal = document.getElementById('prodCantCaja').value;
             const stockUnidVal = document.getElementById('prodStockUnid').value;
             const stockCajasVal = document.getElementById('prodStockCajas').value;
 
+            const radioLinea = document.querySelector('input[name="prodLinea"]:checked');
+            const radioEstado = document.querySelector('input[name="prodEstado"]:checked');
+
             const prod = {
-                nombre: document.getElementById('prodNombre').value,
-                link: document.getElementById('prodLink').value,
-                descripcion: document.getElementById('prodDesc').value,
-                linea: document.querySelector('input[name="prodLinea"]:checked').value,
-                estado: document.querySelector('input[name="prodEstado"]:checked').value,
+                nombre: document.getElementById('prodNombre').value.trim(),
+                link: document.getElementById('prodLink').value.trim(),
+                descripcion: document.getElementById('prodDesc').value.trim(),
+                linea: radioLinea ? radioLinea.value : 'Eco',
+                estado: radioEstado ? radioEstado.value : 'Disponible',
                 imagen: imagenTempBase64,
                 categoria: cat || 'Sin Categoría',
                 subcategoria: sub || 'Sin Subcategoría',
-                unitario: Number(document.getElementById('prodUni').value),
-                minorista: Number(document.getElementById('prodMin').value),
-                mayorista: Number(document.getElementById('prodMay').value),
-                cantCaja: cantCajaVal ? Number(cantCajaVal) : null,
+                unitario: Number(document.getElementById('prodUni').value) || 0,
+                minorista: Number(document.getElementById('prodMin').value) || 0,
+                mayorista: Number(document.getElementById('prodMay').value) || 0,
+                cantCaja: cantCajaVal !== "" ? Number(cantCajaVal) : null,
                 stockUnid: stockUnidVal !== "" ? Number(stockUnidVal) : null,
                 stockCajas: stockCajasVal !== "" ? Number(stockCajasVal) : null,
-                oferta: document.getElementById('prodOferta').value || '-'
+                oferta: document.getElementById('prodOferta').value.trim() || '-'
             };
 
-            if(!prod.nombre || !prod.mayorista) { alert("Ingresa nombre y al menos el precio mayorista."); return; }
+            if(!prod.nombre) { 
+                alert("Por favor, ingresa el nombre del producto."); 
+                return; 
+            }
 
             if(contextoProducto.modo === 'temp') {
                 prod.id = 'temp_' + generarId();
                 productosTemporales.push(prod);
                 actualizarLineaTemp();
                 actualizarTablaTemp();
+            } else if (contextoProducto.modo === 'edit_temp') {
+                const idx = productosTemporales.findIndex(p => p.id === contextoProducto.idProd);
+                if (idx !== -1) {
+                    prod.id = contextoProducto.idProd;
+                    productosTemporales[idx] = prod;
+                }
+                actualizarLineaTemp();
+                actualizarTablaTemp();
             } else if (contextoProducto.modo === 'add_dir') {
                 prod.id = 'prod_' + generarId();
                 const prov = directorio.find(p => p.id === contextoProducto.idProv);
-                prov.productos.push(prod);
-                prov.linea = determinarLineaProveedor(prov.productos);
-                guardarDatos();
-                actualizarDirectorio();
+                if (prov) {
+                    prov.productos.push(prod);
+                    prov.linea = determinarLineaProveedor(prov.productos);
+                    guardarDatos();
+                    actualizarDirectorio();
+                }
             } else if (contextoProducto.modo === 'edit') {
                 const prov = directorio.find(p => p.id === contextoProducto.idProv);
-                const indice = prov.productos.findIndex(p => p.id === contextoProducto.idProd);
-                prod.id = contextoProducto.idProd;
-                prov.productos[indice] = prod;
-                prov.linea = determinarLineaProveedor(prov.productos);
-                guardarDatos();
-                actualizarDirectorio();
+                if (prov) {
+                    const indice = prov.productos.findIndex(p => p.id === contextoProducto.idProd);
+                    if (indice !== -1) {
+                        prod.id = contextoProducto.idProd;
+                        prov.productos[indice] = prod;
+                    } else {
+                        prod.id = contextoProducto.idProd || ('prod_' + generarId());
+                        prov.productos.push(prod);
+                    }
+                    prov.linea = determinarLineaProveedor(prov.productos);
+                    guardarDatos();
+                    actualizarDirectorio();
+                }
             }
 
             cerrarModalProd();
@@ -905,10 +1015,12 @@
         function eliminarProductoDir(idProv, idProd) {
             if(confirm("¿Eliminar este producto?")) {
                 const prov = directorio.find(p => p.id === idProv);
-                prov.productos = prov.productos.filter(p => p.id !== idProd);
-                prov.linea = determinarLineaProveedor(prov.productos);
-                guardarDatos();
-                actualizarDirectorio();
+                if (prov) {
+                    prov.productos = prov.productos.filter(p => p.id !== idProd);
+                    prov.linea = determinarLineaProveedor(prov.productos);
+                    guardarDatos();
+                    actualizarDirectorio();
+                }
             }
         }
 
@@ -931,8 +1043,8 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; background:var(--highlight-bg); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color);">
                         <strong style="font-size:0.9em;">${cat}</strong>
                         <div style="display:flex; gap:5px;">
-                            <button class="btn-warning" style="padding:2px 6px; font-size:0.75em;" onclick="editarCategoria(${idx})">✏️</button>
-                            <button class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="eliminarCategoria(${idx})">🗑️</button>
+                            <button type="button" class="btn-warning" style="padding:2px 6px; font-size:0.75em;" onclick="editarCategoria(${idx})">✏️</button>
+                            <button type="button" class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="eliminarCategoria(${idx})">🗑️</button>
                         </div>
                     </div>
                 `).join('');
@@ -942,8 +1054,8 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; background:var(--highlight-bg); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color);">
                         <strong style="font-size:0.9em;">${sub}</strong>
                         <div style="display:flex; gap:5px;">
-                            <button class="btn-warning" style="padding:2px 6px; font-size:0.75em;" onclick="editarSubcategoria(${idx})">✏️</button>
-                            <button class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="eliminarSubcategoria(${idx})">🗑️</button>
+                            <button type="button" class="btn-warning" style="padding:2px 6px; font-size:0.75em;" onclick="editarSubcategoria(${idx})">✏️</button>
+                            <button type="button" class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="eliminarSubcategoria(${idx})">🗑️</button>
                         </div>
                     </div>
                 `).join('');
@@ -1086,9 +1198,9 @@
                             ${webLink}
                         </div>
                         <div style="display:flex; gap:10px; margin-top:5px;">
-                            <button class="btn-primary" style="padding:4px 10px; font-size:0.8em;" onclick="abrirModalProd('add_dir', '${prov.id}')">+ Añadir Prod.</button>
-                            <button class="btn-warning" onclick="abrirModalProv('${prov.id}')">Editar Prov.</button>
-                            <button class="btn-danger" onclick="eliminarProveedor('${prov.id}')">X Eliminar</button>
+                            <button type="button" class="btn-primary" style="padding:4px 10px; font-size:0.8em;" onclick="abrirModalProd('add_dir', '${prov.id}')">+ Añadir Prod.</button>
+                            <button type="button" class="btn-warning" onclick="abrirModalProv('${prov.id}')">Editar Prov.</button>
+                            <button type="button" class="btn-danger" onclick="eliminarProveedor('${prov.id}')">X Eliminar</button>
                         </div>
                     </summary>
                     <div class="details-content">
@@ -1143,8 +1255,8 @@
                                         <span style="color:#10b981; font-weight:bold; font-size:1.1em;">May: $${fNum(prod.mayorista)}</span>
                                         ${cantCajaTag}
                                     </div>
-                                    <button class="btn-warning" onclick="abrirModalProd('edit', '${prov.id}', '${prod.id}')">Editar</button>
-                                    <button class="btn-danger" onclick="eliminarProductoDir('${prov.id}', '${prod.id}')">X</button>
+                                    <button type="button" class="btn-warning" onclick="abrirModalProd('edit', '${prov.id}', '${prod.id}')">Editar</button>
+                                    <button type="button" class="btn-danger" onclick="eliminarProductoDir('${prov.id}', '${prod.id}')">X</button>
                                 </div>
                             </div>`;
                         });
