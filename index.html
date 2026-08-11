@@ -153,6 +153,7 @@
         .opt-oficial:has(input:checked) { background-color: #10b981; border-color: #10b981; box-shadow: 0 0 12px #10b981; }
         .opt-posible:has(input:checked) { background-color: #eab308; border-color: #eab308; box-shadow: 0 0 12px #eab308; }
         .opt-disp:has(input:checked) { background-color: #10b981; border-color: #10b981; box-shadow: 0 0 12px #10b981; }
+        .opt-ultimas:has(input:checked) { background-color: #f59e0b; border-color: #f59e0b; box-shadow: 0 0 12px #f59e0b; color: #000 !important; }
         .opt-nodisp:has(input:checked) { background-color: #ef4444; border-color: #ef4444; box-shadow: 0 0 12px #ef4444; }
 
         .fav-btn { font-size: 2em; cursor: pointer; color: #cbd5e1; user-select: none; transition: 0.3s; }
@@ -175,9 +176,10 @@
         .tag-premium { background-color: #a855f7; }
         .tag-hibrido { background: linear-gradient(90deg, #0ea5e9, #a855f7); box-shadow: 0 0 8px rgba(168, 85, 247, 0.4); }
         .tag-oficial { background-color: #10b981; }
-        .tag-posible { background-color: #eab308; }
+        .tag-posible { background-color: #eab308; color: #000; }
         
         .tag-disponible { background-color: var(--success); }
+        .tag-ultimas { background-color: var(--warning); color: #000; }
         .tag-nodisponible { background-color: var(--danger); }
 
         details { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
@@ -258,6 +260,7 @@
             <select id="filtroDisp" onchange="actualizarDirectorio()">
                 <option value="todos">📦 Stock (Todos)</option>
                 <option value="Disponible">🟢 Solo Disponibles</option>
+                <option value="Últimas Unidades">🟠 Últimas Unidades</option>
                 <option value="No disponible">🔴 No Disponibles</option>
             </select>
             <select id="filtroCiu" onchange="actualizarDirectorio()">
@@ -359,7 +362,7 @@
 
     <!-- MODAL 2: PRODUCTO (NUEVO O EDITAR) -->
     <div class="modal-overlay" id="modalProd">
-        <div class="modal-content" style="max-width: 700px; border-top-color: var(--cyan-accent);">
+        <div class="modal-content" style="max-width: 750px; border-top-color: var(--cyan-accent);">
             <div class="modal-header">
                 <h2 id="tituloModalProd">➕ Detalle del Producto</h2>
             </div>
@@ -374,9 +377,10 @@
                 </div>
 
                 <div style="flex: 1;">
-                    <label>Estado del Producto (Stock):</label>
+                    <label>Estado del Producto (Disponibilidad):</label>
                     <div class="radio-group">
                         <label class="radio-label opt-disp"><input type="radio" name="prodEstado" value="Disponible" checked> 🟢 Disponible</label>
+                        <label class="radio-label opt-ultimas"><input type="radio" name="prodEstado" value="Últimas Unidades"> 🟠 Últimas Unidades</label>
                         <label class="radio-label opt-nodisp"><input type="radio" name="prodEstado" value="No disponible"> 🔴 No disponible</label>
                     </div>
                 </div>
@@ -420,29 +424,45 @@
                 <textarea id="prodDesc" rows="2" placeholder="Detalles técnicos, material, dimensiones..."></textarea>
             </div>
 
+            <!-- PRECIOS Y UNIDADES POR CAJA -->
             <div class="form-grid" style="align-items: end; background: var(--highlight-bg); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);">
                 <div class="form-group">
-                    <label>Unitario neto ($)</label>
-                    <input type="number" id="prodUni" placeholder="500">
+                    <label style="color: var(--cyan-accent);">Mayorista neto ($)</label>
+                    <input type="number" id="prodMay" placeholder="30000" oninput="calcularUnitarioAuto()" style="border-color: var(--cyan-accent);">
+                </div>
+                <div class="form-group">
+                    <label style="color: var(--cyan-accent);">Unidades x Caja</label>
+                    <input type="number" id="prodCantCaja" placeholder="100" oninput="calcularUnitarioAuto(); SincronizarStockWeb('cajas');" style="border-color: var(--cyan-accent);">
+                </div>
+                <div class="form-group">
+                    <label>Unitario neto ($) <small style="opacity:0.7;">(Auto ⚡)</small></label>
+                    <input type="number" id="prodUni" placeholder="Calculado aut.">
                 </div>
                 <div class="form-group">
                     <label>Minorista neto ($)</label>
                     <input type="number" id="prodMin" placeholder="450">
                 </div>
-                <div class="form-group">
-                    <label>Mayorista neto ($)</label>
-                    <input type="number" id="prodMay" placeholder="300">
-                </div>
-                <div class="form-group">
-                    <label style="color: var(--cyan-accent);">Unidades x Caja (May.)</label>
-                    <input type="number" id="prodCantCaja" placeholder="Ej. 100" style="border-color: var(--cyan-accent);">
-                </div>
-                <div class="form-group" style="grid-column: span 1;">
-                    <button class="btn-iva" onclick="sumarIVA()">➕ Sumar IVA (19%)</button>
+                <div class="form-group" style="grid-column: span 2;">
+                    <button class="btn-iva" onclick="sumarIVA()">➕ Sumar IVA (19%) a Precios</button>
                 </div>
             </div>
 
-            <div class="form-group" style="margin-bottom: 20px; margin-top: 15px;">
+            <!-- STOCK PUBLICADO EN WEB DEL PROVEEDOR -->
+            <div style="background: var(--highlight-bg); padding: 15px; border-radius: 8px; border: 1px dashed var(--warning); margin-top: 15px; margin-bottom: 15px;">
+                <label style="color: var(--warning); display: block; margin-bottom: 8px;">🌐 Stock Disponible Publicado en Web del Proveedor:</label>
+                <div class="form-grid" style="margin-bottom: 0;">
+                    <div class="form-group">
+                        <label>Unidades Disponibles (Web)</label>
+                        <input type="number" id="prodStockUnid" placeholder="Ej. 500" oninput="SincronizarStockWeb('unid')">
+                    </div>
+                    <div class="form-group">
+                        <label>Cajas Disponibles (Web)</label>
+                        <input type="number" id="prodStockCajas" placeholder="Ej. 5" oninput="SincronizarStockWeb('cajas')">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
                 <label>Oferta Especial</label>
                 <input type="text" id="prodOferta" placeholder="Ej. 10% dcto sobre 50 un.">
             </div>
@@ -493,10 +513,10 @@
 
         // --- PERSISTENCIA ---
         function cargarDatos() {
-            const dataDir = localStorage.getItem('cicloPack_directorio');
-            const dataCat = localStorage.getItem('cicloPack_categorias');
-            const dataSub = localStorage.getItem('cicloPack_subcategorias');
-            const theme = localStorage.getItem('cicloPack_theme');
+            const dataDir = localStorage.getItem('cicloPackBio_directorio') || localStorage.getItem('cicloPack_directorio');
+            const dataCat = localStorage.getItem('cicloPackBio_categorias') || localStorage.getItem('cicloPack_categorias');
+            const dataSub = localStorage.getItem('cicloPackBio_subcategorias') || localStorage.getItem('cicloPack_subcategorias');
+            const theme = localStorage.getItem('cicloPackBio_theme') || localStorage.getItem('cicloPack_theme');
 
             if(dataDir) directorio = JSON.parse(dataDir);
             if(dataCat) categoriasBase = JSON.parse(dataCat);
@@ -507,9 +527,9 @@
         }
 
         function guardarDatos() {
-            localStorage.setItem('cicloPack_directorio', JSON.stringify(directorio));
-            localStorage.setItem('cicloPack_categorias', JSON.stringify(categoriasBase));
-            localStorage.setItem('cicloPack_subcategorias', JSON.stringify(subcategoriasBase));
+            localStorage.setItem('cicloPackBio_directorio', JSON.stringify(directorio));
+            localStorage.setItem('cicloPackBio_categorias', JSON.stringify(categoriasBase));
+            localStorage.setItem('cicloPackBio_subcategorias', JSON.stringify(subcategoriasBase));
         }
 
         // --- UTILIDADES ---
@@ -517,10 +537,10 @@
             const body = document.body;
             if(body.getAttribute('data-theme') === 'dark') {
                 body.removeAttribute('data-theme');
-                localStorage.setItem('cicloPack_theme', 'light');
+                localStorage.setItem('cicloPackBio_theme', 'light');
             } else {
                 body.setAttribute('data-theme', 'dark');
-                localStorage.setItem('cicloPack_theme', 'dark');
+                localStorage.setItem('cicloPackBio_theme', 'dark');
             }
         }
 
@@ -552,6 +572,52 @@
 
         function fNum(num) {
             return Number(num || 0).toLocaleString('es-CL');
+        }
+
+        // CÁLCULOS AUTOMÁTICOS DE FORMULARIO
+        function calcularUnitarioAuto() {
+            const may = parseFloat(document.getElementById('prodMay').value);
+            const cantCaja = parseFloat(document.getElementById('prodCantCaja').value);
+            const inputUni = document.getElementById('prodUni');
+
+            if (!isNaN(may) && !isNaN(cantCaja) && cantCaja > 0) {
+                inputUni.value = Math.round(may / cantCaja);
+            }
+        }
+
+        function SincronizarStockWeb(origen) {
+            const cantCaja = parseFloat(document.getElementById('prodCantCaja').value);
+            const inputUnid = document.getElementById('prodStockUnid');
+            const inputCajas = document.getElementById('prodStockCajas');
+
+            if (origen === 'unid') {
+                const unid = parseFloat(inputUnid.value);
+                if (!isNaN(unid) && !isNaN(cantCaja) && cantCaja > 0) {
+                    inputCajas.value = (unid / cantCaja).toFixed(1).replace('.0', '');
+                }
+            } else if (origen === 'cajas') {
+                const cajas = parseFloat(inputCajas.value);
+                if (!isNaN(cajas) && !isNaN(cantCaja) && cantCaja > 0) {
+                    inputUnid.value = Math.round(cajas * cantCaja);
+                }
+            }
+        }
+
+        function renderStockTag(p) {
+            const estado = p.estado || 'Disponible';
+            let infoStock = '';
+            
+            if (p.stockUnid !== null && p.stockUnid !== undefined && p.stockUnid !== '') {
+                infoStock = ` (${fNum(p.stockUnid)} un / ${p.stockCajas || 0} cjas)`;
+            }
+
+            if (estado === 'No disponible') {
+                return `<span class="tag tag-nodisponible">🔴 No disponible</span>`;
+            } else if (estado === 'Últimas Unidades') {
+                return `<span class="tag tag-ultimas">🟠 Últimas Unidades${infoStock}</span>`;
+            } else {
+                return `<span class="tag tag-disponible">🟢 Disponible${infoStock}</span>`;
+            }
         }
 
         // --- PROCESAMIENTO DE IMAGEN ---
@@ -632,15 +698,13 @@
                     ? `<img src="${p.imagen}" style="width:35px; height:35px; object-fit:cover; border-radius:4px;">` 
                     : `<span style="opacity:0.4;">📷</span>`;
                 
-                const estadoClass = p.estado === 'No disponible' ? 'tag-nodisponible' : 'tag-disponible';
-                const estadoTxt = p.estado === 'No disponible' ? 'No Disp.' : 'Disp.';
                 const cantCajaTxt = p.cantCaja ? `<br><small style="opacity:0.8; font-size:0.75em;">📦 ${fNum(p.cantCaja)} un/caja</small>` : '';
 
                 tbody.innerHTML += `<tr>
                     <td>${imgHTML}</td>
                     <td><span class="tag ${getClaseTag(p.linea)}">${p.linea}</span></td>
                     <td><strong>${p.nombre}</strong><br><small>${p.categoria} > ${p.subcategoria}</small></td>
-                    <td><span class="tag ${estadoClass}">${estadoTxt}</span></td>
+                    <td>${renderStockTag(p)}</td>
                     <td>$${fNum(p.unitario)}</td>
                     <td>$${fNum(p.minorista)}</td>
                     <td><strong>$${fNum(p.mayorista)}</strong>${cantCajaTxt}</td>
@@ -739,6 +803,8 @@
             document.getElementById('prodMin').value = '';
             document.getElementById('prodMay').value = '';
             document.getElementById('prodCantCaja').value = '';
+            document.getElementById('prodStockUnid').value = '';
+            document.getElementById('prodStockCajas').value = '';
             document.getElementById('prodOferta').value = '';
             document.querySelector('input[name="prodLinea"][value="Eco"]').checked = true;
             document.querySelector('input[name="prodEstado"][value="Disponible"]').checked = true;
@@ -754,6 +820,8 @@
                 document.getElementById('prodMin').value = prod.minorista;
                 document.getElementById('prodMay').value = prod.mayorista;
                 document.getElementById('prodCantCaja').value = prod.cantCaja || '';
+                document.getElementById('prodStockUnid').value = prod.stockUnid !== undefined && prod.stockUnid !== null ? prod.stockUnid : '';
+                document.getElementById('prodStockCajas').value = prod.stockCajas !== undefined && prod.stockCajas !== null ? prod.stockCajas : '';
                 document.getElementById('prodOferta').value = prod.oferta;
                 
                 document.querySelector(`input[name="prodLinea"][value="${prod.linea}"]`).checked = true;
@@ -786,6 +854,8 @@
             }
 
             const cantCajaVal = document.getElementById('prodCantCaja').value;
+            const stockUnidVal = document.getElementById('prodStockUnid').value;
+            const stockCajasVal = document.getElementById('prodStockCajas').value;
 
             const prod = {
                 nombre: document.getElementById('prodNombre').value,
@@ -800,6 +870,8 @@
                 minorista: Number(document.getElementById('prodMin').value),
                 mayorista: Number(document.getElementById('prodMay').value),
                 cantCaja: cantCajaVal ? Number(cantCajaVal) : null,
+                stockUnid: stockUnidVal !== "" ? Number(stockUnidVal) : null,
+                stockCajas: stockCajasVal !== "" ? Number(stockCajasVal) : null,
                 oferta: document.getElementById('prodOferta').value || '-'
             };
 
@@ -854,7 +926,7 @@
             const divCat = document.getElementById('listaCategoriasManager');
             const divSub = document.getElementById('listaSubcategoriasManager');
 
-            divCat.innerHTML = categoriasBase.length === 0 ? '<em>No hay categorías registadas.</em>' : 
+            divCat.innerHTML = categoriasBase.length === 0 ? '<em>No hay categorías registradas.</em>' : 
                 categoriasBase.map((cat, idx) => `
                     <div style="display:flex; justify-content:space-between; align-items:center; background:var(--highlight-bg); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color);">
                         <strong style="font-size:0.9em;">${cat}</strong>
@@ -885,7 +957,6 @@
                 const nombreLimpio = nuevoNombre.trim();
                 categoriasBase[index] = nombreLimpio;
 
-                // Actualizar en cascada todos los productos existentes
                 directorio.forEach(prov => {
                     prov.productos.forEach(prod => {
                         if (prod.categoria === nombreViejo) {
@@ -927,7 +998,6 @@
                 const nombreLimpio = nuevoNombre.trim();
                 subcategoriasBase[index] = nombreLimpio;
 
-                // Actualizar en cascada todos los productos existentes
                 directorio.forEach(prov => {
                     prov.productos.forEach(prod => {
                         if (prod.subcategoria === nombreViejo) {
@@ -1048,11 +1118,7 @@
                                 ? `<img src="${prod.imagen}" class="prod-img-thumb" alt="${prod.nombre}">` 
                                 : `<div class="prod-img-thumb">📷 Sin Foto</div>`;
 
-                            const esDisponible = prod.estado !== 'No disponible';
-                            const tagDisp = esDisponible 
-                                ? `<span class="tag tag-disponible">🟢 Disponible</span>` 
-                                : `<span class="tag tag-nodisponible">🔴 No disponible</span>`;
-
+                            const tagDisp = renderStockTag(prod);
                             const cantCajaTag = prod.cantCaja ? `<small style="display:block; font-size:0.78em; color:var(--cyan-accent); font-weight:bold;">📦 ${fNum(prod.cantCaja)} un/caja</small>` : '';
 
                             htmlProv += `
@@ -1111,7 +1177,9 @@
                             provNombre: prov.nombre, prodNombre: prod.nombre,
                             precio: prod.mayorista, cantCaja: prod.cantCaja, tiempo: prov.tiempo,
                             esOficial: prov.estado === 'Oficial', esFav: prov.favorito,
-                            disponible: prod.estado !== 'No disponible'
+                            estado: prod.estado || 'Disponible',
+                            stockUnid: prod.stockUnid,
+                            stockCajas: prod.stockCajas
                         });
                     }
                 });
@@ -1121,17 +1189,29 @@
                 divRec.innerHTML = '<em>No hay coincidencias en tu base de datos.</em>'; return;
             }
 
-            let disponibles = opciones.filter(o => o.disponible);
+            let disponibles = opciones.filter(o => o.estado !== 'No disponible');
             
             if (disponibles.length > 0) {
                 let mejor = disponibles.reduce((prev, curr) => (prev.precio < curr.precio) ? prev : curr);
                 const infoCaja = mejor.cantCaja ? ` (${fNum(mejor.cantCaja)} un/caja)` : '';
+                
+                let tagStock = `<span class="tag tag-disponible">🟢 En Stock</span>`;
+                let alertStockTxt = '';
+
+                if (mejor.estado === 'Últimas Unidades') {
+                    let stockTxt = (mejor.stockUnid !== null && mejor.stockUnid !== undefined) 
+                        ? ` (${fNum(mejor.stockUnid)} un / ${mejor.stockCajas || 0} cjas)` 
+                        : '';
+                    tagStock = `<span class="tag tag-ultimas">🟠 Últimas Unidades${stockTxt}</span>`;
+                    alertStockTxt = ` <strong style="color:var(--warning);">(⚠️ Quedan pocas unidades en la web del proveedor)</strong>`;
+                }
+
                 divRec.innerHTML = `
                     💡 <strong>Mejor Opción Disponible:</strong> 
                     <strong>${mejor.provNombre}</strong> tiene "${mejor.prodNombre}" a 
                     <strong style="color:#10b981;">$${fNum(mejor.precio)} (Mayorista${infoCaja})</strong>. 
                     Tiempo estimado: ${mejor.tiempo} días. 
-                    <span class="tag tag-disponible">🟢 En Stock</span>
+                    ${tagStock} ${alertStockTxt}
                     ${mejor.esFav ? '⭐(Tu Favorito)' : ''} 
                     ${mejor.esOficial ? '<span class="tag tag-oficial">Prov. Oficial</span>' : ''}
                 `;
@@ -1140,7 +1220,7 @@
                 divRec.innerHTML = `
                     ⚠️ <strong>Atención:</strong> Se encontró "${mejorSinStock.prodNombre}" en 
                     <strong>${mejorSinStock.provNombre}</strong> a <strong style="color:#ef4444;">$${fNum(mejorSinStock.precio)}</strong>, 
-                    pero figura como <span class="tag tag-nodisponible">🔴 No disponible</span>. Consulta con el proveedor.
+                    pero figura como <span class="tag tag-nodisponible">🔴 No disponible</span>. Consulta disponibilidad directamente con el proveedor.
                 `;
             }
         }
