@@ -150,6 +150,7 @@
         
         .opt-eco:has(input:checked) { background-color: #0ea5e9; border-color: #0ea5e9; box-shadow: 0 0 12px #0ea5e9; }
         .opt-premium:has(input:checked) { background-color: #a855f7; border-color: #a855f7; box-shadow: 0 0 12px #a855f7; }
+        .opt-hibrido:has(input:checked) { background: linear-gradient(90deg, #0ea5e9, #a855f7); border-color: #a855f7; box-shadow: 0 0 12px #a855f7; }
         .opt-oficial:has(input:checked) { background-color: #10b981; border-color: #10b981; box-shadow: 0 0 12px #10b981; }
         .opt-posible:has(input:checked) { background-color: #eab308; border-color: #eab308; box-shadow: 0 0 12px #eab308; }
         .opt-disp:has(input:checked) { background-color: #10b981; border-color: #10b981; box-shadow: 0 0 12px #10b981; }
@@ -373,6 +374,7 @@
                     <div class="radio-group">
                         <label class="radio-label opt-eco"><input type="radio" name="prodLinea" value="Eco" checked> Tradicional / Eco</label>
                         <label class="radio-label opt-premium"><input type="radio" name="prodLinea" value="Premium"> Sustentable / Premium</label>
+                        <label class="radio-label opt-hibrido"><input type="radio" name="prodLinea" value="Híbrido"> Híbrido (Bicolor/Mixto)</label>
                     </div>
                 </div>
 
@@ -405,17 +407,25 @@
                     <input type="text" id="prodNombre" placeholder="Ej. Envase PET 500cc">
                 </div>
                 <div class="form-group" style="grid-column: span 1;">
-                    <label>Enlace Web (URL)</label>
+                    <label>Enlace Web (URL Ficha/Compra)</label>
                     <input type="url" id="prodLink" placeholder="https://...">
                 </div>
             </div>
 
+            <!-- MODIFICACIÓN HÍBRIDA: IMAGEN POR ARCHIVO O URL -->
             <div class="form-group" style="margin-bottom: 15px; background: var(--highlight-bg); padding: 12px; border-radius: 8px; border: 1px dashed var(--border-color);">
-                <label>📷 Imagen de Referencia</label>
-                <div style="display: flex; gap: 15px; align-items: center; margin-top: 5px;">
-                    <input type="file" id="prodImagenInput" accept="image/*" onchange="procesarImagenSeleccionada(event)" style="font-size: 0.85em;">
+                <label>📷 Imagen de Referencia (Forma Híbrida: Archivo o URL)</label>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 5px;">
+                    <div style="flex: 1; min-width: 180px;">
+                        <small style="display:block; opacity:0.8; margin-bottom:2px;">Subir archivo local:</small>
+                        <input type="file" id="prodImagenInput" accept="image/*" onchange="procesarImagenSeleccionada(event)" style="font-size: 0.8em; width: 100%;">
+                    </div>
+                    <div style="flex: 1; min-width: 180px;">
+                        <small style="display:block; opacity:0.8; margin-bottom:2px;">O pegar URL directa de imagen:</small>
+                        <input type="url" id="prodImagenUrl" placeholder="https://ejemplo.com/imagen.jpg" oninput="procesarUrlImagen(this.value)" style="font-size: 0.85em; padding: 6px;">
+                    </div>
                     <div id="previewBox" class="prod-img-thumb" style="width: 50px; height: 50px;">Sin foto</div>
-                    <button type="button" class="btn-danger" onclick="limpiarImagen()" style="padding: 4px 8px;">Quitar</button>
+                    <button type="button" class="btn-danger" onclick="limpiarImagen()" style="padding: 6px 10px;">Quitar</button>
                 </div>
             </div>
 
@@ -537,7 +547,7 @@
                 localStorage.setItem('cicloPackBio_subcategorias', JSON.stringify(subcategoriasBase));
             } catch (e) {
                 console.error("Error guardando datos en localStorage:", e);
-                alert("⚠️ Atención: La memoria del navegador está llena (imágenes pesadas). Considera usar URLs de imágenes.");
+                alert("⚠️ Atención: La memoria del navegador está llena. Se recomienda usar URLs de imágenes para optimizar espacio.");
             }
         }
 
@@ -567,7 +577,9 @@
             if(!productos || productos.length === 0) return "Sin Productos";
             const tieneEco = productos.some(p => p.linea === 'Eco');
             const tienePremium = productos.some(p => p.linea === 'Premium');
-            if(tieneEco && tienePremium) return "Híbrido";
+            const tieneHibrido = productos.some(p => p.linea === 'Híbrido');
+            
+            if((tieneEco && tienePremium) || tieneHibrido) return "Híbrido";
             if(tieneEco) return "Eco";
             return "Premium";
         }
@@ -629,16 +641,30 @@
             }
         }
 
-        // --- PROCESAMIENTO E OPTIMIZACIÓN DE IMAGEN ---
+        // --- PROCESAMIENTO HÍBRIDO DE IMAGEN (SUBIDA LOCAL Y/O URL) ---
+        function procesarUrlImagen(url) {
+            const urlLimpia = url.trim();
+            if(urlLimpia !== "") {
+                document.getElementById('prodImagenInput').value = ""; // Limpia archivo local si hay URL
+                imagenTempBase64 = urlLimpia;
+                document.getElementById('previewBox').innerHTML = `<img src="${urlLimpia}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;" onerror="this.onerror=null; this.parentElement.innerHTML='❌ Error URL';">`;
+            } else {
+                if(!document.getElementById('prodImagenInput').value) {
+                    limpiarImagen();
+                }
+            }
+        }
+
         function procesarImagenSeleccionada(e) {
             const file = e.target.files[0];
             if (!file) return;
+
+            document.getElementById('prodImagenUrl').value = ""; // Limpia input URL si se sube archivo
 
             const reader = new FileReader();
             reader.onload = function(evt) {
                 const img = new Image();
                 img.onload = function() {
-                    // Redimensionar para no saturar LocalStorage
                     const canvas = document.createElement('canvas');
                     const maxDim = 300;
                     let width = img.width;
@@ -673,6 +699,7 @@
         function limpiarImagen() {
             imagenTempBase64 = "";
             document.getElementById('prodImagenInput').value = "";
+            document.getElementById('prodImagenUrl').value = "";
             document.getElementById('previewBox').innerHTML = "Sin foto";
         }
 
@@ -737,7 +764,7 @@
             tbody.innerHTML = '';
             productosTemporales.forEach(p => {
                 const imgHTML = p.imagen 
-                    ? `<img src="${p.imagen}" style="width:35px; height:35px; object-fit:cover; border-radius:4px;">` 
+                    ? `<img src="${p.imagen}" style="width:35px; height:35px; object-fit:cover; border-radius:4px;" onerror="this.onerror=null; this.parentElement.innerHTML='📷';">` 
                     : `<span style="opacity:0.4;">📷</span>`;
                 
                 const cantCajaTxt = p.cantCaja ? `<br><small style="opacity:0.8; font-size:0.75em;">📦 ${fNum(p.cantCaja)} un/caja</small>` : '';
@@ -892,7 +919,10 @@
 
                 if(prod.imagen) {
                     imagenTempBase64 = prod.imagen;
-                    document.getElementById('previewBox').innerHTML = `<img src="${prod.imagen}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;">`;
+                    if(prod.imagen.startsWith('http://') || prod.imagen.startsWith('https://')) {
+                        document.getElementById('prodImagenUrl').value = prod.imagen;
+                    }
+                    document.getElementById('previewBox').innerHTML = `<img src="${prod.imagen}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;" onerror="this.onerror=null; this.parentElement.innerHTML='❌ Error URL';">`;
                 }
 
                 if(prod.categoria) {
@@ -1223,7 +1253,7 @@
                             const prodWebLink = prod.link ? `<a href="${prod.link}" target="_blank" style="font-size: 0.8em; margin-left:10px; color:var(--primary-blue);">🔗 Ver en Web</a>` : '';
                             
                             const imgThumb = prod.imagen 
-                                ? `<img src="${prod.imagen}" class="prod-img-thumb" alt="${prod.nombre}">` 
+                                ? `<img src="${prod.imagen}" class="prod-img-thumb" alt="${prod.nombre}" onerror="this.onerror=null; this.parentElement.innerHTML='📷 Sin Foto';">` 
                                 : `<div class="prod-img-thumb">📷 Sin Foto</div>`;
 
                             const tagDisp = renderStockTag(prod);
