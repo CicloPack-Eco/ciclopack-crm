@@ -6,7 +6,7 @@
     <title>CicloPack Eco - CRM Proveedores</title>
     <style>
         :root {
-            /* MODO CLARO - Inspirado en tonos textiles y azul noche */
+            /* MODO CLARO */
             --bg-body: #ffffff;
             --bg-main: #f0f4f8;
             --card-bg: #ffffff;
@@ -19,10 +19,11 @@
             --modal-bg: rgba(11, 19, 43, 0.65);
             --danger: #ef4444;
             --warning: #f59e0b;
+            --success: #10b981;
         }
 
         [data-theme="dark"] {
-            /* MODO OSCURO - Base Azul Noche Chalequero */
+            /* MODO OSCURO */
             --bg-body: #ffffff;
             --bg-main: #0c1427;
             --card-bg: #142038;
@@ -43,7 +44,6 @@
             padding: 3vh 4vw;
             transition: color 0.3s ease, background-color 0.3s ease;
             
-            /* DISEÑO EXACTO: Rombos azul noche, fondo blanco y bordes gradientes azul (Franja del chaleco) */
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='60' viewBox='0 0 40 60'%3E%3Cdefs%3E%3ClinearGradient id='gNight' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%230a1128'/%3E%3Cstop offset='50%25' stop-color='%231c2541'/%3E%3Cstop offset='100%25' stop-color='%230077b6'/%3E%3C/linearGradient%3E%3ClinearGradient id='gBorder' x1='0' y1='1' x2='0' y2='0'%3E%3Cstop offset='0%25' stop-color='%2300b4d8'/%3E%3Cstop offset='50%25' stop-color='%23023e8a'/%3E%3Cstop offset='100%25' stop-color='%230a1128'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='40' height='60' fill='%23ffffff'/%3E%3Cg stroke='url(%23gBorder)' stroke-width='1.8' fill='none'%3E%3Cpolygon points='20,1 38,15 20,29 2,15'/%3E%3Cpolygon points='0,31 18,45 0,59 -18,45'/%3E%3Cpolygon points='40,31 58,45 40,59 22,45'/%3E%3C/g%3E%3Cg fill='url(%23gNight)'%3E%3Cpolygon points='20,5 33,15 20,25 7,15'/%3E%3Cpolygon points='0,35 13,45 0,55 -13,45'/%3E%3Cpolygon points='40,35 53,45 40,55 27,45'/%3E%3C/g%3E%3Cg fill='%23ffffff'%3E%3Cpolygon points='20,10 26,15 20,20 14,15'/%3E%3Cpolygon points='0,40 6,45 0,50 -6,45'/%3E%3Cpolygon points='40,40 46,45 40,50 34,45'/%3E%3C/g%3E%3C/svg%3E");
             background-repeat: repeat;
             background-size: 40px 60px;
@@ -74,7 +74,6 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* BOTONES Y EFECTOS NEÓN / HALO VERDOSO AL HACER CLICK */
         button {
             outline: none;
             transition: all 0.2s ease;
@@ -109,7 +108,6 @@
         .btn-warning { background: var(--warning); color: #000; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8em; font-weight: bold; transition: 0.3s;}
         .btn-warning:hover { filter: brightness(1.1); box-shadow: 0 0 10px var(--warning); }
 
-        /* MODALES */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--modal-bg); backdrop-filter: blur(5px);
@@ -148,10 +146,13 @@
         .radio-label input { display: none; }
         .radio-label:has(input:checked) { color: white; transform: scale(1.05); }
         .radio-label:active { box-shadow: 0 0 12px var(--cyan-accent); }
+        
         .opt-eco:has(input:checked) { background-color: #0ea5e9; border-color: #0ea5e9; box-shadow: 0 0 12px #0ea5e9; }
         .opt-premium:has(input:checked) { background-color: #a855f7; border-color: #a855f7; box-shadow: 0 0 12px #a855f7; }
         .opt-oficial:has(input:checked) { background-color: #10b981; border-color: #10b981; box-shadow: 0 0 12px #10b981; }
         .opt-posible:has(input:checked) { background-color: #eab308; border-color: #eab308; box-shadow: 0 0 12px #eab308; }
+        .opt-disp:has(input:checked) { background-color: #10b981; border-color: #10b981; box-shadow: 0 0 12px #10b981; }
+        .opt-nodisp:has(input:checked) { background-color: #ef4444; border-color: #ef4444; box-shadow: 0 0 12px #ef4444; }
 
         .fav-btn { font-size: 2em; cursor: pointer; color: #cbd5e1; user-select: none; transition: 0.3s; }
         .fav-active { color: #fbbf24; filter: drop-shadow(0 0 8px #fbbf24); }
@@ -168,12 +169,16 @@
         th { background: var(--chrome-blue); color: white; }
         tr:hover { background: var(--highlight-bg); }
 
-        .tag { padding: 3px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; color: white;}
+        .tag { padding: 3px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; color: white; display: inline-block;}
         .tag-eco { background-color: #0ea5e9; }
         .tag-premium { background-color: #a855f7; }
         .tag-hibrido { background: linear-gradient(90deg, #0ea5e9, #a855f7); box-shadow: 0 0 8px rgba(168, 85, 247, 0.4); }
         .tag-oficial { background-color: #10b981; }
         .tag-posible { background-color: #eab308; }
+        
+        /* ESTADOS DE DISPONIBILIDAD */
+        .tag-disponible { background-color: var(--success); }
+        .tag-nodisponible { background-color: var(--danger); }
 
         details { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
         summary { 
@@ -190,8 +195,15 @@
 
         .prod-item-dir { 
             display: flex; justify-content: space-between; align-items: center; 
-            padding: 10px; background: var(--highlight-bg); border-radius: 6px; 
-            margin-bottom: 5px; border: 1px solid var(--border-color); flex-wrap: wrap; gap: 10px;
+            padding: 10px; background: var(--highlight-bg); border-radius: 8px; 
+            margin-bottom: 8px; border: 1px solid var(--border-color); flex-wrap: wrap; gap: 12px;
+        }
+        
+        /* ESTILOS DE IMAGEN DE PRODUCTO */
+        .prod-img-thumb {
+            width: 65px; height: 65px; object-fit: cover; border-radius: 8px;
+            border: 1px solid var(--border-color); background: var(--card-bg); flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 0.7em; color: gray;
         }
         
         .btn-iva {
@@ -218,9 +230,9 @@
         </div>
 
         <div style="background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--cyan-accent); margin-bottom: 25px; box-shadow: 0 0 10px rgba(0,245,212,0.15);">
-            <h3 style="margin-top:0;">🔍 Analizador de Precios</h3>
+            <h3 style="margin-top:0;">🔍 Analizador de Precios y Stock</h3>
             <div class="form-group">
-                <input type="text" id="buscarProd" placeholder="Escribe un producto (ej. Cajas) para buscar la mejor opción..." onkeyup="compararProveedores()">
+                <input type="text" id="buscarProd" placeholder="Escribe un producto (ej. Cajas) para buscar la mejor opción disponible..." onkeyup="compararProveedores()">
             </div>
             <div id="recomendacion" style="margin-top: 10px; font-size: 0.95em;"></div>
         </div>
@@ -239,9 +251,14 @@
                 <option value="Híbrido">Híbrido (Bicolor)</option>
             </select>
             <select id="filtroEst" onchange="actualizarDirectorio()">
-                <option value="todos">🟢 Todos los Estados</option>
+                <option value="todos">🟢 Todos los Estados Prov.</option>
                 <option value="Oficial">Actual / Oficial</option>
                 <option value="Posible">Posible Proveedor</option>
+            </select>
+            <select id="filtroDisp" onchange="actualizarDirectorio()">
+                <option value="todos">📦 Stock (Todos)</option>
+                <option value="Disponible">🟢 Solo Disponibles</option>
+                <option value="No disponible">🔴 No Disponibles</option>
             </select>
             <select id="filtroCiu" onchange="actualizarDirectorio()">
                 <option value="todos">📍 Todas las Ciudades</option>
@@ -319,8 +336,10 @@
                 <table>
                     <thead>
                         <tr>
+                            <th>Img</th>
                             <th>Línea</th>
                             <th>Producto</th>
+                            <th>Stock</th>
                             <th>Uni</th>
                             <th>Min</th>
                             <th>May</th>
@@ -345,10 +364,22 @@
                 <h2 id="tituloModalProd">➕ Detalle del Producto</h2>
             </div>
             
-            <label>Línea del Producto:</label>
-            <div class="radio-group">
-                <label class="radio-label opt-eco"><input type="radio" name="prodLinea" value="Eco" checked> Tradicional / Eco</label>
-                <label class="radio-label opt-premium"><input type="radio" name="prodLinea" value="Premium"> Sustentable / Premium</label>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 15px;">
+                <div style="flex: 1;">
+                    <label>Línea del Producto:</label>
+                    <div class="radio-group">
+                        <label class="radio-label opt-eco"><input type="radio" name="prodLinea" value="Eco" checked> Tradicional / Eco</label>
+                        <label class="radio-label opt-premium"><input type="radio" name="prodLinea" value="Premium"> Sustentable / Premium</label>
+                    </div>
+                </div>
+
+                <div style="flex: 1;">
+                    <label>Estado del Producto (Stock):</label>
+                    <div class="radio-group">
+                        <label class="radio-label opt-disp"><input type="radio" name="prodEstado" value="Disponible" checked> 🟢 Disponible</label>
+                        <label class="radio-label opt-nodisp"><input type="radio" name="prodEstado" value="No disponible"> 🔴 No disponible</label>
+                    </div>
+                </div>
             </div>
 
             <div class="form-grid">
@@ -372,6 +403,16 @@
                 <div class="form-group" style="grid-column: span 1;">
                     <label>Enlace Web (URL)</label>
                     <input type="url" id="prodLink" placeholder="https://...">
+                </div>
+            </div>
+
+            <!-- CAMPO CÁRGAR IMAGEN DE REFERENCIA -->
+            <div class="form-group" style="margin-bottom: 15px; background: var(--highlight-bg); padding: 12px; border-radius: 8px; border: 1px dashed var(--border-color);">
+                <label>📷 Imagen de Referencia</label>
+                <div style="display: flex; gap: 15px; align-items: center; margin-top: 5px;">
+                    <input type="file" id="prodImagenInput" accept="image/*" onchange="procesarImagenSeleccionada(event)" style="font-size: 0.85em;">
+                    <div id="previewBox" class="prod-img-thumb" style="width: 50px; height: 50px;">Sin foto</div>
+                    <button type="button" class="btn-danger" onclick="limpiarImagen()" style="padding: 4px 8px;">Quitar</button>
                 </div>
             </div>
 
@@ -415,7 +456,8 @@
         let directorio = []; 
         let productosTemporales = [];
         let esFavActual = false;
-        let idProveedorEnEdicion = null; // Controla si estamos editando un proveedor completo
+        let idProveedorEnEdicion = null;
+        let imagenTempBase64 = ""; // Variable temporal para la imagen cargada
         
         let categoriasBase = ["Plástico", "Cartón", "Aluminio", "Papelería", "Biodegradable"];
         let subcategoriasBase = ["Bolsas camiseta", "Bolsas transparentes/celofán", "Bolsas taco/prepicadas", "Vasos", "Cajas"];
@@ -481,9 +523,28 @@
             return '';
         }
 
-        // FORMATO NÚMEROS A CHILENOS
         function fNum(num) {
             return Number(num || 0).toLocaleString('es-CL');
+        }
+
+        // --- PROCESAMIENTO DE IMAGEN ---
+        function procesarImagenSeleccionada(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                imagenTempBase64 = evt.target.result;
+                const previewBox = document.getElementById('previewBox');
+                previewBox.innerHTML = `<img src="${imagenTempBase64}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;">`;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function limpiarImagen() {
+            imagenTempBase64 = "";
+            document.getElementById('prodImagenInput').value = "";
+            document.getElementById('previewBox').innerHTML = "Sin foto";
         }
 
         // --- MODAL PROVEEDOR ---
@@ -504,7 +565,7 @@
                 document.querySelector(`input[name="catEstado"][value="${prov.estado}"]`).checked = true;
                 
                 esFavActual = prov.favorito;
-                productosTemporales = JSON.parse(JSON.stringify(prov.productos)); // Copia profunda
+                productosTemporales = JSON.parse(JSON.stringify(prov.productos));
             } else {
                 titulo.innerText = "🏢 Ficha de Nuevo Proveedor";
                 document.getElementById('provNombre').value = '';
@@ -540,9 +601,18 @@
             const tbody = document.getElementById('listaTempProductos');
             tbody.innerHTML = '';
             productosTemporales.forEach(p => {
+                const imgHTML = p.imagen 
+                    ? `<img src="${p.imagen}" style="width:35px; height:35px; object-fit:cover; border-radius:4px;">` 
+                    : `<span style="opacity:0.4;">📷</span>`;
+                
+                const estadoClass = p.estado === 'No disponible' ? 'tag-nodisponible' : 'tag-disponible';
+                const estadoTxt = p.estado === 'No disponible' ? 'No Disp.' : 'Disp.';
+
                 tbody.innerHTML += `<tr>
+                    <td>${imgHTML}</td>
                     <td><span class="tag ${getClaseTag(p.linea)}">${p.linea}</span></td>
                     <td><strong>${p.nombre}</strong><br><small>${p.categoria} > ${p.subcategoria}</small></td>
+                    <td><span class="tag ${estadoClass}">${estadoTxt}</span></td>
                     <td>$${fNum(p.unitario)}</td>
                     <td>$${fNum(p.minorista)}</td>
                     <td><strong>$${fNum(p.mayorista)}</strong></td>
@@ -577,12 +647,10 @@
             };
 
             if (idProveedorEnEdicion) {
-                // Actualizar existente
                 const indice = directorio.findIndex(p => p.id === idProveedorEnEdicion);
                 datosProveedor.id = idProveedorEnEdicion;
                 directorio[indice] = datosProveedor;
             } else {
-                // Crear nuevo
                 datosProveedor.id = 'prov_' + generarId();
                 directorio.push(datosProveedor);
             }
@@ -619,7 +687,6 @@
             if(select.value === 'OTRA') input.focus();
         }
 
-        // BOTÓN SUMAR IVA
         function sumarIVA() {
             const iUni = document.getElementById('prodUni');
             const iMin = document.getElementById('prodMin');
@@ -633,10 +700,10 @@
         function abrirModalProd(modo, idProv = null, idProd = null) {
             contextoProducto = { modo, idProv, idProd };
             cargarSelectsCategoria();
+            limpiarImagen();
             
             document.getElementById('tituloModalProd').innerText = modo === 'edit' ? '✏️ Editar Producto' : '➕ Detalle del Producto';
             
-            // Limpiar
             document.getElementById('prodNombre').value = '';
             document.getElementById('prodLink').value = '';
             document.getElementById('prodDesc').value = '';
@@ -645,8 +712,8 @@
             document.getElementById('prodMay').value = '';
             document.getElementById('prodOferta').value = '';
             document.querySelector('input[name="prodLinea"][value="Eco"]').checked = true;
+            document.querySelector('input[name="prodEstado"][value="Disponible"]').checked = true;
 
-            // Si es edición, poblar datos
             if(modo === 'edit') {
                 const prov = directorio.find(p => p.id === idProv);
                 const prod = prov.productos.find(p => p.id === idProd);
@@ -658,8 +725,15 @@
                 document.getElementById('prodMin').value = prod.minorista;
                 document.getElementById('prodMay').value = prod.mayorista;
                 document.getElementById('prodOferta').value = prod.oferta;
-                document.querySelector(`input[name="prodLinea"][value="${prod.linea}"]`).checked = true;
                 
+                document.querySelector(`input[name="prodLinea"][value="${prod.linea}"]`).checked = true;
+                document.querySelector(`input[name="prodEstado"][value="${prod.estado || 'Disponible'}"]`).checked = true;
+
+                if(prod.imagen) {
+                    imagenTempBase64 = prod.imagen;
+                    document.getElementById('previewBox').innerHTML = `<img src="${prod.imagen}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;">`;
+                }
+
                 if(categoriasBase.includes(prod.categoria)) document.getElementById('prodCatSelect').value = prod.categoria;
                 if(subcategoriasBase.includes(prod.subcategoria)) document.getElementById('prodSubSelect').value = prod.subcategoria;
             }
@@ -686,6 +760,8 @@
                 link: document.getElementById('prodLink').value,
                 descripcion: document.getElementById('prodDesc').value,
                 linea: document.querySelector('input[name="prodLinea"]:checked').value,
+                estado: document.querySelector('input[name="prodEstado"]:checked').value,
+                imagen: imagenTempBase64,
                 categoria: cat || 'Sin Categoría',
                 subcategoria: sub || 'Sin Subcategoría',
                 unitario: Number(document.getElementById('prodUni').value),
@@ -711,7 +787,7 @@
             } else if (contextoProducto.modo === 'edit') {
                 const prov = directorio.find(p => p.id === contextoProducto.idProv);
                 const indice = prov.productos.findIndex(p => p.id === contextoProducto.idProd);
-                prod.id = contextoProducto.idProd; // Mantener ID
+                prod.id = contextoProducto.idProd;
                 prov.productos[indice] = prod;
                 prov.linea = determinarLineaProveedor(prov.productos);
                 guardarDatos();
@@ -731,19 +807,28 @@
             }
         }
 
-        // --- RENDERIZADO DIRECTORIO (ACORDEONES) ---
+        // --- RENDERIZADO DIRECTORIO (ACORDEONES Y TABLET ADAPTATIVE) ---
         function actualizarDirectorio() {
             const fFav = document.getElementById('filtroFav').value;
             const fCat = document.getElementById('filtroCat').value;
             const fEst = document.getElementById('filtroEst').value;
+            const fDisp = document.getElementById('filtroDisp').value;
             const fCiu = document.getElementById('filtroCiu').value;
 
-            let directorioFiltrado = directorio.filter(prov => {
+            let directorioFiltrado = directorio.map(prov => {
+                // Clonar objeto para no alterar el original durante filtrado de productos
+                let copyProv = JSON.parse(JSON.stringify(prov));
+                if (fDisp !== 'todos') {
+                    copyProv.productos = copyProv.productos.filter(p => (p.estado || 'Disponible') === fDisp);
+                }
+                return copyProv;
+            }).filter(prov => {
                 let pasaFav = (fFav === 'todos') || (fFav === 'fav' && prov.favorito);
                 let pasaCat = (fCat === 'todos') || (prov.linea === fCat);
                 let pasaEst = (fEst === 'todos') || (prov.estado === fEst);
                 let pasaCiu = (fCiu === 'todos') || (prov.ciudad === fCiu);
-                return pasaFav && pasaCat && pasaEst && pasaCiu;
+                let tieneProductos = prov.productos.length > 0 || fDisp === 'todos';
+                return pasaFav && pasaCat && pasaEst && pasaCiu && tieneProductos;
             });
 
             directorioFiltrado.sort((a, b) => {
@@ -806,19 +891,35 @@
                             const descInfo = prod.descripcion ? `<br><small style="opacity:0.8;"><em>${prod.descripcion}</em></small>` : '';
                             const prodWebLink = prod.link ? `<a href="${prod.link}" target="_blank" style="font-size: 0.8em; margin-left:10px; color:var(--primary-blue);">🔗 Ver en Web</a>` : '';
                             
+                            // RENDERIZAR IMAGEN MINIATURA (TABLET OPTIMIZED)
+                            const imgThumb = prod.imagen 
+                                ? `<img src="${prod.imagen}" class="prod-img-thumb" alt="${prod.nombre}">` 
+                                : `<div class="prod-img-thumb">📷 Sin Foto</div>`;
+
+                            // TAG DISPONIBILIDAD
+                            const esDisponible = prod.estado !== 'No disponible';
+                            const tagDisp = esDisponible 
+                                ? `<span class="tag tag-disponible">🟢 Disponible</span>` 
+                                : `<span class="tag tag-nodisponible">🔴 No disponible</span>`;
+
                             htmlProv += `
                             <div class="prod-item-dir">
-                                <div style="display:flex; flex-direction:column; gap:5px; max-width:40%;">
-                                    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                                        <span class="tag ${getClaseTag(prod.linea)}">${prod.linea}</span>
-                                        <strong>${prod.nombre}</strong> ${prodWebLink}
+                                <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:250px;">
+                                    ${imgThumb}
+                                    <div style="display:flex; flex-direction:column; gap:4px;">
+                                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                            <span class="tag ${getClaseTag(prod.linea)}">${prod.linea}</span>
+                                            ${tagDisp}
+                                            <strong style="font-size:1em;">${prod.nombre}</strong> ${prodWebLink}
+                                        </div>
+                                        <small style="opacity:0.75;">Oferta: ${prod.oferta}</small>
+                                        ${descInfo}
                                     </div>
-                                    <small style="opacity:0.7;">Oferta: ${prod.oferta}</small>
-                                    ${descInfo}
                                 </div>
-                                <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
-                                    <span style="font-size:0.9em; opacity:0.8;">Uni: $${fNum(prod.unitario)}</span>
-                                    <span style="font-size:0.9em;">Min: $${fNum(prod.minorista)}</span>
+
+                                <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:flex-end;">
+                                    <span style="font-size:0.85em; opacity:0.8;">Uni: $${fNum(prod.unitario)}</span>
+                                    <span style="font-size:0.85em;">Min: $${fNum(prod.minorista)}</span>
                                     <span style="color:#10b981; font-weight:bold; font-size:1.1em;">May: $${fNum(prod.mayorista)}</span>
                                     <button class="btn-warning" onclick="abrirModalProd('edit', '${prov.id}', '${prod.id}')">Editar</button>
                                     <button class="btn-danger" onclick="eliminarProductoDir('${prov.id}', '${prod.id}')">X</button>
@@ -837,6 +938,7 @@
             compararProveedores();
         }
 
+        // --- EVALUADOR Y COMPARADOR (INCLUYE CRITERIO DE DISPONIBILIDAD) ---
         function compararProveedores() {
             const busqueda = document.getElementById('buscarProd').value.toLowerCase().trim();
             const divRec = document.getElementById('recomendacion');
@@ -852,7 +954,8 @@
                         opciones.push({
                             provNombre: prov.nombre, prodNombre: prod.nombre,
                             precio: prod.mayorista, tiempo: prov.tiempo,
-                            esOficial: prov.estado === 'Oficial', esFav: prov.favorito
+                            esOficial: prov.estado === 'Oficial', esFav: prov.favorito,
+                            disponible: prod.estado !== 'No disponible'
                         });
                     }
                 });
@@ -862,16 +965,28 @@
                 divRec.innerHTML = '<em>No hay coincidencias en tu base de datos.</em>'; return;
             }
 
-            let mejor = opciones.reduce((prev, curr) => (prev.precio < curr.precio) ? prev : curr);
-
-            divRec.innerHTML = `
-                💡 <strong>Mejor Opción:</strong> 
-                <strong>${mejor.provNombre}</strong> tiene "${mejor.prodNombre}" a 
-                <strong style="color:#10b981;">$${fNum(mejor.precio)} (Mayorista)</strong>. 
-                Tiempo estimado: ${mejor.tiempo} días. 
-                ${mejor.esFav ? '⭐(Tu Favorito)' : ''} 
-                ${mejor.esOficial ? '<span class="tag tag-oficial">Prov. Oficial</span>' : ''}
-            `;
+            // Filtrar y dar prioridad a opciones DISPONIBLES
+            let disponibles = opciones.filter(o => o.disponible);
+            
+            if (disponibles.length > 0) {
+                let mejor = disponibles.reduce((prev, curr) => (prev.precio < curr.precio) ? prev : curr);
+                divRec.innerHTML = `
+                    💡 <strong>Mejor Opción Disponible:</strong> 
+                    <strong>${mejor.provNombre}</strong> tiene "${mejor.prodNombre}" a 
+                    <strong style="color:#10b981;">$${fNum(mejor.precio)} (Mayorista)</strong>. 
+                    Tiempo estimado: ${mejor.tiempo} días. 
+                    <span class="tag tag-disponible">🟢 En Stock</span>
+                    ${mejor.esFav ? '⭐(Tu Favorito)' : ''} 
+                    ${mejor.esOficial ? '<span class="tag tag-oficial">Prov. Oficial</span>' : ''}
+                `;
+            } else {
+                let mejorSinStock = opciones.reduce((prev, curr) => (prev.precio < curr.precio) ? prev : curr);
+                divRec.innerHTML = `
+                    ⚠️ <strong>Atención:</strong> Se encontró "${mejorSinStock.prodNombre}" en 
+                    <strong>${mejorSinStock.provNombre}</strong> a <strong style="color:#ef4444;">$${fNum(mejorSinStock.precio)}</strong>, 
+                    pero figura como <span class="tag tag-nodisponible">🔴 No disponible</span>. Consulta con el proveedor.
+                `;
+            }
         }
 
         // --- INICIALIZAR AL CARGAR ---
