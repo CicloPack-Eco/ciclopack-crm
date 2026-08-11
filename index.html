@@ -65,6 +65,7 @@
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 2px dashed var(--border-color);
             padding-bottom: 15px; margin-bottom: 25px;
+            flex-wrap: wrap; gap: 10px;
         }
 
         h1 {
@@ -176,7 +177,6 @@
         .tag-oficial { background-color: #10b981; }
         .tag-posible { background-color: #eab308; }
         
-        /* ESTADOS DE DISPONIBILIDAD */
         .tag-disponible { background-color: var(--success); }
         .tag-nodisponible { background-color: var(--danger); }
 
@@ -199,7 +199,6 @@
             margin-bottom: 8px; border: 1px solid var(--border-color); flex-wrap: wrap; gap: 12px;
         }
         
-        /* ESTILOS DE IMAGEN DE PRODUCTO */
         .prod-img-thumb {
             width: 65px; height: 65px; object-fit: cover; border-radius: 8px;
             border: 1px solid var(--border-color); background: var(--card-bg); flex-shrink: 0;
@@ -223,8 +222,9 @@
                 <h1>CicloPack Eco</h1>
                 <small>Sistema CRM - Gestión de Proveedores</small>
             </div>
-            <div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <button class="btn-primary" onclick="abrirModalProv()">+ Nuevo Proveedor</button>
+                <button class="btn-secondary" onclick="abrirModalCatSub()">⚙️ Categorías</button>
                 <button class="theme-toggle" onclick="toggleTheme()">🌓 Modo</button>
             </div>
         </div>
@@ -406,7 +406,6 @@
                 </div>
             </div>
 
-            <!-- CAMPO CÁRGAR IMAGEN DE REFERENCIA -->
             <div class="form-group" style="margin-bottom: 15px; background: var(--highlight-bg); padding: 12px; border-radius: 8px; border: 1px dashed var(--border-color);">
                 <label>📷 Imagen de Referencia</label>
                 <div style="display: flex; gap: 15px; align-items: center; margin-top: 5px;">
@@ -455,13 +454,37 @@
         </div>
     </div>
 
+    <!-- MODAL 3: GESTIÓN DE CATEGORÍAS Y SUBCATEGORÍAS -->
+    <div class="modal-overlay" id="modalCatSub">
+        <div class="modal-content" style="max-width: 650px;">
+            <div class="modal-header">
+                <h2>⚙️ Gestión de Categorías y Sub-Categorías</h2>
+            </div>
+            
+            <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div>
+                    <h3 style="margin-top:0;">📂 Categorías</h3>
+                    <div id="listaCategoriasManager" style="display:flex; flex-direction:column; gap:8px;"></div>
+                </div>
+                <div>
+                    <h3 style="margin-top:0;">📁 Sub-Categorías</h3>
+                    <div id="listaSubcategoriasManager" style="display:flex; flex-direction:column; gap:8px;"></div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end;">
+                <button class="btn-secondary" onclick="cerrarModalCatSub()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- BASE DE DATOS Y ESTADOS ---
         let directorio = []; 
         let productosTemporales = [];
         let esFavActual = false;
         let idProveedorEnEdicion = null;
-        let imagenTempBase64 = ""; // Variable temporal para la imagen cargada
+        let imagenTempBase64 = ""; 
         
         let categoriasBase = ["Plástico", "Cartón", "Aluminio", "Papelería", "Biodegradable"];
         let subcategoriasBase = ["Bolsas camiseta", "Bolsas transparentes/celofán", "Bolsas taco/prepicadas", "Vasos", "Cajas"];
@@ -817,7 +840,128 @@
             }
         }
 
-        // --- RENDERIZADO DIRECTORIO (ACORDEONES Y TABLET ADAPTATIVE) ---
+        // --- GESTIÓN DE CATEGORÍAS Y SUBCATEGORÍAS ---
+        function abrirModalCatSub() {
+            renderizarListaCatSub();
+            document.getElementById('modalCatSub').style.display = 'flex';
+        }
+
+        function cerrarModalCatSub() {
+            document.getElementById('modalCatSub').style.display = 'none';
+        }
+
+        function renderizarListaCatSub() {
+            const divCat = document.getElementById('listaCategoriasManager');
+            const divSub = document.getElementById('listaSubcategoriasManager');
+
+            divCat.innerHTML = categoriasBase.length === 0 ? '<em>No hay categorías registadas.</em>' : 
+                categoriasBase.map((cat, idx) => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--highlight-bg); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color);">
+                        <strong style="font-size:0.9em;">${cat}</strong>
+                        <div style="display:flex; gap:5px;">
+                            <button class="btn-warning" style="padding:2px 6px; font-size:0.75em;" onclick="editarCategoria(${idx})">✏️</button>
+                            <button class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="eliminarCategoria(${idx})">🗑️</button>
+                        </div>
+                    </div>
+                `).join('');
+
+            divSub.innerHTML = subcategoriasBase.length === 0 ? '<em>No hay sub-categorías registradas.</em>' : 
+                subcategoriasBase.map((sub, idx) => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--highlight-bg); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color);">
+                        <strong style="font-size:0.9em;">${sub}</strong>
+                        <div style="display:flex; gap:5px;">
+                            <button class="btn-warning" style="padding:2px 6px; font-size:0.75em;" onclick="editarSubcategoria(${idx})">✏️</button>
+                            <button class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="eliminarSubcategoria(${idx})">🗑️</button>
+                        </div>
+                    </div>
+                `).join('');
+        }
+
+        function editarCategoria(index) {
+            const nombreViejo = categoriasBase[index];
+            const nuevoNombre = prompt("Modificar nombre de la Categoría:", nombreViejo);
+            
+            if (nuevoNombre && nuevoNombre.trim() !== "" && nuevoNombre !== nombreViejo) {
+                const nombreLimpio = nuevoNombre.trim();
+                categoriasBase[index] = nombreLimpio;
+
+                // Actualizar en cascada todos los productos existentes
+                directorio.forEach(prov => {
+                    prov.productos.forEach(prod => {
+                        if (prod.categoria === nombreViejo) {
+                            prod.categoria = nombreLimpio;
+                        }
+                    });
+                });
+
+                guardarDatos();
+                renderizarListaCatSub();
+                actualizarDirectorio();
+            }
+        }
+
+        function eliminarCategoria(index) {
+            const catNombre = categoriasBase[index];
+            if (confirm(`¿Eliminar la categoría "${catNombre}"? Los productos asignados a ella cambiarán a "Sin Categoría".`)) {
+                categoriasBase.splice(index, 1);
+
+                directorio.forEach(prov => {
+                    prov.productos.forEach(prod => {
+                        if (prod.categoria === catNombre) {
+                            prod.categoria = "Sin Categoría";
+                        }
+                    });
+                });
+
+                guardarDatos();
+                renderizarListaCatSub();
+                actualizarDirectorio();
+            }
+        }
+
+        function editarSubcategoria(index) {
+            const nombreViejo = subcategoriasBase[index];
+            const nuevoNombre = prompt("Modificar nombre de la Sub-Categoría:", nombreViejo);
+            
+            if (nuevoNombre && nuevoNombre.trim() !== "" && nuevoNombre !== nombreViejo) {
+                const nombreLimpio = nuevoNombre.trim();
+                subcategoriasBase[index] = nombreLimpio;
+
+                // Actualizar en cascada todos los productos existentes
+                directorio.forEach(prov => {
+                    prov.productos.forEach(prod => {
+                        if (prod.subcategoria === nombreViejo) {
+                            prod.subcategoria = nombreLimpio;
+                        }
+                    });
+                });
+
+                guardarDatos();
+                renderizarListaCatSub();
+                actualizarDirectorio();
+            }
+        }
+
+        function eliminarSubcategoria(index) {
+            const subNombre = subcategoriasBase[index];
+            if (confirm(`¿Eliminar la sub-categoría "${subNombre}"? Los productos asignados a ella cambiarán a "Sin Subcategoría".`)) {
+                subcategoriasBase.splice(index, 1);
+
+                directorio.forEach(prov => {
+                    prov.productos.forEach(prod => {
+                        if (prod.subcategoria === subNombre) {
+                            prod.subcategoria = "Sin Subcategoría";
+                        }
+                    });
+                });
+
+                guardarDatos();
+                renderizarListaCatSub();
+                actualizarDirectorio();
+            }
+        }
+
+        // --- RENDERIZADO DIRECTORIO ---
         function actualizarDirectorio() {
             const fFav = document.getElementById('filtroFav').value;
             const fCat = document.getElementById('filtroCat').value;
@@ -826,7 +970,6 @@
             const fCiu = document.getElementById('filtroCiu').value;
 
             let directorioFiltrado = directorio.map(prov => {
-                // Clonar objeto para no alterar el original durante filtrado de productos
                 let copyProv = JSON.parse(JSON.stringify(prov));
                 if (fDisp !== 'todos') {
                     copyProv.productos = copyProv.productos.filter(p => (p.estado || 'Disponible') === fDisp);
@@ -901,18 +1044,15 @@
                             const descInfo = prod.descripcion ? `<br><small style="opacity:0.8;"><em>${prod.descripcion}</em></small>` : '';
                             const prodWebLink = prod.link ? `<a href="${prod.link}" target="_blank" style="font-size: 0.8em; margin-left:10px; color:var(--primary-blue);">🔗 Ver en Web</a>` : '';
                             
-                            // RENDERIZAR IMAGEN MINIATURA (TABLET OPTIMIZED)
                             const imgThumb = prod.imagen 
                                 ? `<img src="${prod.imagen}" class="prod-img-thumb" alt="${prod.nombre}">` 
                                 : `<div class="prod-img-thumb">📷 Sin Foto</div>`;
 
-                            // TAG DISPONIBILIDAD
                             const esDisponible = prod.estado !== 'No disponible';
                             const tagDisp = esDisponible 
                                 ? `<span class="tag tag-disponible">🟢 Disponible</span>` 
                                 : `<span class="tag tag-nodisponible">🔴 No disponible</span>`;
 
-                            // TEXTO CANTIDAD POR CAJA
                             const cantCajaTag = prod.cantCaja ? `<small style="display:block; font-size:0.78em; color:var(--cyan-accent); font-weight:bold;">📦 ${fNum(prod.cantCaja)} un/caja</small>` : '';
 
                             htmlProv += `
@@ -954,7 +1094,7 @@
             compararProveedores();
         }
 
-        // --- EVALUADOR Y COMPARADOR (INCLUYE CRITERIO DE DISPONIBILIDAD) ---
+        // --- EVALUADOR Y COMPARADOR ---
         function compararProveedores() {
             const busqueda = document.getElementById('buscarProd').value.toLowerCase().trim();
             const divRec = document.getElementById('recomendacion');
@@ -981,7 +1121,6 @@
                 divRec.innerHTML = '<em>No hay coincidencias en tu base de datos.</em>'; return;
             }
 
-            // Filtrar y dar prioridad a opciones DISPONIBLES
             let disponibles = opciones.filter(o => o.disponible);
             
             if (disponibles.length > 0) {
