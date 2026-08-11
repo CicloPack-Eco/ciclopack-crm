@@ -44,7 +44,7 @@
             padding: 3vh 4vw;
             transition: color 0.3s ease, background-color 0.3s ease;
             
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='60' viewBox='0 0 40 60'%3E%3Cdefs%3E%3ClinearGradient id='gNight' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%230a1128'/%3E%3Cstop offset='50%25' stop-color='%231c2541'/%3E%3Cstop offset='100%25' stop-color='%230077b6'/%3E%3C/linearGradient%3E%3ClinearGradient id='gBorder' x1='0' y1='1' x2='0' y2='0'%3E%3Cstop offset='0%25' stop-color='%2300b4d8'/%3E%3Cstop offset='50%25' stop-color='%23023e8a'/%3E%3Cstop offset='100%25' stop-color='%230a1128'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='40' height='60' fill='%23ffffff'/%3E%3Cg stroke='url(%23gBorder)' stroke-width='1.8' fill='none'%3E%3Cpolygon points='20,1 38,15 20,29 2,15'/%3E%3Cpolygon points='0,31 18,45 0,59 -18,45'/%3E%3Cpolygon points='40,31 58,45 40,59 22,45'/%3E%3C/g%3E%3Cg fill='url(%23gNight)'%3E%3Cpolygon points='20,5 33,15 20,25 7,15'/%3E%3Cpolygon points='0,35 13,45 0,55 -13,45'/%3E%3Cpolygon points='40,35 53,45 40,55 27,45'/%3E%3C/g%3E%3Cg fill='%23ffffff'%3E%3Cpolygon points='20,10 26,15 20,20 14,15'/%3E%3Cpolygon points='0,40 6,45 0,50 -6,45'/%3E%3Cpolygon points='40,40 46,45 40,50 34,45'/%3E%3C/g%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='60' viewBox='0 0 40 60'%3E%3Cdefs%3E%3ClinearGradient id='gNight' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%230a1128'/%3E%3Cstop offset='50%25' stop-color='%231c2541'/%3E%3Cstop offset='100%25' stop-color='%230077b6'/%3E%3C/linearGradient%3E%3ClinearGradient id='gBorder' x1='0' y1='1' x2='0' y2='0'%3E%3Cstop offset='0%25' stop-color='%2300b4d8'/%3E%3Cstop offset='50%25' stop-color='%23023e8a'/%3E%3Cstop offset='100%25' stop-color='%230a1128'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='40' height='60' fill='%23ffffff'/%3E%3Cg stroke='url(%23gBorder)' stroke-width='1.8' fill='none'%3E%3Cpolygon points='20,1 38,15 20,29 2,15'/%3E%3Cpolygon points='0,31 18,45 0,59 -18,45'/%3E%3Cpolygon points='40,31 58,45 40,59 22,45'/%3E%3C/g%3E%3Cg fill='url(%23gNight)'%3E%3Cpolygon points='20,5 33,15 20,25 7,15'/%3E%3Cpolygon points='0,35 13,45 0,25 7,15'/%3E%3Cpolygon points='0,35 13,45 0,55 -13,45'/%3E%3Cpolygon points='40,35 53,45 40,55 27,45'/%3E%3C/g%3E%3Cg fill='%23ffffff'%3E%3Cpolygon points='20,10 26,15 20,20 14,15'/%3E%3Cpolygon points='0,40 6,45 0,50 -6,45'/%3E%3Cpolygon points='40,40 46,45 40,50 34,45'/%3E%3C/g%3E%3C/svg%3E");
             background-repeat: repeat;
             background-size: 40px 60px;
             background-attachment: fixed;
@@ -215,6 +215,11 @@
         }
         .btn-iva:hover { filter: brightness(1.1); box-shadow: 0 0 15px #10b981; }
 
+        #cloudStatus {
+            font-size: 0.8em; font-weight: bold; padding: 4px 8px; border-radius: 6px;
+            background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid var(--success);
+            display: inline-flex; align-items: center; gap: 5px;
+        }
     </style>
 </head>
 <body>
@@ -224,6 +229,7 @@
             <div>
                 <h1>CicloPack Bio</h1>
                 <small>Sistema CRM - Gestión de Proveedores</small>
+                <div id="cloudStatus" style="margin-left: 10px;">☁️ Conectando con Cloud...</div>
             </div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <button type="button" class="btn-primary" onclick="abrirModalProv()">+ Nuevo Proveedor</button>
@@ -278,7 +284,7 @@
         </div>
     </div>
 
-    <!-- MODAL 1: PROVEEDOR (NUEVO O EDITAR) -->
+    <!-- MODAL 1: PROVEEDOR -->
     <div class="modal-overlay" id="modalProv">
         <div class="modal-content">
             <div class="modal-header">
@@ -361,7 +367,7 @@
         </div>
     </div>
 
-    <!-- MODAL 2: PRODUCTO (NUEVO O EDITAR) -->
+    <!-- MODAL 2: PRODUCTO -->
     <div class="modal-overlay" id="modalProd">
         <div class="modal-content" style="max-width: 750px; border-top-color: var(--cyan-accent);">
             <div class="modal-header">
@@ -412,7 +418,6 @@
                 </div>
             </div>
 
-            <!-- MODIFICACIÓN HÍBRIDA: IMAGEN POR ARCHIVO O URL -->
             <div class="form-group" style="margin-bottom: 15px; background: var(--highlight-bg); padding: 12px; border-radius: 8px; border: 1px dashed var(--border-color);">
                 <label>📷 Imagen de Referencia (Forma Híbrida: Archivo o URL)</label>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 5px;">
@@ -434,7 +439,6 @@
                 <textarea id="prodDesc" rows="2" placeholder="Detalles técnicos, material, dimensiones..."></textarea>
             </div>
 
-            <!-- PRECIOS Y UNIDADES POR CAJA -->
             <div class="form-grid" style="align-items: end; background: var(--highlight-bg); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);">
                 <div class="form-group">
                     <label style="color: var(--cyan-accent);">Mayorista neto ($)</label>
@@ -457,7 +461,6 @@
                 </div>
             </div>
 
-            <!-- STOCK PUBLICADO EN WEB DEL PROVEEDOR -->
             <div style="background: var(--highlight-bg); padding: 15px; border-radius: 8px; border: 1px dashed var(--warning); margin-top: 15px; margin-bottom: 15px;">
                 <label style="color: var(--warning); display: block; margin-bottom: 8px;">🌐 Stock Disponible Publicado en Web del Proveedor:</label>
                 <div class="form-grid" style="margin-bottom: 0;">
@@ -484,7 +487,7 @@
         </div>
     </div>
 
-    <!-- MODAL 3: GESTIÓN DE CATEGORÍAS Y SUBCATEGORÍAS -->
+    <!-- MODAL 3: GESTIÓN DE CATEGORÍAS -->
     <div class="modal-overlay" id="modalCatSub">
         <div class="modal-content" style="max-width: 650px;">
             <div class="modal-header">
@@ -508,51 +511,98 @@
         </div>
     </div>
 
-    <script>
-        // --- BASE DE DATOS Y ESTADOS ---
-        let directorio = []; 
-        let productosTemporales = [];
-        let esFavActual = false;
-        let idProveedorEnEdicion = null;
-        let imagenTempBase64 = ""; 
+    <!-- SCRIPT FIREBASE Y LÓGICA CRM -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBTVITP2g-4Sy_ccaFnd7o5bkeWlgTa7Sc",
+            authDomain: "ciclopack-eco.firebaseapp.com",
+            projectId: "ciclopack-eco",
+            storageBucket: "ciclopack-eco.firebasestorage.app",
+            messagingSenderId: "587485375626",
+            appId: "1:587485375626:web:a2625a13f4ea9689add173"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- ESTADOS Y VARIABLES GLOBALES ---
+        window.directorio = []; 
+        window.productosTemporales = [];
+        window.esFavActual = false;
+        window.idProveedorEnEdicion = null;
+        window.imagenTempBase64 = ""; 
         
-        let categoriasBase = ["Plástico", "Cartón", "Aluminio", "Papelería", "Biodegradable"];
-        let subcategoriasBase = ["Bolsas camiseta", "Bolsas transparentes/celofán", "Bolsas taco/prepicadas", "Vasos", "Cajas"];
+        window.categoriasBase = ["Plástico", "Cartón", "Aluminio", "Papelería", "Biodegradable"];
+        window.subcategoriasBase = ["Bolsas camiseta", "Bolsas transparentes/celofán", "Bolsas taco/prepicadas", "Vasos", "Cajas"];
 
-        let contextoProducto = { modo: 'temp', idProv: null, idProd: null }; 
+        window.contextoProducto = { modo: 'temp', idProv: null, idProd: null }; 
 
-        // --- PERSISTENCIA ---
-        function cargarDatos() {
-            try {
-                const dataDir = localStorage.getItem('cicloPackBio_directorio') || localStorage.getItem('cicloPack_directorio');
-                const dataCat = localStorage.getItem('cicloPackBio_categorias') || localStorage.getItem('cicloPack_categorias');
-                const dataSub = localStorage.getItem('cicloPackBio_subcategorias') || localStorage.getItem('cicloPack_subcategorias');
-                const theme = localStorage.getItem('cicloPackBio_theme') || localStorage.getItem('cicloPack_theme');
+        // --- CONEXIÓN EN TIEMPO REAL CON FIRESTORE ---
+        const cloudStatus = document.getElementById('cloudStatus');
 
-                if(dataDir) directorio = JSON.parse(dataDir);
-                if(dataCat) categoriasBase = JSON.parse(dataCat);
-                if(dataSub) subcategoriasBase = JSON.parse(dataSub);
-                if(theme === 'dark') document.body.setAttribute('data-theme', 'dark');
-            } catch (e) {
-                console.error("Error al cargar datos:", e);
+        // Escuchar Proveedores
+        onSnapshot(collection(db, "proveedores"), (snapshot) => {
+            window.directorio = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            cloudStatus.innerHTML = "☁️ Cloud Sincronizado";
+            cloudStatus.style.borderColor = "var(--success)";
+            cloudStatus.style.color = "var(--success)";
+            window.actualizarDirectorio();
+        }, (error) => {
+            console.error("Error al escuchar proveedores:", error);
+            cloudStatus.innerHTML = "⚠️ Error de Conexión";
+            cloudStatus.style.borderColor = "var(--danger)";
+            cloudStatus.style.color = "var(--danger)";
+        });
+
+        // Escuchar Configuración Global (Categorías y Subcategorías)
+        onSnapshot(doc(db, "configuracion", "listas"), (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (data.categorias) window.categoriasBase = data.categorias;
+                if (data.subcategorias) window.subcategoriasBase = data.subcategorias;
+            } else {
+                window.guardarConfiguracionCloud();
             }
+        });
 
-            actualizarDirectorio();
-        }
-
-        function guardarDatos() {
+        // --- FUNCIONES CLOUD ---
+        window.guardarProveedorCloud = async function(provData) {
             try {
-                localStorage.setItem('cicloPackBio_directorio', JSON.stringify(directorio));
-                localStorage.setItem('cicloPackBio_categorias', JSON.stringify(categoriasBase));
-                localStorage.setItem('cicloPackBio_subcategorias', JSON.stringify(subcategoriasBase));
+                await setDoc(doc(db, "proveedores", provData.id), provData);
             } catch (e) {
-                console.error("Error guardando datos en localStorage:", e);
-                alert("⚠️ Atención: La memoria del navegador está llena. Se recomienda usar URLs de imágenes para optimizar espacio.");
+                console.error("Error guardando proveedor:", e);
+                alert("Error al guardar en la nube: " + e.message);
             }
-        }
+        };
 
-        // --- UTILIDADES ---
-        function toggleTheme() {
+        window.eliminarProveedorCloud = async function(idProv) {
+            try {
+                await deleteDoc(doc(db, "proveedores", idProv));
+            } catch (e) {
+                console.error("Error eliminando proveedor:", e);
+                alert("Error al eliminar de la nube: " + e.message);
+            }
+        };
+
+        window.guardarConfiguracionCloud = async function() {
+            try {
+                await setDoc(doc(db, "configuracion", "listas"), {
+                    categorias: window.categoriasBase,
+                    subcategorias: window.subcategoriasBase
+                });
+            } catch (e) {
+                console.error("Error guardando categorías:", e);
+            }
+        };
+
+        // --- MODO OSCURO / CLARO ---
+        window.toggleTheme = function() {
             const body = document.body;
             if(body.getAttribute('data-theme') === 'dark') {
                 body.removeAttribute('data-theme');
@@ -561,19 +611,24 @@
                 body.setAttribute('data-theme', 'dark');
                 localStorage.setItem('cicloPackBio_theme', 'dark');
             }
+        };
+
+        if(localStorage.getItem('cicloPackBio_theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
         }
 
-        function toggleFav() {
-            esFavActual = !esFavActual;
+        // --- UTILIDADES ---
+        window.toggleFav = function() {
+            window.esFavActual = !window.esFavActual;
             const estrella = document.getElementById('estrellaFav');
-            estrella.innerHTML = esFavActual ? '★' : '☆';
-            if(esFavActual) estrella.classList.add('fav-active');
+            estrella.innerHTML = window.esFavActual ? '★' : '☆';
+            if(window.esFavActual) estrella.classList.add('fav-active');
             else estrella.classList.remove('fav-active');
-        }
+        };
 
-        function generarId() { return Date.now().toString(36) + Math.random().toString(36).substr(2); }
+        window.generarId = function() { return Date.now().toString(36) + Math.random().toString(36).substr(2); };
 
-        function determinarLineaProveedor(productos) {
+        window.determinarLineaProveedor = function(productos) {
             if(!productos || productos.length === 0) return "Sin Productos";
             const tieneEco = productos.some(p => p.linea === 'Eco');
             const tienePremium = productos.some(p => p.linea === 'Premium');
@@ -582,21 +637,21 @@
             if((tieneEco && tienePremium) || tieneHibrido) return "Híbrido";
             if(tieneEco) return "Eco";
             return "Premium";
-        }
+        };
 
-        function getClaseTag(linea) {
+        window.getClaseTag = function(linea) {
             if(linea === 'Eco') return 'tag-eco';
             if(linea === 'Premium') return 'tag-premium';
             if(linea === 'Híbrido') return 'tag-hibrido';
             return '';
-        }
+        };
 
-        function fNum(num) {
+        window.fNum = function(num) {
             return Number(num || 0).toLocaleString('es-CL');
-        }
+        };
 
-        // CÁLCULOS AUTOMÁTICOS DE FORMULARIO
-        function calcularUnitarioAuto() {
+        // CÁLCULOS AUTOMÁTICOS
+        window.calcularUnitarioAuto = function() {
             const may = parseFloat(document.getElementById('prodMay').value);
             const cantCaja = parseFloat(document.getElementById('prodCantCaja').value);
             const inputUni = document.getElementById('prodUni');
@@ -604,9 +659,9 @@
             if (!isNaN(may) && !isNaN(cantCaja) && cantCaja > 0) {
                 inputUni.value = Math.round(may / cantCaja);
             }
-        }
+        };
 
-        function SincronizarStockWeb(origen) {
+        window.SincronizarStockWeb = function(origen) {
             const cantCaja = parseFloat(document.getElementById('prodCantCaja').value);
             const inputUnid = document.getElementById('prodStockUnid');
             const inputCajas = document.getElementById('prodStockCajas');
@@ -622,14 +677,14 @@
                     inputUnid.value = Math.round(cajas * cantCaja);
                 }
             }
-        }
+        };
 
-        function renderStockTag(p) {
+        window.renderStockTag = function(p) {
             const estado = p.estado || 'Disponible';
             let infoStock = '';
             
             if (p.stockUnid !== null && p.stockUnid !== undefined && p.stockUnid !== '') {
-                infoStock = ` (${fNum(p.stockUnid)} un / ${p.stockCajas || 0} cjas)`;
+                infoStock = ` (${window.fNum(p.stockUnid)} un / ${p.stockCajas || 0} cjas)`;
             }
 
             if (estado === 'No disponible') {
@@ -639,27 +694,27 @@
             } else {
                 return `<span class="tag tag-disponible">🟢 Disponible${infoStock}</span>`;
             }
-        }
+        };
 
-        // --- PROCESAMIENTO HÍBRIDO DE IMAGEN (SUBIDA LOCAL Y/O URL) ---
-        function procesarUrlImagen(url) {
+        // --- PROCESAMIENTO HÍBRIDO DE IMAGEN ---
+        window.procesarUrlImagen = function(url) {
             const urlLimpia = url.trim();
             if(urlLimpia !== "") {
-                document.getElementById('prodImagenInput').value = ""; // Limpia archivo local si hay URL
-                imagenTempBase64 = urlLimpia;
+                document.getElementById('prodImagenInput').value = "";
+                window.imagenTempBase64 = urlLimpia;
                 document.getElementById('previewBox').innerHTML = `<img src="${urlLimpia}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;" onerror="this.onerror=null; this.parentElement.innerHTML='❌ Error URL';">`;
             } else {
                 if(!document.getElementById('prodImagenInput').value) {
-                    limpiarImagen();
+                    window.limpiarImagen();
                 }
             }
-        }
+        };
 
-        function procesarImagenSeleccionada(e) {
+        window.procesarImagenSeleccionada = function(e) {
             const file = e.target.files[0];
             if (!file) return;
 
-            document.getElementById('prodImagenUrl').value = ""; // Limpia input URL si se sube archivo
+            document.getElementById('prodImagenUrl').value = "";
 
             const reader = new FileReader();
             reader.onload = function(evt) {
@@ -687,30 +742,30 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    imagenTempBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    window.imagenTempBase64 = canvas.toDataURL('image/jpeg', 0.7);
                     const previewBox = document.getElementById('previewBox');
-                    previewBox.innerHTML = `<img src="${imagenTempBase64}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;">`;
+                    previewBox.innerHTML = `<img src="${window.imagenTempBase64}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;">`;
                 };
                 img.src = evt.target.result;
             };
             reader.readAsDataURL(file);
-        }
+        };
 
-        function limpiarImagen() {
-            imagenTempBase64 = "";
+        window.limpiarImagen = function() {
+            window.imagenTempBase64 = "";
             document.getElementById('prodImagenInput').value = "";
             document.getElementById('prodImagenUrl').value = "";
             document.getElementById('previewBox').innerHTML = "Sin foto";
-        }
+        };
 
         // --- MODAL PROVEEDOR ---
-        function abrirModalProv(idProv = null) {
-            idProveedorEnEdicion = idProv;
+        window.abrirModalProv = function(idProv = null) {
+            window.idProveedorEnEdicion = idProv;
             const titulo = document.getElementById('tituloModalProv');
 
             if (idProv) {
                 titulo.innerText = "✏️ Editar Proveedor";
-                const prov = directorio.find(p => p.id === idProv);
+                const prov = window.directorio.find(p => p.id === idProv);
                 
                 document.getElementById('provNombre').value = prov.nombre;
                 document.getElementById('provWeb').value = prov.web || '';
@@ -722,8 +777,8 @@
                 const radioEstado = document.querySelector(`input[name="catEstado"][value="${prov.estado}"]`);
                 if(radioEstado) radioEstado.checked = true;
 
-                esFavActual = prov.favorito;
-                productosTemporales = JSON.parse(JSON.stringify(prov.productos || []));
+                window.esFavActual = prov.favorito;
+                window.productosTemporales = JSON.parse(JSON.stringify(prov.productos || []));
             } else {
                 titulo.innerText = "🏢 Ficha de Nuevo Proveedor";
                 document.getElementById('provNombre').value = '';
@@ -735,48 +790,48 @@
                 const radioOficial = document.querySelector('input[name="catEstado"][value="Oficial"]');
                 if(radioOficial) radioOficial.checked = true;
 
-                esFavActual = false;
-                productosTemporales = []; 
+                window.esFavActual = false;
+                window.productosTemporales = []; 
             }
 
             const estrella = document.getElementById('estrellaFav');
-            estrella.innerHTML = esFavActual ? '★' : '☆';
-            if(esFavActual) estrella.classList.add('fav-active');
+            estrella.innerHTML = window.esFavActual ? '★' : '☆';
+            if(window.esFavActual) estrella.classList.add('fav-active');
             else estrella.classList.remove('fav-active');
             
-            actualizarLineaTemp();
-            actualizarTablaTemp();
+            window.actualizarLineaTemp();
+            window.actualizarTablaTemp();
             document.getElementById('modalProv').style.display = 'flex';
-        }
+        };
 
-        function cerrarModalProv() { document.getElementById('modalProv').style.display = 'none'; }
+        window.cerrarModalProv = function() { document.getElementById('modalProv').style.display = 'none'; };
 
-        function actualizarLineaTemp() {
-            const linea = determinarLineaProveedor(productosTemporales);
+        window.actualizarLineaTemp = function() {
+            const linea = window.determinarLineaProveedor(window.productosTemporales);
             const etiqueta = document.getElementById('etiquetaLineaProv');
             etiqueta.innerText = linea;
-            etiqueta.className = 'tag ' + getClaseTag(linea);
+            etiqueta.className = 'tag ' + window.getClaseTag(linea);
             if(linea === 'Sin Productos') etiqueta.style.background = '#64748b';
-        }
+        };
 
-        function actualizarTablaTemp() {
+        window.actualizarTablaTemp = function() {
             const tbody = document.getElementById('listaTempProductos');
             tbody.innerHTML = '';
-            productosTemporales.forEach(p => {
+            window.productosTemporales.forEach(p => {
                 const imgHTML = p.imagen 
                     ? `<img src="${p.imagen}" style="width:35px; height:35px; object-fit:cover; border-radius:4px;" onerror="this.onerror=null; this.parentElement.innerHTML='📷';">` 
                     : `<span style="opacity:0.4;">📷</span>`;
                 
-                const cantCajaTxt = p.cantCaja ? `<br><small style="opacity:0.8; font-size:0.75em;">📦 ${fNum(p.cantCaja)} un/caja</small>` : '';
+                const cantCajaTxt = p.cantCaja ? `<br><small style="opacity:0.8; font-size:0.75em;">📦 ${window.fNum(p.cantCaja)} un/caja</small>` : '';
 
                 tbody.innerHTML += `<tr>
                     <td>${imgHTML}</td>
-                    <td><span class="tag ${getClaseTag(p.linea)}">${p.linea}</span></td>
+                    <td><span class="tag ${window.getClaseTag(p.linea)}">${p.linea}</span></td>
                     <td><strong>${p.nombre}</strong><br><small>${p.categoria} > ${p.subcategoria}</small></td>
-                    <td>${renderStockTag(p)}</td>
-                    <td>$${fNum(p.unitario)}</td>
-                    <td>$${fNum(p.minorista)}</td>
-                    <td><strong>$${fNum(p.mayorista)}</strong>${cantCajaTxt}</td>
+                    <td>${window.renderStockTag(p)}</td>
+                    <td>$${window.fNum(p.unitario)}</td>
+                    <td>$${window.fNum(p.minorista)}</td>
+                    <td><strong>$${window.fNum(p.mayorista)}</strong>${cantCajaTxt}</td>
                     <td>
                         <div style="display:flex; gap:4px;">
                             <button type="button" class="btn-warning" style="padding:2px 6px; font-size:0.8em;" onclick="abrirModalProd('edit_temp', null, '${p.id}')">✏️</button>
@@ -785,79 +840,66 @@
                     </td>
                 </tr>`;
             });
-        }
+        };
 
-        function eliminarProdTemp(id) {
-            productosTemporales = productosTemporales.filter(p => p.id !== id);
-            actualizarLineaTemp();
-            actualizarTablaTemp();
-        }
+        window.eliminarProdTemp = function(id) {
+            window.productosTemporales = window.productosTemporales.filter(p => p.id !== id);
+            window.actualizarLineaTemp();
+            window.actualizarTablaTemp();
+        };
 
-        function guardarProveedorFinal() {
+        window.guardarProveedorFinal = function() {
             const nombre = document.getElementById('provNombre').value.trim();
-            if(!nombre || productosTemporales.length === 0) {
+            if(!nombre || window.productosTemporales.length === 0) {
                 alert("Ingresa el nombre del proveedor y al menos un producto."); return;
             }
 
             const estadoRadio = document.querySelector('input[name="catEstado"]:checked');
 
             const datosProveedor = {
+                id: window.idProveedorEnEdicion || ('prov_' + window.generarId()),
                 nombre: nombre,
                 web: document.getElementById('provWeb').value.trim(),
                 contacto: document.getElementById('provContacto').value.trim() || '-',
                 email: document.getElementById('provEmail').value.trim() || '-',
                 ciudad: document.getElementById('provCiudad').value,
                 tiempo: document.getElementById('provTiempo').value.trim() || '-',
-                linea: determinarLineaProveedor(productosTemporales),
+                linea: window.determinarLineaProveedor(window.productosTemporales),
                 estado: estadoRadio ? estadoRadio.value : 'Oficial',
-                favorito: esFavActual,
-                productos: [...productosTemporales]
+                favorito: window.esFavActual,
+                productos: [...window.productosTemporales]
             };
 
-            if (idProveedorEnEdicion) {
-                const indice = directorio.findIndex(p => p.id === idProveedorEnEdicion);
-                if (indice !== -1) {
-                    datosProveedor.id = idProveedorEnEdicion;
-                    directorio[indice] = datosProveedor;
-                }
-            } else {
-                datosProveedor.id = 'prov_' + generarId();
-                directorio.push(datosProveedor);
-            }
+            window.guardarProveedorCloud(datosProveedor);
+            window.cerrarModalProv();
+        };
 
-            guardarDatos();
-            actualizarDirectorio();
-            cerrarModalProv();
-        }
-
-        function eliminarProveedor(idProv) {
+        window.eliminarProveedor = function(idProv) {
             if(confirm("¿Estás seguro de eliminar este proveedor y todos sus productos? Esta acción no se puede deshacer.")) {
-                directorio = directorio.filter(p => p.id !== idProv);
-                guardarDatos();
-                actualizarDirectorio();
+                window.eliminarProveedorCloud(idProv);
             }
-        }
+        };
 
         // --- MODAL PRODUCTO ---
-        function cargarSelectsCategoria() {
+        window.cargarSelectsCategoria = function() {
             const sCat = document.getElementById('prodCatSelect');
             const sSub = document.getElementById('prodSubSelect');
             
-            sCat.innerHTML = categoriasBase.map(c => `<option value="${c}">${c}</option>`).join('') + `<option value="OTRA">➕ Crear Nueva...</option>`;
-            sSub.innerHTML = subcategoriasBase.map(s => `<option value="${s}">${s}</option>`).join('') + `<option value="OTRA">➕ Crear Nueva...</option>`;
+            sCat.innerHTML = window.categoriasBase.map(c => `<option value="${c}">${c}</option>`).join('') + `<option value="OTRA">➕ Crear Nueva...</option>`;
+            sSub.innerHTML = window.subcategoriasBase.map(s => `<option value="${s}">${s}</option>`).join('') + `<option value="OTRA">➕ Crear Nueva...</option>`;
             
             document.getElementById('prodCatNueva').style.display = 'none';
             document.getElementById('prodSubNueva').style.display = 'none';
-        }
+        };
 
-        function verificarCategoria(tipo) {
+        window.verificarCategoria = function(tipo) {
             const select = document.getElementById('prod' + tipo + 'Select');
             const input = document.getElementById('prod' + tipo + 'Nueva');
             input.style.display = select.value === 'OTRA' ? 'block' : 'none';
             if(select.value === 'OTRA') input.focus();
-        }
+        };
 
-        function sumarIVA() {
+        window.sumarIVA = function() {
             const iUni = document.getElementById('prodUni');
             const iMin = document.getElementById('prodMin');
             const iMay = document.getElementById('prodMay');
@@ -865,12 +907,12 @@
             if(iUni.value) iUni.value = Math.round(Number(iUni.value) * 1.19);
             if(iMin.value) iMin.value = Math.round(Number(iMin.value) * 1.19);
             if(iMay.value) iMay.value = Math.round(Number(iMay.value) * 1.19);
-        }
+        };
 
-        function abrirModalProd(modo, idProv = null, idProd = null) {
-            contextoProducto = { modo, idProv, idProd };
-            cargarSelectsCategoria();
-            limpiarImagen();
+        window.abrirModalProd = function(modo, idProv = null, idProd = null) {
+            window.contextoProducto = { modo, idProv, idProd };
+            window.cargarSelectsCategoria();
+            window.limpiarImagen();
             
             document.getElementById('tituloModalProd').innerText = (modo === 'edit' || modo === 'edit_temp') ? '✏️ Editar Producto' : '➕ Detalle del Producto';
             
@@ -893,10 +935,10 @@
 
             let prod = null;
             if(modo === 'edit' && idProv && idProd) {
-                const prov = directorio.find(p => p.id === idProv);
+                const prov = window.directorio.find(p => p.id === idProv);
                 if(prov) prod = prov.productos.find(p => p.id === idProd);
             } else if(modo === 'edit_temp' && idProd) {
-                prod = productosTemporales.find(p => p.id === idProd);
+                prod = window.productosTemporales.find(p => p.id === idProd);
             }
 
             if(prod) {
@@ -918,7 +960,7 @@
                 if(rEstado) rEstado.checked = true;
 
                 if(prod.imagen) {
-                    imagenTempBase64 = prod.imagen;
+                    window.imagenTempBase64 = prod.imagen;
                     if(prod.imagen.startsWith('http://') || prod.imagen.startsWith('https://')) {
                         document.getElementById('prodImagenUrl').value = prod.imagen;
                     }
@@ -926,40 +968,52 @@
                 }
 
                 if(prod.categoria) {
-                    if(!categoriasBase.includes(prod.categoria)) {
-                        categoriasBase.push(prod.categoria);
-                        cargarSelectsCategoria();
+                    if(!window.categoriasBase.includes(prod.categoria)) {
+                        window.categoriasBase.push(prod.categoria);
+                        window.cargarSelectsCategoria();
+                        window.guardarConfiguracionCloud();
                     }
                     document.getElementById('prodCatSelect').value = prod.categoria;
                 }
 
                 if(prod.subcategoria) {
-                    if(!subcategoriasBase.includes(prod.subcategoria)) {
-                        subcategoriasBase.push(prod.subcategoria);
-                        cargarSelectsCategoria();
+                    if(!window.subcategoriasBase.includes(prod.subcategoria)) {
+                        window.subcategoriasBase.push(prod.subcategoria);
+                        window.cargarSelectsCategoria();
+                        window.guardarConfiguracionCloud();
                     }
                     document.getElementById('prodSubSelect').value = prod.subcategoria;
                 }
             }
             
             document.getElementById('modalProd').style.display = 'flex';
-        }
+        };
 
-        function cerrarModalProd() { document.getElementById('modalProd').style.display = 'none'; }
+        window.cerrarModalProd = function() { document.getElementById('modalProd').style.display = 'none'; };
 
-        function procesarGuardadoProducto() {
+        window.procesarGuardadoProducto = function() {
             try {
                 let cat = document.getElementById('prodCatSelect').value;
                 let sub = document.getElementById('prodSubSelect').value;
                 
+                let cambioListas = false;
+
                 if(cat === 'OTRA') {
                     cat = document.getElementById('prodCatNueva').value.trim();
-                    if(cat && !categoriasBase.includes(cat)) categoriasBase.push(cat);
+                    if(cat && !window.categoriasBase.includes(cat)) {
+                        window.categoriasBase.push(cat);
+                        cambioListas = true;
+                    }
                 }
                 if(sub === 'OTRA') {
                     sub = document.getElementById('prodSubNueva').value.trim();
-                    if(sub && !subcategoriasBase.includes(sub)) subcategoriasBase.push(sub);
+                    if(sub && !window.subcategoriasBase.includes(sub)) {
+                        window.subcategoriasBase.push(sub);
+                        cambioListas = true;
+                    }
                 }
+
+                if (cambioListas) window.guardarConfiguracionCloud();
 
                 const cantCajaVal = document.getElementById('prodCantCaja').value;
                 const stockUnidVal = document.getElementById('prodStockUnid').value;
@@ -974,7 +1028,7 @@
                     descripcion: document.getElementById('prodDesc').value.trim(),
                     linea: rLinea ? rLinea.value : 'Eco',
                     estado: rEstado ? rEstado.value : 'Disponible',
-                    imagen: imagenTempBase64,
+                    imagen: window.imagenTempBase64,
                     categoria: cat || 'Sin Categoría',
                     subcategoria: sub || 'Sin Subcategoría',
                     unitario: Number(document.getElementById('prodUni').value) || 0,
@@ -991,78 +1045,84 @@
                     return; 
                 }
 
-                if(contextoProducto.modo === 'temp') {
-                    prod.id = 'temp_' + generarId();
-                    productosTemporales.push(prod);
-                    actualizarLineaTemp();
-                    actualizarTablaTemp();
-                } else if(contextoProducto.modo === 'edit_temp') {
-                    const idx = productosTemporales.findIndex(p => p.id === contextoProducto.idProd);
+                const { modo, idProv, idProd } = window.contextoProducto;
+
+                if(modo === 'temp') {
+                    prod.id = 'temp_' + window.generarId();
+                    window.productosTemporales.push(prod);
+                    window.actualizarLineaTemp();
+                    window.actualizarTablaTemp();
+                } else if(modo === 'edit_temp') {
+                    const idx = window.productosTemporales.findIndex(p => p.id === idProd);
                     if(idx !== -1) {
-                        prod.id = contextoProducto.idProd;
-                        productosTemporales[idx] = prod;
-                        actualizarLineaTemp();
-                        actualizarTablaTemp();
+                        prod.id = idProd;
+                        window.productosTemporales[idx] = prod;
+                        window.actualizarLineaTemp();
+                        window.actualizarTablaTemp();
                     }
-                } else if (contextoProducto.modo === 'add_dir') {
-                    prod.id = 'prod_' + generarId();
-                    const prov = directorio.find(p => p.id === contextoProducto.idProv);
+                } else if (modo === 'add_dir' || modo === 'edit') {
+                    const prov = window.directorio.find(p => p.id === idProv);
                     if(prov) {
-                        if(!prov.productos) prov.productos = [];
-                        prov.productos.push(prod);
-                        prov.linea = determinarLineaProveedor(prov.productos);
-                        guardarDatos();
-                        actualizarDirectorio();
-                    }
-                } else if (contextoProducto.modo === 'edit') {
-                    const prov = directorio.find(p => p.id === contextoProducto.idProv);
-                    if(prov && prov.productos) {
-                        const indice = prov.productos.findIndex(p => p.id === contextoProducto.idProd);
-                        if(indice !== -1) {
-                            prod.id = contextoProducto.idProd;
-                            prov.productos[indice] = prod;
-                            prov.linea = determinarLineaProveedor(prov.productos);
-                            guardarDatos();
-                            actualizarDirectorio();
+                        let copiaProductos = [...(prov.productos || [])];
+                        if (modo === 'add_dir') {
+                            prod.id = 'prod_' + window.generarId();
+                            copiaProductos.push(prod);
+                        } else {
+                            const idx = copiaProductos.findIndex(p => p.id === idProd);
+                            if(idx !== -1) {
+                                prod.id = idProd;
+                                copiaProductos[idx] = prod;
+                            }
                         }
+
+                        const provActualizado = {
+                            ...prov,
+                            productos: copiaProductos,
+                            linea: window.determinarLineaProveedor(copiaProductos)
+                        };
+
+                        window.guardarProveedorCloud(provActualizado);
                     }
                 }
 
-                cerrarModalProd();
+                window.cerrarModalProd();
             } catch (err) {
                 console.error("Error al procesar producto:", err);
                 alert("Ocurrió un error al guardar el producto: " + err.message);
             }
-        }
+        };
 
-        function eliminarProductoDir(idProv, idProd) {
+        window.eliminarProductoDir = function(idProv, idProd) {
             if(confirm("¿Eliminar este producto?")) {
-                const prov = directorio.find(p => p.id === idProv);
+                const prov = window.directorio.find(p => p.id === idProv);
                 if(prov) {
-                    prov.productos = prov.productos.filter(p => p.id !== idProd);
-                    prov.linea = determinarLineaProveedor(prov.productos);
-                    guardarDatos();
-                    actualizarDirectorio();
+                    const productosFiltrados = (prov.productos || []).filter(p => p.id !== idProd);
+                    const provActualizado = {
+                        ...prov,
+                        productos: productosFiltrados,
+                        linea: window.determinarLineaProveedor(productosFiltrados)
+                    };
+                    window.guardarProveedorCloud(provActualizado);
                 }
             }
-        }
+        };
 
         // --- GESTIÓN DE CATEGORÍAS Y SUBCATEGORÍAS ---
-        function abrirModalCatSub() {
-            renderizarListaCatSub();
+        window.abrirModalCatSub = function() {
+            window.renderizarListaCatSub();
             document.getElementById('modalCatSub').style.display = 'flex';
-        }
+        };
 
-        function cerrarModalCatSub() {
+        window.cerrarModalCatSub = function() {
             document.getElementById('modalCatSub').style.display = 'none';
-        }
+        };
 
-        function renderizarListaCatSub() {
+        window.renderizarListaCatSub = function() {
             const divCat = document.getElementById('listaCategoriasManager');
             const divSub = document.getElementById('listaSubcategoriasManager');
 
-            divCat.innerHTML = categoriasBase.length === 0 ? '<em>No hay categorías registradas.</em>' : 
-                categoriasBase.map((cat, idx) => `
+            divCat.innerHTML = window.categoriasBase.length === 0 ? '<em>No hay categorías registradas.</em>' : 
+                window.categoriasBase.map((cat, idx) => `
                     <div style="display:flex; justify-content:space-between; align-items:center; background:var(--highlight-bg); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color);">
                         <strong style="font-size:0.9em;">${cat}</strong>
                         <div style="display:flex; gap:5px;">
@@ -1072,8 +1132,8 @@
                     </div>
                 `).join('');
 
-            divSub.innerHTML = subcategoriasBase.length === 0 ? '<em>No hay sub-categorías registradas.</em>' : 
-                subcategoriasBase.map((sub, idx) => `
+            divSub.innerHTML = window.subcategoriasBase.length === 0 ? '<em>No hay sub-categorías registradas.</em>' : 
+                window.subcategoriasBase.map((sub, idx) => `
                     <div style="display:flex; justify-content:space-between; align-items:center; background:var(--highlight-bg); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color);">
                         <strong style="font-size:0.9em;">${sub}</strong>
                         <div style="display:flex; gap:5px;">
@@ -1082,99 +1142,61 @@
                         </div>
                     </div>
                 `).join('');
-        }
+        };
 
-        function editarCategoria(index) {
-            const nombreViejo = categoriasBase[index];
+        window.editarCategoria = function(index) {
+            const nombreViejo = window.categoriasBase[index];
             const nuevoNombre = prompt("Modificar nombre de la Categoría:", nombreViejo);
             
             if (nuevoNombre && nuevoNombre.trim() !== "" && nuevoNombre !== nombreViejo) {
                 const nombreLimpio = nuevoNombre.trim();
-                categoriasBase[index] = nombreLimpio;
+                window.categoriasBase[index] = nombreLimpio;
 
-                directorio.forEach(prov => {
-                    if(prov.productos) {
-                        prov.productos.forEach(prod => {
-                            if (prod.categoria === nombreViejo) prod.categoria = nombreLimpio;
-                        });
-                    }
-                });
-
-                guardarDatos();
-                renderizarListaCatSub();
-                actualizarDirectorio();
+                window.guardarConfiguracionCloud();
+                window.renderizarListaCatSub();
             }
-        }
+        };
 
-        function eliminarCategoria(index) {
-            const catNombre = categoriasBase[index];
-            if (confirm(`¿Eliminar la categoría "${catNombre}"? Los productos asignados a ella cambiarán a "Sin Categoría".`)) {
-                categoriasBase.splice(index, 1);
-
-                directorio.forEach(prov => {
-                    if(prov.productos) {
-                        prov.productos.forEach(prod => {
-                            if (prod.categoria === catNombre) prod.categoria = "Sin Categoría";
-                        });
-                    }
-                });
-
-                guardarDatos();
-                renderizarListaCatSub();
-                actualizarDirectorio();
+        window.eliminarCategoria = function(index) {
+            const catNombre = window.categoriasBase[index];
+            if (confirm(`¿Eliminar la categoría "${catNombre}"?`)) {
+                window.categoriasBase.splice(index, 1);
+                window.guardarConfiguracionCloud();
+                window.renderizarListaCatSub();
             }
-        }
+        };
 
-        function editarSubcategoria(index) {
-            const nombreViejo = subcategoriasBase[index];
+        window.editarSubcategoria = function(index) {
+            const nombreViejo = window.subcategoriasBase[index];
             const nuevoNombre = prompt("Modificar nombre de la Sub-Categoría:", nombreViejo);
             
             if (nuevoNombre && nuevoNombre.trim() !== "" && nuevoNombre !== nombreViejo) {
                 const nombreLimpio = nuevoNombre.trim();
-                subcategoriasBase[index] = nombreLimpio;
+                window.subcategoriasBase[index] = nombreLimpio;
 
-                directorio.forEach(prov => {
-                    if(prov.productos) {
-                        prov.productos.forEach(prod => {
-                            if (prod.subcategoria === nombreViejo) prod.subcategoria = nombreLimpio;
-                        });
-                    }
-                });
-
-                guardarDatos();
-                renderizarListaCatSub();
-                actualizarDirectorio();
+                window.guardarConfiguracionCloud();
+                window.renderizarListaCatSub();
             }
-        }
+        };
 
-        function eliminarSubcategoria(index) {
-            const subNombre = subcategoriasBase[index];
-            if (confirm(`¿Eliminar la sub-categoría "${subNombre}"? Los productos asignados a ella cambiarán a "Sin Subcategoría".`)) {
-                subcategoriasBase.splice(index, 1);
-
-                directorio.forEach(prov => {
-                    if(prov.productos) {
-                        prov.productos.forEach(prod => {
-                            if (prod.subcategoria === subNombre) prod.subcategoria = "Sin Subcategoría";
-                        });
-                    }
-                });
-
-                guardarDatos();
-                renderizarListaCatSub();
-                actualizarDirectorio();
+        window.eliminarSubcategoria = function(index) {
+            const subNombre = window.subcategoriasBase[index];
+            if (confirm(`¿Eliminar la sub-categoría "${subNombre}"?`)) {
+                window.subcategoriasBase.splice(index, 1);
+                window.guardarConfiguracionCloud();
+                window.renderizarListaCatSub();
             }
-        }
+        };
 
         // --- RENDERIZADO DIRECTORIO ---
-        function actualizarDirectorio() {
+        window.actualizarDirectorio = function() {
             const fFav = document.getElementById('filtroFav').value;
             const fCat = document.getElementById('filtroCat').value;
             const fEst = document.getElementById('filtroEst').value;
             const fDisp = document.getElementById('filtroDisp').value;
             const fCiu = document.getElementById('filtroCiu').value;
 
-            let directorioFiltrado = directorio.map(prov => {
+            let directorioFiltrado = window.directorio.map(prov => {
                 let copyProv = JSON.parse(JSON.stringify(prov));
                 if(!copyProv.productos) copyProv.productos = [];
                 if (fDisp !== 'todos') {
@@ -1200,14 +1222,14 @@
             contenedor.innerHTML = '';
 
             if(directorioFiltrado.length === 0) {
-                contenedor.innerHTML = '<p>No hay datos que coincidan con tu búsqueda.</p>';
-                compararProveedores();
+                contenedor.innerHTML = '<p>No hay datos registrados en Firebase o que coincidan con tu búsqueda.</p>';
+                window.compararProveedores();
                 return;
             }
 
             directorioFiltrado.forEach(prov => {
                 const favIcon = prov.favorito ? '<span style="color:gold; font-size:1.2em; filter:drop-shadow(0 0 5px gold);">★</span>' : '<span style="color:gray;">☆</span>';
-                const tagLinea = `<span class="tag ${getClaseTag(prov.linea)}">${prov.linea}</span>`;
+                const tagLinea = `<span class="tag ${window.getClaseTag(prov.linea)}">${prov.linea}</span>`;
                 const tagEstado = prov.estado === 'Oficial' ? '<span class="tag tag-oficial">Oficial</span>' : '<span class="tag tag-posible">Posible</span>';
                 const webLink = prov.web ? `<a href="${prov.web}" target="_blank" style="color:var(--primary-blue); font-weight:bold; margin-left:10px;">🔗 Web</a>` : ``;
                 const mailInfo = prov.email && prov.email !== '-' ? ` | ✉️ ${prov.email}` : '';
@@ -1256,8 +1278,8 @@
                                 ? `<img src="${prod.imagen}" class="prod-img-thumb" alt="${prod.nombre}" onerror="this.onerror=null; this.parentElement.innerHTML='📷 Sin Foto';">` 
                                 : `<div class="prod-img-thumb">📷 Sin Foto</div>`;
 
-                            const tagDisp = renderStockTag(prod);
-                            const cantCajaTag = prod.cantCaja ? `<small style="display:block; font-size:0.78em; color:var(--cyan-accent); font-weight:bold;">📦 ${fNum(prod.cantCaja)} un/caja</small>` : '';
+                            const tagDisp = window.renderStockTag(prod);
+                            const cantCajaTag = prod.cantCaja ? `<small style="display:block; font-size:0.78em; color:var(--cyan-accent); font-weight:bold;">📦 ${window.fNum(prod.cantCaja)} un/caja</small>` : '';
 
                             htmlProv += `
                             <div class="prod-item-dir">
@@ -1265,7 +1287,7 @@
                                     ${imgThumb}
                                     <div style="display:flex; flex-direction:column; gap:4px;">
                                         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                                            <span class="tag ${getClaseTag(prod.linea)}">${prod.linea}</span>
+                                            <span class="tag ${window.getClaseTag(prod.linea)}">${prod.linea}</span>
                                             ${tagDisp}
                                             <strong style="font-size:1em;">${prod.nombre}</strong> ${prodWebLink}
                                         </div>
@@ -1275,10 +1297,10 @@
                                 </div>
 
                                 <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:flex-end;">
-                                    <span style="font-size:0.85em; opacity:0.8;">Uni: $${fNum(prod.unitario)}</span>
-                                    <span style="font-size:0.85em;">Min: $${fNum(prod.minorista)}</span>
+                                    <span style="font-size:0.85em; opacity:0.8;">Uni: $${window.fNum(prod.unitario)}</span>
+                                    <span style="font-size:0.85em;">Min: $${window.fNum(prod.minorista)}</span>
                                     <div style="text-align:right;">
-                                        <span style="color:#10b981; font-weight:bold; font-size:1.1em;">May: $${fNum(prod.mayorista)}</span>
+                                        <span style="color:#10b981; font-weight:bold; font-size:1.1em;">May: $${window.fNum(prod.mayorista)}</span>
                                         ${cantCajaTag}
                                     </div>
                                     <button type="button" class="btn-warning" onclick="abrirModalProd('edit', '${prov.id}', '${prod.id}')">Editar</button>
@@ -1295,23 +1317,23 @@
                 contenedor.innerHTML += htmlProv;
             });
             
-            compararProveedores();
-        }
+            window.compararProveedores();
+        };
 
         // --- EVALUADOR Y COMPARADOR ---
-        function compararProveedores() {
+        window.compararProveedores = function() {
             const inputBusqueda = document.getElementById('buscarProd');
             if(!inputBusqueda) return;
 
             const busqueda = inputBusqueda.value.toLowerCase().trim();
             const divRec = document.getElementById('recomendacion');
 
-            if (!busqueda || directorio.length === 0) {
+            if (!busqueda || window.directorio.length === 0) {
                 if(divRec) divRec.innerHTML = ''; return;
             }
 
             let opciones = [];
-            directorio.forEach(prov => {
+            window.directorio.forEach(prov => {
                 if(prov.productos) {
                     prov.productos.forEach(prod => {
                         if(prod.nombre.toLowerCase().includes(busqueda) || 
@@ -1332,21 +1354,21 @@
             });
 
             if (opciones.length === 0) {
-                if(divRec) divRec.innerHTML = '<em>No hay coincidencias en tu base de datos.</em>'; return;
+                if(divRec) divRec.innerHTML = '<em>No hay coincidencias en tu base de datos cloud.</em>'; return;
             }
 
             let disponibles = opciones.filter(o => o.estado !== 'No disponible');
             
             if (disponibles.length > 0) {
                 let mejor = disponibles.reduce((prev, curr) => (prev.precio < curr.precio) ? prev : curr);
-                const infoCaja = mejor.cantCaja ? ` (${fNum(mejor.cantCaja)} un/caja)` : '';
+                const infoCaja = mejor.cantCaja ? ` (${window.fNum(mejor.cantCaja)} un/caja)` : '';
                 
                 let tagStock = `<span class="tag tag-disponible">🟢 En Stock</span>`;
                 let alertStockTxt = '';
 
                 if (mejor.estado === 'Últimas Unidades') {
                     let stockTxt = (mejor.stockUnid !== null && mejor.stockUnid !== undefined) 
-                        ? ` (${fNum(mejor.stockUnid)} un / ${mejor.stockCajas || 0} cjas)` 
+                        ? ` (${window.fNum(mejor.stockUnid)} un / ${mejor.stockCajas || 0} cjas)` 
                         : '';
                     tagStock = `<span class="tag tag-ultimas">🟠 Últimas Unidades${stockTxt}</span>`;
                     alertStockTxt = ` <strong style="color:var(--warning);">(⚠️ Quedan pocas unidades en la web del proveedor)</strong>`;
@@ -1356,7 +1378,7 @@
                     divRec.innerHTML = `
                         💡 <strong>Mejor Opción Disponible:</strong> 
                         <strong>${mejor.provNombre}</strong> tiene "${mejor.prodNombre}" a 
-                        <strong style="color:#10b981;">$${fNum(mejor.precio)} (Mayorista${infoCaja})</strong>. 
+                        <strong style="color:#10b981;">$${window.fNum(mejor.precio)} (Mayorista${infoCaja})</strong>. 
                         Tiempo estimado: ${mejor.tiempo} días. 
                         ${tagStock} ${alertStockTxt}
                         ${mejor.esFav ? '⭐(Tu Favorito)' : ''} 
@@ -1368,15 +1390,12 @@
                 if(divRec) {
                     divRec.innerHTML = `
                         ⚠️ <strong>Atención:</strong> Se encontró "${mejorSinStock.prodNombre}" en 
-                        <strong>${mejorSinStock.provNombre}</strong> a <strong style="color:#ef4444;">$${fNum(mejorSinStock.precio)}</strong>, 
+                        <strong>${mejorSinStock.provNombre}</strong> a <strong style="color:#ef4444;">$${window.fNum(mejorSinStock.precio)}</strong>, 
                         pero figura como <span class="tag tag-nodisponible">🔴 No disponible</span>. Consulta disponibilidad directamente con el proveedor.
                     `;
                 }
             }
-        }
-
-        // --- INICIALIZAR AL CARGAR ---
-        window.onload = cargarDatos;
+        };
     </script>
 </body>
 </html>
