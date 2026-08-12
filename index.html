@@ -20,6 +20,8 @@
             --danger: #ef4444;
             --warning: #f59e0b;
             --success: #10b981;
+            --minor-color: #0284c7;
+            --mayor-color: #10b981;
         }
 
         [data-theme="dark"] {
@@ -34,6 +36,8 @@
             --border-color: #2a3a5c;
             --highlight-bg: #1c2a47;
             --modal-bg: rgba(2, 6, 23, 0.85);
+            --minor-color: #38bdf8;
+            --mayor-color: #10b981;
         }
 
         body {
@@ -216,6 +220,24 @@
         }
         .btn-iva:hover { filter: brightness(1.1); box-shadow: 0 0 15px #10b981; }
 
+        /* ESTILOS PARA BLOQUES DE PRECIOS EN DIRECTORIO */
+        .price-box-minor {
+            background: rgba(2, 132, 199, 0.1);
+            border: 1px solid var(--minor-color);
+            border-radius: 8px;
+            padding: 6px 12px;
+            text-align: right;
+            min-width: 125px;
+        }
+        .price-box-mayor {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--mayor-color);
+            border-radius: 8px;
+            padding: 6px 12px;
+            text-align: right;
+            min-width: 140px;
+        }
+
     </style>
 </head>
 <body>
@@ -370,9 +392,8 @@
                             <th>Línea</th>
                             <th>Producto</th>
                             <th>Stock</th>
-                            <th>Uni</th>
-                            <th>Min (Un/Caja)</th>
-                            <th>May (Un/Caja)</th>
+                            <th>Precio Minorista</th>
+                            <th>Precio Mayorista</th>
                             <th>Acción</th>
                         </tr>
                     </thead>
@@ -460,29 +481,40 @@
                 <textarea id="prodDesc" rows="2" placeholder="Detalles técnicos, material, dimensiones..."></textarea>
             </div>
 
-            <!-- PRECIOS Y UNIDADES POR CAJA (INCLUYE UNIDADES/CAJA MINORISTA COMO BASE PARA MAYORISTA) -->
+            <!-- PRECIOS Y UNIDADES POR CAJA (ESTRUCTURA NUEVA Y AUTO-CALCULADA) -->
             <div class="form-grid" style="align-items: end; background: var(--highlight-bg); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);">
+                <div class="form-group">
+                    <label style="color: var(--minor-color);">Unidades x Caja Minor</label>
+                    <input type="number" id="prodUniCajaMinor" placeholder="Ej. 10" oninput="calcularUnitarioAuto()" style="border-color: var(--minor-color);">
+                </div>
+                <div class="form-group">
+                    <label style="color: var(--minor-color);">Cajas Minor x Caja Mayor</label>
+                    <input type="number" id="prodCajasMinorEnMayor" placeholder="Ej. 10" oninput="calcularUnitarioAuto()" style="border-color: var(--minor-color);">
+                </div>
+                <div class="form-group">
+                    <label style="color: var(--cyan-accent);">Uni. x Caja Mayor <small style="opacity:0.7;">(Auto 🔒)</small></label>
+                    <input type="number" id="prodCantCaja" placeholder="Calculado aut." readonly disabled style="border-color: var(--cyan-accent); font-weight: bold; background: var(--card-bg);" oninput="SincronizarStockWeb('cajas');">
+                </div>
+
+                <div class="form-group">
+                    <label style="color: var(--minor-color);">Minorista neto ($)</label>
+                    <input type="number" id="prodMin" placeholder="4500" oninput="calcularUnitarioAuto()" style="border-color: var(--minor-color);">
+                </div>
+                <div class="form-group">
+                    <label style="color: var(--minor-color);">Unit. Minorista neto ($) <small style="opacity:0.7;">(Auto ⚡)</small></label>
+                    <input type="number" id="prodUniMin" placeholder="Calculado aut." readonly disabled style="background: var(--card-bg); border-color: var(--minor-color);">
+                </div>
+
                 <div class="form-group">
                     <label style="color: var(--cyan-accent);">Mayorista neto ($)</label>
                     <input type="number" id="prodMay" placeholder="30000" oninput="calcularUnitarioAuto()" style="border-color: var(--cyan-accent);">
                 </div>
                 <div class="form-group">
-                    <label style="color: var(--cyan-accent);">Unidades x Caja (Mayorista)</label>
-                    <input type="number" id="prodCantCaja" placeholder="100" oninput="calcularUnitarioAuto(); SincronizarStockWeb('cajas');" style="border-color: var(--cyan-accent);">
+                    <label style="color: var(--cyan-accent);">Unit. Mayorista neto ($) <small style="opacity:0.7;">(Auto ⚡)</small></label>
+                    <input type="number" id="prodUni" placeholder="Calculado aut." readonly disabled style="background: var(--card-bg); border-color: var(--cyan-accent);">
                 </div>
-                <div class="form-group">
-                    <label>Unitario neto ($) <small style="opacity:0.7;">(Auto ⚡)</small></label>
-                    <input type="number" id="prodUni" placeholder="Calculado aut.">
-                </div>
-                <div class="form-group">
-                    <label>Minorista neto ($)</label>
-                    <input type="number" id="prodMin" placeholder="450">
-                </div>
-                <div class="form-group">
-                    <label style="color: var(--warning);">Unidades x Caja (Minorista) ⚡</label>
-                    <input type="number" id="prodCantCajaMin" placeholder="10" oninput="calcularCajaMayoristaAuto()" style="border-color: var(--warning);">
-                </div>
-                <div class="form-group" style="grid-column: span 2;">
+
+                <div class="form-group" style="grid-column: 1 / -1;">
                     <button type="button" class="btn-iva" onclick="sumarIVA()">➕ Sumar IVA (19%) a Precios</button>
                 </div>
             </div>
@@ -634,25 +666,40 @@
             return Number(num || 0).toLocaleString('es-CL');
         }
 
-        // CÁLCULOS AUTOMÁTICOS DE FORMULARIO
+        // CÁLCULOS AUTOMÁTICOS DE FORMULARIO (ACTUALIZADO CON MULTIPLICACIÓN Y UNITARIOS MINORISTA / MAYORISTA)
         function calcularUnitarioAuto() {
-            const may = parseFloat(document.getElementById('prodMay').value);
-            const cantCaja = parseFloat(document.getElementById('prodCantCaja').value);
-            const inputUni = document.getElementById('prodUni');
+            const uniMinor = parseFloat(document.getElementById('prodUniCajaMinor').value);
+            const cajasInMayor = parseFloat(document.getElementById('prodCajasMinorEnMayor').value);
+            const inputCantCajaMayor = document.getElementById('prodCantCaja');
 
-            if (!isNaN(may) && !isNaN(cantCaja) && cantCaja > 0) {
-                inputUni.value = Math.round(may / cantCaja);
+            let totalUniMayor = 0;
+            if (!isNaN(uniMinor) && !isNaN(cajasInMayor)) {
+                totalUniMayor = uniMinor * cajasInMayor;
+                inputCantCajaMayor.value = totalUniMayor;
+            } else if (!isNaN(uniMinor) && isNaN(cajasInMayor)) {
+                totalUniMayor = uniMinor;
+                inputCantCajaMayor.value = totalUniMayor;
             }
-        }
 
-        // CÁLCULO AUTOMÁTICO DE UNIDADES/CAJA MAYORISTA BASADO EN MINORISTA
-        function calcularCajaMayoristaAuto() {
-            const cantCajaMin = parseFloat(document.getElementById('prodCantCajaMin').value);
-            const inputCantCajaMay = document.getElementById('prodCantCaja');
-            if (!isNaN(cantCajaMin) && cantCajaMin > 0) {
-                inputCantCajaMay.value = cantCajaMin;
-                calcularUnitarioAuto();
-                SincronizarStockWeb('cajas');
+            // Cálculo Unitario Minorista
+            const min = parseFloat(document.getElementById('prodMin').value);
+            const inputUniMin = document.getElementById('prodUniMin');
+            if (!isNaN(min) && !isNaN(uniMinor) && uniMinor > 0) {
+                inputUniMin.value = Math.round(min / uniMinor);
+            } else if (!isNaN(min) && (isNaN(uniMinor) || uniMinor <= 0)) {
+                inputUniMin.value = min;
+            } else {
+                if (inputUniMin) inputUniMin.value = '';
+            }
+
+            // Cálculo Unitario Mayorista
+            const may = parseFloat(document.getElementById('prodMay').value);
+            const inputUniMay = document.getElementById('prodUni');
+            const cantCaja = parseFloat(inputCantCajaMayor.value);
+            if (!isNaN(may) && !isNaN(cantCaja) && cantCaja > 0) {
+                inputUniMay.value = Math.round(may / cantCaja);
+            } else {
+                if (inputUniMay) inputUniMay.value = '';
             }
         }
 
@@ -809,6 +856,7 @@
             if(linea === 'Sin Productos') etiqueta.style.background = '#64748b';
         }
 
+        // REESTRUCTURACIÓN DE TABLA TEMPORAL DEL PROVEEDOR (DIVISIÓN MINORISTA Y MAYORISTA)
         function actualizarTablaTemp() {
             const tbody = document.getElementById('listaTempProductos');
             tbody.innerHTML = '';
@@ -817,17 +865,25 @@
                     ? `<img src="${p.imagen}" style="width:35px; height:35px; object-fit:cover; border-radius:4px;" onerror="this.onerror=null; this.parentElement.innerHTML='📷';">` 
                     : `<span style="opacity:0.4;">📷</span>`;
                 
-                const cantCajaMinTxt = p.cantCajaMin ? ` <small style="opacity:0.8; font-size:0.75em;">(${fNum(p.cantCajaMin)} un)</small>` : '';
-                const cantCajaMayTxt = p.cantCaja ? ` <small style="opacity:0.8; font-size:0.75em;">(${fNum(p.cantCaja)} un)</small>` : '';
+                const uMinor = p.uniCajaMinor ? `${fNum(p.uniCajaMinor)} un/cja` : '1 un';
+                const uNetoMin = p.uniNetoMinor || (p.uniCajaMinor ? Math.round(p.minorista / p.uniCajaMinor) : p.minorista);
+                const celdaMinorista = `<strong style="color:var(--minor-color); font-size:1.05em;">$${fNum(p.minorista)}</strong><br>
+                    <small style="opacity:0.8; font-size:0.75em;">📦 ${uMinor}</small><br>
+                    <small style="opacity:0.8; font-size:0.75em; color:var(--minor-color);">⚡ $${fNum(uNetoMin)}/un</small>`;
+
+                const uMayor = p.cantCaja ? `${fNum(p.cantCaja)} un/cja mayor` : '1 un';
+                const uNetoMay = p.unitario || (p.cantCaja ? Math.round(p.mayorista / p.cantCaja) : p.mayorista);
+                const celdaMayorista = `<strong style="color:var(--mayor-color); font-size:1.1em;">$${fNum(p.mayorista)}</strong><br>
+                    <small style="opacity:0.8; font-size:0.75em;">📦 ${uMayor}</small><br>
+                    <small style="opacity:0.8; font-size:0.75em; color:var(--mayor-color);">⚡ $${fNum(uNetoMay)}/un</small>`;
 
                 tbody.innerHTML += `<tr>
                     <td>${imgHTML}</td>
                     <td><span class="tag ${getClaseTag(p.linea)}">${p.linea}</span></td>
                     <td><strong>${p.nombre}</strong><br><small>${p.categoria} > ${p.subcategoria}</small></td>
                     <td>${renderStockTag(p)}</td>
-                    <td>$${fNum(p.unitario)}</td>
-                    <td><strong>$${fNum(p.minorista)}</strong>${cantCajaMinTxt}</td>
-                    <td><strong>$${fNum(p.mayorista)}</strong>${cantCajaMayTxt}</td>
+                    <td>${celdaMinorista}</td>
+                    <td>${celdaMayorista}</td>
                     <td>
                         <div style="display:flex; gap:4px;">
                             <button type="button" class="btn-warning" style="padding:2px 6px; font-size:0.8em;" onclick="abrirModalProd('edit_temp', null, '${p.id}')">✏️</button>
@@ -909,13 +965,12 @@
         }
 
         function sumarIVA() {
-            const iUni = document.getElementById('prodUni');
             const iMin = document.getElementById('prodMin');
             const iMay = document.getElementById('prodMay');
             
-            if(iUni.value) iUni.value = Math.round(Number(iUni.value) * 1.19);
             if(iMin.value) iMin.value = Math.round(Number(iMin.value) * 1.19);
             if(iMay.value) iMay.value = Math.round(Number(iMay.value) * 1.19);
+            calcularUnitarioAuto();
         }
 
         function abrirModalProd(modo, idProv = null, idProd = null) {
@@ -928,11 +983,13 @@
             document.getElementById('prodNombre').value = '';
             document.getElementById('prodLink').value = '';
             document.getElementById('prodDesc').value = '';
-            document.getElementById('prodUni').value = '';
-            document.getElementById('prodMin').value = '';
-            document.getElementById('prodMay').value = '';
+            document.getElementById('prodUniCajaMinor').value = '';
+            document.getElementById('prodCajasMinorEnMayor').value = '';
             document.getElementById('prodCantCaja').value = '';
-            document.getElementById('prodCantCajaMin').value = '';
+            document.getElementById('prodMin').value = '';
+            document.getElementById('prodUniMin').value = '';
+            document.getElementById('prodMay').value = '';
+            document.getElementById('prodUni').value = '';
             document.getElementById('prodStockUnid').value = '';
             document.getElementById('prodStockCajas').value = '';
             document.getElementById('prodOferta').value = '';
@@ -955,11 +1012,13 @@
                 document.getElementById('prodNombre').value = prod.nombre || '';
                 document.getElementById('prodLink').value = prod.link || '';
                 document.getElementById('prodDesc').value = prod.descripcion || '';
-                document.getElementById('prodUni').value = prod.unitario || '';
-                document.getElementById('prodMin').value = prod.minorista || '';
-                document.getElementById('prodMay').value = prod.mayorista || '';
+                document.getElementById('prodUniCajaMinor').value = prod.uniCajaMinor || '';
+                document.getElementById('prodCajasMinorEnMayor').value = prod.cajasMinorEnMayor || '';
                 document.getElementById('prodCantCaja').value = prod.cantCaja || '';
-                document.getElementById('prodCantCajaMin').value = prod.cantCajaMin || '';
+                document.getElementById('prodMin').value = prod.minorista || '';
+                document.getElementById('prodUniMin').value = prod.uniNetoMinor || '';
+                document.getElementById('prodMay').value = prod.mayorista || '';
+                document.getElementById('prodUni').value = prod.unitario || '';
                 document.getElementById('prodStockUnid').value = (prod.stockUnid !== undefined && prod.stockUnid !== null) ? prod.stockUnid : '';
                 document.getElementById('prodStockCajas').value = (prod.stockCajas !== undefined && prod.stockCajas !== null) ? prod.stockCajas : '';
                 document.getElementById('prodOferta').value = prod.oferta || '';
@@ -995,6 +1054,7 @@
                 }
             }
             
+            calcularUnitarioAuto();
             document.getElementById('modalProd').style.display = 'flex';
         }
 
@@ -1014,8 +1074,9 @@
                     if(sub && !subcategoriasBase.includes(sub)) subcategoriasBase.push(sub);
                 }
 
+                const uniCajaMinorVal = document.getElementById('prodUniCajaMinor').value;
+                const cajasMinorEnMayorVal = document.getElementById('prodCajasMinorEnMayor').value;
                 const cantCajaVal = document.getElementById('prodCantCaja').value;
-                const cantCajaMinVal = document.getElementById('prodCantCajaMin').value;
                 const stockUnidVal = document.getElementById('prodStockUnid').value;
                 const stockCajasVal = document.getElementById('prodStockCajas').value;
 
@@ -1031,11 +1092,13 @@
                     imagen: imagenTempBase64,
                     categoria: cat || 'Sin Categoría',
                     subcategoria: sub || 'Sin Subcategoría',
-                    unitario: Number(document.getElementById('prodUni').value) || 0,
-                    minorista: Number(document.getElementById('prodMin').value) || 0,
-                    mayorista: Number(document.getElementById('prodMay').value) || 0,
+                    uniCajaMinor: uniCajaMinorVal ? Number(uniCajaMinorVal) : null,
+                    cajasMinorEnMayor: cajasMinorEnMayorVal ? Number(cajasMinorEnMayorVal) : null,
                     cantCaja: cantCajaVal ? Number(cantCajaVal) : null,
-                    cantCajaMin: cantCajaMinVal ? Number(cantCajaMinVal) : null,
+                    minorista: Number(document.getElementById('prodMin').value) || 0,
+                    uniNetoMinor: Number(document.getElementById('prodUniMin').value) || 0,
+                    mayorista: Number(document.getElementById('prodMay').value) || 0,
+                    unitario: Number(document.getElementById('prodUni').value) || 0,
                     stockUnid: stockUnidVal !== "" ? Number(stockUnidVal) : null,
                     stockCajas: stockCajasVal !== "" ? Number(stockCajasVal) : null,
                     oferta: document.getElementById('prodOferta').value.trim() || '-'
@@ -1221,7 +1284,7 @@
             }
         }
 
-        // --- RENDERIZADO DIRECTORIO (EL ACORDEÓN ORIGINAL Y PERFECTO) ---
+        // --- RENDERIZADO DIRECTORIO (ACORDEÓN ALINEADO CON BLOQUES VISUALES SEPARADOS) ---
         function actualizarDirectorio() {
             const fFav = document.getElementById('filtroFav').value;
             const fCat = document.getElementById('filtroCat').value;
@@ -1312,8 +1375,33 @@
                                 : `<div class="prod-img-thumb">📷 Sin Foto</div>`;
 
                             const tagDisp = renderStockTag(prod);
-                            const cantCajaMinTag = prod.cantCajaMin ? `<small style="font-size:0.75em; opacity:0.8;">(${fNum(prod.cantCajaMin)} un)</small>` : '';
-                            const cantCajaMayTag = prod.cantCaja ? `<small style="font-size:0.75em; color:var(--cyan-accent); font-weight:bold;">📦 ${fNum(prod.cantCaja)} un/caja</small>` : '';
+
+                            // Cálculos seguros para despliegue de Minorista y Mayorista
+                            const uMinorCount = prod.uniCajaMinor ? fNum(prod.uniCajaMinor) : '1';
+                            const uNetoMin = prod.uniNetoMinor || (prod.minorista && prod.uniCajaMinor ? Math.round(prod.minorista / prod.uniCajaMinor) : (prod.minorista || 0));
+
+                            const uMayorCount = prod.cantCaja ? fNum(prod.cantCaja) : '1';
+                            const uNetoMay = prod.unitario || (prod.mayorista && prod.cantCaja ? Math.round(prod.mayorista / prod.cantCaja) : (prod.mayorista || 0));
+
+                            // Bloque Minorista visualmente definido
+                            const bloqueMinorista = `
+                                <div class="price-box-minor">
+                                    <div style="font-size: 0.7em; text-transform: uppercase; font-weight: bold; color: var(--minor-color);">Minorista</div>
+                                    <div style="font-size: 1.05em; font-weight: bold; color: var(--minor-color);">$${fNum(prod.minorista)}</div>
+                                    <small style="display:block; font-size:0.75em; opacity:0.85;">📦 ${uMinorCount} un/caja</small>
+                                    <small style="display:block; font-size:0.75em; font-weight:bold; color: var(--minor-color);">⚡ $${fNum(uNetoMin)}/un</small>
+                                </div>
+                            `;
+
+                            // Bloque Mayorista visualmente definido
+                            const bloqueMayorista = `
+                                <div class="price-box-mayor">
+                                    <div style="font-size: 0.7em; text-transform: uppercase; font-weight: bold; color: var(--mayor-color);">Mayorista</div>
+                                    <div style="font-size: 1.25em; font-weight: bold; color: var(--mayor-color);">$${fNum(prod.mayorista)}</div>
+                                    <small style="display:block; font-size:0.75em; color:var(--cyan-accent); font-weight:bold;">📦 ${uMayorCount} un/caja mayor</small>
+                                    <small style="display:block; font-size:0.75em; font-weight:bold; color: var(--mayor-color);">⚡ $${fNum(uNetoMay)}/un</small>
+                                </div>
+                            `;
 
                             htmlProv += `
                             <div class="prod-item-dir">
@@ -1330,18 +1418,13 @@
                                     </div>
                                 </div>
 
-                                <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap; justify-content:flex-end;">
-                                    <span style="font-size:0.85em; opacity:0.8;">Uni: $${fNum(prod.unitario)}</span>
-                                    <div style="text-align:right;">
-                                        <span style="font-size:0.85em;">Min: <strong>$${fNum(prod.minorista)}</strong></span>
-                                        ${cantCajaMinTag}
+                                <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:flex-end;">
+                                    ${bloqueMinorista}
+                                    ${bloqueMayorista}
+                                    <div style="display:flex; flex-direction:column; gap:4px;">
+                                        <button type="button" class="btn-warning" onclick="abrirModalProd('edit', '${prov.id}', '${prod.id}')">Editar</button>
+                                        <button type="button" class="btn-danger" onclick="eliminarProductoDir('${prov.id}', '${prod.id}')">X</button>
                                     </div>
-                                    <div style="text-align:right;">
-                                        <span style="color:#10b981; font-weight:bold; font-size:1.05em;">May: $${fNum(prod.mayorista)}</span>
-                                        <div style="display:block;">${cantCajaMayTag}</div>
-                                    </div>
-                                    <button type="button" class="btn-warning" onclick="abrirModalProd('edit', '${prov.id}', '${prod.id}')">Editar</button>
-                                    <button type="button" class="btn-danger" onclick="eliminarProductoDir('${prov.id}', '${prod.id}')">X</button>
                                 </div>
                             </div>`;
                         });
@@ -1379,9 +1462,7 @@
                            (prod.descripcion && prod.descripcion.toLowerCase().includes(busqueda))) {
                             opciones.push({
                                 provNombre: prov.nombre, prodNombre: prod.nombre,
-                                precio: prod.mayorista, cantCaja: prod.cantCaja, 
-                                minorista: prod.minorista, cantCajaMin: prod.cantCajaMin,
-                                tiempo: prov.tiempo,
+                                precio: prod.mayorista, cantCaja: prod.cantCaja, tiempo: prov.tiempo,
                                 esOficial: prov.estado === 'Oficial', esFav: prov.favorito,
                                 estado: prod.estado || 'Disponible',
                                 stockUnid: prod.stockUnid,
@@ -1400,8 +1481,7 @@
             
             if (disponibles.length > 0) {
                 let mejor = disponibles.reduce((prev, curr) => (prev.precio < curr.precio) ? prev : curr);
-                const infoCajaMay = mejor.cantCaja ? ` (${fNum(mejor.cantCaja)} un/caja mayorista)` : '';
-                const infoMin = mejor.minorista ? ` | Min: $${fNum(mejor.minorista)}${mejor.cantCajaMin ? ' ('+fNum(mejor.cantCajaMin)+' un)' : ''}` : '';
+                const infoCaja = mejor.cantCaja ? ` (${fNum(mejor.cantCaja)} un/caja mayor)` : '';
                 
                 let tagStock = `<span class="tag tag-disponible">🟢 En Stock</span>`;
                 let alertStockTxt = '';
@@ -1418,7 +1498,7 @@
                     divRec.innerHTML = `
                         💡 <strong>Mejor Opción Disponible:</strong> 
                         <strong>${mejor.provNombre}</strong> tiene "${mejor.prodNombre}" a 
-                        <strong style="color:#10b981;">$${fNum(mejor.precio)} (May.${infoCajaMay})</strong>${infoMin}. 
+                        <strong style="color:#10b981;">$${fNum(mejor.precio)} (Mayorista${infoCaja})</strong>. 
                         Tiempo estimado: ${mejor.tiempo} días. 
                         ${tagStock} ${alertStockTxt}
                         ${mejor.esFav ? '⭐(Tu Favorito)' : ''} 
