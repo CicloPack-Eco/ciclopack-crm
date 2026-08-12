@@ -371,7 +371,7 @@
                             <th>Producto</th>
                             <th>Stock</th>
                             <th>Uni</th>
-                            <th>Min</th>
+                            <th>Min (Caja)</th>
                             <th>May (Caja)</th>
                             <th>Acción</th>
                         </tr>
@@ -438,7 +438,6 @@
                 </div>
             </div>
 
-            <!-- MODIFICACIÓN HÍBRIDA: IMAGEN POR ARCHIVO O URL -->
             <div class="form-group" style="margin-bottom: 15px; background: var(--highlight-bg); padding: 12px; border-radius: 8px; border: 1px dashed var(--border-color);">
                 <label>📷 Imagen de Referencia (Forma Híbrida: Archivo o URL)</label>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 5px;">
@@ -460,25 +459,37 @@
                 <textarea id="prodDesc" rows="2" placeholder="Detalles técnicos, material, dimensiones..."></textarea>
             </div>
 
-            <!-- PRECIOS Y UNIDADES POR CAJA -->
-            <div class="form-grid" style="align-items: end; background: var(--highlight-bg); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);">
-                <div class="form-group">
-                    <label style="color: var(--cyan-accent);">Mayorista neto ($)</label>
-                    <input type="number" id="prodMay" placeholder="30000" oninput="calcularUnitarioAuto()" style="border-color: var(--cyan-accent);">
-                </div>
-                <div class="form-group">
-                    <label style="color: var(--cyan-accent);">Unidades x Caja</label>
-                    <input type="number" id="prodCantCaja" placeholder="100" oninput="calcularUnitarioAuto(); SincronizarStockWeb('cajas');" style="border-color: var(--cyan-accent);">
-                </div>
-                <div class="form-group">
-                    <label>Unitario neto ($) <small style="opacity:0.7;">(Auto ⚡)</small></label>
-                    <input type="number" id="prodUni" placeholder="Calculado aut.">
-                </div>
+            <!-- PRECIOS Y UNIDADES POR CAJA (MODIFICADO) -->
+            <div class="form-grid" style="align-items: end; background: var(--highlight-bg); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color); grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
+                
                 <div class="form-group">
                     <label>Minorista neto ($)</label>
                     <input type="number" id="prodMin" placeholder="450">
                 </div>
-                <div class="form-group" style="grid-column: span 2;">
+                <div class="form-group">
+                    <label>Unidades x Caja Minor.</label>
+                    <input type="number" id="prodMinCant" placeholder="50" oninput="calcularUnitarioAuto()">
+                </div>
+                
+                <div class="form-group">
+                    <label style="color: var(--cyan-accent);">Cajas Minor. x Caja Mayor.</label>
+                    <input type="number" id="prodMayMult" placeholder="10" oninput="calcularUnitarioAuto()">
+                </div>
+                <div class="form-group">
+                    <label style="color: var(--cyan-accent);">Mayorista neto ($)</label>
+                    <input type="number" id="prodMay" placeholder="30000" oninput="calcularUnitarioAuto()" style="border-color: var(--cyan-accent);">
+                </div>
+                
+                <div class="form-group">
+                    <label style="color: var(--cyan-accent);">Uni. x Caja Mayor. <small>(Auto)</small></label>
+                    <input type="number" id="prodCantCaja" placeholder="Auto" readonly style="background: var(--bg-body); opacity: 0.7; border-color: var(--cyan-accent); cursor: not-allowed;">
+                </div>
+                <div class="form-group">
+                    <label>Unitario neto ($) <small>(Auto ⚡)</small></label>
+                    <input type="number" id="prodUni" placeholder="Auto" readonly style="background: var(--bg-body); opacity: 0.7; cursor: not-allowed;">
+                </div>
+
+                <div class="form-group" style="grid-column: 1 / -1;">
                     <button type="button" class="btn-iva" onclick="sumarIVA()">➕ Sumar IVA (19%) a Precios</button>
                 </div>
             </div>
@@ -492,7 +503,7 @@
                         <input type="number" id="prodStockUnid" placeholder="Ej. 500" oninput="SincronizarStockWeb('unid')">
                     </div>
                     <div class="form-group">
-                        <label>Cajas Disponibles (Web)</label>
+                        <label>Cajas May. Disponibles (Web)</label>
                         <input type="number" id="prodStockCajas" placeholder="Ej. 5" oninput="SincronizarStockWeb('cajas')">
                     </div>
                 </div>
@@ -534,9 +545,8 @@
         </div>
     </div>
 
-    <!-- SCRIPT 1: LÓGICA DE LA INTERFAZ Y EL CRM (Globales para que funcionen los botones) -->
+    <!-- SCRIPT 1: LÓGICA DE LA INTERFAZ Y EL CRM -->
     <script>
-        // Usamos "var" para que Firebase pueda acceder a estas variables globalmente (window.directorio)
         var directorio = []; 
         var productosTemporales = [];
         var esFavActual = false;
@@ -548,7 +558,6 @@
 
         var contextoProducto = { modo: 'temp', idProv: null, idProd: null }; 
 
-        // --- PERSISTENCIA HÍBRIDA ---
         function cargarDatosLocal() {
             try {
                 const dataDir = localStorage.getItem('cicloPackBio_directorio') || localStorage.getItem('cicloPack_directorio');
@@ -566,7 +575,6 @@
             actualizarDirectorio();
         }
 
-        // Guarda localmente y luego intenta sincronizar con la nube
         function guardarDatos() {
             guardarLocalSolo();
             if (window.sincronizarHaciaNube) {
@@ -574,19 +582,17 @@
             }
         }
 
-        // Exclusivo para guardar local
         function guardarLocalSolo() {
             try {
                 localStorage.setItem('cicloPackBio_directorio', JSON.stringify(directorio));
                 localStorage.setItem('cicloPackBio_categorias', JSON.stringify(categoriasBase));
                 localStorage.setItem('cicloPackBio_subcategorias', JSON.stringify(subcategoriasBase));
             } catch (e) {
-                console.error("Error guardando datos en localStorage:", e);
-                alert("⚠️ Atención: La memoria del navegador está llena. Se recomienda usar URLs de imágenes para optimizar espacio.");
+                console.error("Error guardando:", e);
+                alert("⚠️ Atención: Memoria llena. Usa URLs de imágenes para optimizar espacio.");
             }
         }
 
-        // --- UTILIDADES ---
         function toggleTheme() {
             const body = document.body;
             if(body.getAttribute('data-theme') === 'dark') {
@@ -630,31 +636,55 @@
             return Number(num || 0).toLocaleString('es-CL');
         }
 
-        // CÁLCULOS AUTOMÁTICOS DE FORMULARIO
+        // ⚡ CÁLCULOS AUTOMÁTICOS ACTUALIZADOS ⚡
         function calcularUnitarioAuto() {
             const may = parseFloat(document.getElementById('prodMay').value);
-            const cantCaja = parseFloat(document.getElementById('prodCantCaja').value);
+            const minCant = parseFloat(document.getElementById('prodMinCant').value);
+            const mayMult = parseFloat(document.getElementById('prodMayMult').value);
+            
+            const inputCantCaja = document.getElementById('prodCantCaja');
             const inputUni = document.getElementById('prodUni');
 
-            if (!isNaN(may) && !isNaN(cantCaja) && cantCaja > 0) {
-                inputUni.value = Math.round(may / cantCaja);
+            let totalUnidadesMay = 0;
+
+            // 1. Calcular Unidades de la Caja Mayorista
+            if (!isNaN(minCant) && minCant > 0) {
+                if (!isNaN(mayMult) && mayMult > 0) {
+                    totalUnidadesMay = minCant * mayMult;
+                    inputCantCaja.value = totalUnidadesMay;
+                } else {
+                    inputCantCaja.value = minCant; // Mínimo asume 1 a 1 si no hay multiplicador
+                    totalUnidadesMay = minCant;
+                }
+            } else {
+                inputCantCaja.value = '';
             }
+
+            // 2. Calcular Unitario en base al Precio Mayorista / Unidades May. Totales
+            if (!isNaN(may) && totalUnidadesMay > 0) {
+                inputUni.value = Math.round(may / totalUnidadesMay);
+            } else {
+                inputUni.value = '';
+            }
+
+            // Sincronizar Cajas
+            SincronizarStockWeb('cajas');
         }
 
         function SincronizarStockWeb(origen) {
-            const cantCaja = parseFloat(document.getElementById('prodCantCaja').value);
+            const cantCajaMay = parseFloat(document.getElementById('prodCantCaja').value);
             const inputUnid = document.getElementById('prodStockUnid');
             const inputCajas = document.getElementById('prodStockCajas');
 
             if (origen === 'unid') {
                 const unid = parseFloat(inputUnid.value);
-                if (!isNaN(unid) && !isNaN(cantCaja) && cantCaja > 0) {
-                    inputCajas.value = (unid / cantCaja).toFixed(1).replace('.0', '');
+                if (!isNaN(unid) && !isNaN(cantCajaMay) && cantCajaMay > 0) {
+                    inputCajas.value = (unid / cantCajaMay).toFixed(1).replace('.0', '');
                 }
             } else if (origen === 'cajas') {
                 const cajas = parseFloat(inputCajas.value);
-                if (!isNaN(cajas) && !isNaN(cantCaja) && cantCaja > 0) {
-                    inputUnid.value = Math.round(cajas * cantCaja);
+                if (!isNaN(cajas) && !isNaN(cantCajaMay) && cantCajaMay > 0) {
+                    inputUnid.value = Math.round(cajas * cantCajaMay);
                 }
             }
         }
@@ -662,21 +692,14 @@
         function renderStockTag(p) {
             const estado = p.estado || 'Disponible';
             let infoStock = '';
-            
             if (p.stockUnid !== null && p.stockUnid !== undefined && p.stockUnid !== '') {
                 infoStock = ` (${fNum(p.stockUnid)} un / ${p.stockCajas || 0} cjas)`;
             }
-
-            if (estado === 'No disponible') {
-                return `<span class="tag tag-nodisponible">🔴 No disponible</span>`;
-            } else if (estado === 'Últimas Unidades') {
-                return `<span class="tag tag-ultimas">🟠 Últimas Unidades${infoStock}</span>`;
-            } else {
-                return `<span class="tag tag-disponible">🟢 Disponible${infoStock}</span>`;
-            }
+            if (estado === 'No disponible') return `<span class="tag tag-nodisponible">🔴 No disponible</span>`;
+            if (estado === 'Últimas Unidades') return `<span class="tag tag-ultimas">🟠 Últimas Unidades${infoStock}</span>`;
+            return `<span class="tag tag-disponible">🟢 Disponible${infoStock}</span>`;
         }
 
-        // --- PROCESAMIENTO HÍBRIDO DE IMAGEN ---
         function procesarUrlImagen(url) {
             const urlLimpia = url.trim();
             if(urlLimpia !== "") {
@@ -684,18 +707,14 @@
                 imagenTempBase64 = urlLimpia;
                 document.getElementById('previewBox').innerHTML = `<img src="${urlLimpia}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;" onerror="this.onerror=null; this.parentElement.innerHTML='❌ Error URL';">`;
             } else {
-                if(!document.getElementById('prodImagenInput').value) {
-                    limpiarImagen();
-                }
+                if(!document.getElementById('prodImagenInput').value) limpiarImagen();
             }
         }
 
         function procesarImagenSeleccionada(e) {
             const file = e.target.files[0];
             if (!file) return;
-
             document.getElementById('prodImagenUrl').value = ""; 
-
             const reader = new FileReader();
             reader.onload = function(evt) {
                 const img = new Image();
@@ -704,27 +723,16 @@
                     const maxDim = 300;
                     let width = img.width;
                     let height = img.height;
-
                     if (width > height) {
-                        if (width > maxDim) {
-                            height = Math.round((height * maxDim) / width);
-                            width = maxDim;
-                        }
+                        if (width > maxDim) { height = Math.round((height * maxDim) / width); width = maxDim; }
                     } else {
-                        if (height > maxDim) {
-                            width = Math.round((width * maxDim) / height);
-                            height = maxDim;
-                        }
+                        if (height > maxDim) { width = Math.round((width * maxDim) / height); height = maxDim; }
                     }
-
-                    canvas.width = width;
-                    canvas.height = height;
+                    canvas.width = width; canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-
                     imagenTempBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                    const previewBox = document.getElementById('previewBox');
-                    previewBox.innerHTML = `<img src="${imagenTempBase64}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;">`;
+                    document.getElementById('previewBox').innerHTML = `<img src="${imagenTempBase64}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;">`;
                 };
                 img.src = evt.target.result;
             };
@@ -738,7 +746,7 @@
             document.getElementById('previewBox').innerHTML = "Sin foto";
         }
 
-        // --- MODAL PROVEEDOR ---
+        // --- LÓGICA MODALES Y CARGA DE DATOS ---
         function abrirModalProv(idProv = null) {
             idProveedorEnEdicion = idProv;
             const titulo = document.getElementById('tituloModalProv');
@@ -746,345 +754,398 @@
             if (idProv) {
                 titulo.innerText = "✏️ Editar Proveedor";
                 const prov = directorio.find(p => p.id === idProv);
-                
                 document.getElementById('provNombre').value = prov.nombre;
                 document.getElementById('provWeb').value = prov.web || '';
                 document.getElementById('provContacto').value = prov.contacto || '';
                 document.getElementById('provEmail').value = prov.email || '';
-                document.getElementById('provCiudad').value = prov.ciudad || 'Otra';
-                document.getElementById('provTiempo').value = prov.tiempo !== '-' ? prov.tiempo : '';
+                document.getElementById('provCiudad').value = prov.ciudad || 'Coquimbo';
+                document.getElementById('provTiempo').value = prov.tiempo || '';
                 
-                const radioEstado = document.querySelector(`input[name="catEstado"][value="${prov.estado}"]`);
-                if(radioEstado) radioEstado.checked = true;
-
-                esFavActual = prov.favorito;
+                esFavActual = prov.fav || false;
                 productosTemporales = JSON.parse(JSON.stringify(prov.productos || []));
+                
+                document.querySelector(`input[name="catEstado"][value="${prov.estado || 'Oficial'}"]`).checked = true;
             } else {
-                titulo.innerText = "🏢 Ficha de Nuevo Proveedor";
+                titulo.innerText = "🏢 Nuevo Proveedor";
                 document.getElementById('provNombre').value = '';
                 document.getElementById('provWeb').value = '';
                 document.getElementById('provContacto').value = '';
                 document.getElementById('provEmail').value = '';
+                document.getElementById('provCiudad').value = 'Coquimbo';
                 document.getElementById('provTiempo').value = '';
-                
-                const radioOficial = document.querySelector('input[name="catEstado"][value="Oficial"]');
-                if(radioOficial) radioOficial.checked = true;
-
                 esFavActual = false;
-                productosTemporales = []; 
+                productosTemporales = [];
+                document.querySelector('input[name="catEstado"][value="Oficial"]').checked = true;
             }
-
-            const estrella = document.getElementById('estrellaFav');
-            estrella.innerHTML = esFavActual ? '★' : '☆';
-            if(esFavActual) estrella.classList.add('fav-active');
-            else estrella.classList.remove('fav-active');
             
-            actualizarLineaTemp();
+            toggleFav(); 
+            toggleFav(); 
+            
             actualizarTablaTemp();
             document.getElementById('modalProv').style.display = 'flex';
         }
 
         function cerrarModalProv() { document.getElementById('modalProv').style.display = 'none'; }
 
-        function actualizarLineaTemp() {
-            const linea = determinarLineaProveedor(productosTemporales);
-            const etiqueta = document.getElementById('etiquetaLineaProv');
-            etiqueta.innerText = linea;
-            etiqueta.className = 'tag ' + getClaseTag(linea);
-            if(linea === 'Sin Productos') etiqueta.style.background = '#64748b';
-        }
-
         function actualizarTablaTemp() {
             const tbody = document.getElementById('listaTempProductos');
             tbody.innerHTML = '';
-            productosTemporales.forEach(p => {
-                const imgHTML = p.imagen 
-                    ? `<img src="${p.imagen}" style="width:35px; height:35px; object-fit:cover; border-radius:4px;" onerror="this.onerror=null; this.parentElement.innerHTML='📷';">` 
-                    : `<span style="opacity:0.4;">📷</span>`;
-                
-                const cantCajaTxt = p.cantCaja ? `<br><small style="opacity:0.8; font-size:0.75em;">📦 ${fNum(p.cantCaja)} un/caja</small>` : '';
+            
+            const lineaCat = determinarLineaProveedor(productosTemporales);
+            const etiqueta = document.getElementById('etiquetaLineaProv');
+            etiqueta.className = 'tag ' + getClaseTag(lineaCat);
+            etiqueta.innerText = lineaCat;
 
-                tbody.innerHTML += `<tr>
-                    <td>${imgHTML}</td>
+            productosTemporales.forEach((p, idx) => {
+                const tr = document.createElement('tr');
+                const imgTag = p.imagen ? `<img src="${p.imagen}" style="width:40px; height:40px; object-fit:cover; border-radius:4px;">` : 'N/A';
+                
+                // Formateo visual del Minorista
+                const cantMinTxt = p.minCant ? `<br><small style="opacity:0.8; font-size:0.75em;">📦 ${fNum(p.minCant)} un/cj.</small>` : '';
+                // Formateo visual del Mayorista
+                const cantCajaTxt = p.cantCaja ? `<br><small style="opacity:0.8; font-size:0.75em;">📦 ${fNum(p.cantCaja)} un/cj.</small>` : '';
+
+                tr.innerHTML = `
+                    <td>${imgTag}</td>
                     <td><span class="tag ${getClaseTag(p.linea)}">${p.linea}</span></td>
-                    <td><strong>${p.nombre}</strong><br><small>${p.categoria} > ${p.subcategoria}</small></td>
+                    <td><strong>${p.nombre}</strong><br><small>${p.cat} > ${p.subcat}</small></td>
                     <td>${renderStockTag(p)}</td>
                     <td>$${fNum(p.unitario)}</td>
-                    <td>$${fNum(p.minorista)}</td>
+                    <td><strong>$${fNum(p.minorista)}</strong>${cantMinTxt}</td>
                     <td><strong>$${fNum(p.mayorista)}</strong>${cantCajaTxt}</td>
                     <td>
-                        <div style="display:flex; gap:4px;">
-                            <button type="button" class="btn-warning" style="padding:2px 6px; font-size:0.8em;" onclick="abrirModalProd('edit_temp', null, '${p.id}')">✏️</button>
-                            <button type="button" class="btn-danger" style="padding:2px 6px; font-size:0.8em;" onclick="eliminarProdTemp('${p.id}')">X</button>
-                        </div>
+                        <button type="button" class="btn-warning" onclick="abrirModalProd('temp', null, '${p.id}')">✏️</button>
+                        <button type="button" class="btn-danger" onclick="eliminarProductoTemp('${p.id}')">❌</button>
                     </td>
-                </tr>`;
+                `;
+                tbody.appendChild(tr);
             });
-        }
-
-        function eliminarProdTemp(id) {
-            productosTemporales = productosTemporales.filter(p => p.id !== id);
-            actualizarLineaTemp();
-            actualizarTablaTemp();
-        }
-
-        function guardarProveedorFinal() {
-            const nombre = document.getElementById('provNombre').value.trim();
-            if(!nombre || productosTemporales.length === 0) {
-                alert("Ingresa el nombre del proveedor y al menos un producto."); return;
-            }
-
-            const estadoRadio = document.querySelector('input[name="catEstado"]:checked');
-
-            const datosProveedor = {
-                nombre: nombre,
-                web: document.getElementById('provWeb').value.trim(),
-                contacto: document.getElementById('provContacto').value.trim() || '-',
-                email: document.getElementById('provEmail').value.trim() || '-',
-                ciudad: document.getElementById('provCiudad').value,
-                tiempo: document.getElementById('provTiempo').value.trim() || '-',
-                linea: determinarLineaProveedor(productosTemporales),
-                estado: estadoRadio ? estadoRadio.value : 'Oficial',
-                favorito: esFavActual,
-                productos: [...productosTemporales]
-            };
-
-            if (idProveedorEnEdicion) {
-                const indice = directorio.findIndex(p => p.id === idProveedorEnEdicion);
-                if (indice !== -1) {
-                    datosProveedor.id = idProveedorEnEdicion;
-                    directorio[indice] = datosProveedor;
-                }
-            } else {
-                datosProveedor.id = 'prov_' + generarId();
-                directorio.push(datosProveedor);
-            }
-
-            guardarDatos();
-            actualizarDirectorio();
-            cerrarModalProv();
-        }
-
-        function eliminarProveedor(idProv) {
-            if(confirm("¿Estás seguro de eliminar este proveedor y todos sus productos? Esta acción no se puede deshacer.")) {
-                directorio = directorio.filter(p => p.id !== idProv);
-                guardarDatos();
-                actualizarDirectorio();
-            }
-        }
-
-        // --- MODAL PRODUCTO ---
-        function cargarSelectsCategoria() {
-            const sCat = document.getElementById('prodCatSelect');
-            const sSub = document.getElementById('prodSubSelect');
-            
-            sCat.innerHTML = categoriasBase.map(c => `<option value="${c}">${c}</option>`).join('') + `<option value="OTRA">➕ Crear Nueva...</option>`;
-            sSub.innerHTML = subcategoriasBase.map(s => `<option value="${s}">${s}</option>`).join('') + `<option value="OTRA">➕ Crear Nueva...</option>`;
-            
-            document.getElementById('prodCatNueva').style.display = 'none';
-            document.getElementById('prodSubNueva').style.display = 'none';
-        }
-
-        function verificarCategoria(tipo) {
-            const select = document.getElementById('prod' + tipo + 'Select');
-            const input = document.getElementById('prod' + tipo + 'Nueva');
-            input.style.display = select.value === 'OTRA' ? 'block' : 'none';
-            if(select.value === 'OTRA') input.focus();
-        }
-
-        function sumarIVA() {
-            const iUni = document.getElementById('prodUni');
-            const iMin = document.getElementById('prodMin');
-            const iMay = document.getElementById('prodMay');
-            
-            if(iUni.value) iUni.value = Math.round(Number(iUni.value) * 1.19);
-            if(iMin.value) iMin.value = Math.round(Number(iMin.value) * 1.19);
-            if(iMay.value) iMay.value = Math.round(Number(iMay.value) * 1.19);
         }
 
         function abrirModalProd(modo, idProv = null, idProd = null) {
             contextoProducto = { modo, idProv, idProd };
-            cargarSelectsCategoria();
             limpiarImagen();
+            cargarOpcionesCategorias();
             
-            document.getElementById('tituloModalProd').innerText = (modo === 'edit' || modo === 'edit_temp') ? '✏️ Editar Producto' : '➕ Detalle del Producto';
+            document.getElementById('prodCatNueva').style.display = 'none';
+            document.getElementById('prodSubNueva').style.display = 'none';
             
-            document.getElementById('prodNombre').value = '';
-            document.getElementById('prodLink').value = '';
-            document.getElementById('prodDesc').value = '';
-            document.getElementById('prodUni').value = '';
-            document.getElementById('prodMin').value = '';
-            document.getElementById('prodMay').value = '';
-            document.getElementById('prodCantCaja').value = '';
-            document.getElementById('prodStockUnid').value = '';
-            document.getElementById('prodStockCajas').value = '';
-            document.getElementById('prodOferta').value = '';
-            
-            const defaultLinea = document.querySelector('input[name="prodLinea"][value="Eco"]');
-            if(defaultLinea) defaultLinea.checked = true;
-            
-            const defaultEstado = document.querySelector('input[name="prodEstado"][value="Disponible"]');
-            if(defaultEstado) defaultEstado.checked = true;
-
-            let prod = null;
-            if(modo === 'edit' && idProv && idProd) {
-                const prov = directorio.find(p => p.id === idProv);
-                if(prov) prod = prov.productos.find(p => p.id === idProd);
-            } else if(modo === 'edit_temp' && idProd) {
-                prod = productosTemporales.find(p => p.id === idProd);
-            }
-
-            if(prod) {
-                document.getElementById('prodNombre').value = prod.nombre || '';
+            if (idProd) {
+                document.getElementById('tituloModalProd').innerText = "✏️ Editar Producto";
+                let prod = modo === 'temp' ? productosTemporales.find(p => p.id === idProd) : directorio.find(p => p.id === idProv).productos.find(p => p.id === idProd);
+                
+                document.getElementById('prodNombre').value = prod.nombre;
                 document.getElementById('prodLink').value = prod.link || '';
-                document.getElementById('prodDesc').value = prod.descripcion || '';
-                document.getElementById('prodUni').value = prod.unitario || '';
+                document.getElementById('prodDesc').value = prod.desc || '';
                 document.getElementById('prodMin').value = prod.minorista || '';
+                
+                // Nuevos campos
+                document.getElementById('prodMinCant').value = prod.minCant || '';
+                document.getElementById('prodMayMult').value = prod.mayMult || '';
+                
                 document.getElementById('prodMay').value = prod.mayorista || '';
-                document.getElementById('prodCantCaja').value = prod.cantCaja || '';
-                document.getElementById('prodStockUnid').value = (prod.stockUnid !== undefined && prod.stockUnid !== null) ? prod.stockUnid : '';
-                document.getElementById('prodStockCajas').value = (prod.stockCajas !== undefined && prod.stockCajas !== null) ? prod.stockCajas : '';
+                
                 document.getElementById('prodOferta').value = prod.oferta || '';
                 
-                const rLinea = document.querySelector(`input[name="prodLinea"][value="${prod.linea}"]`);
-                if(rLinea) rLinea.checked = true;
+                document.getElementById('prodStockUnid').value = prod.stockUnid !== undefined ? prod.stockUnid : '';
+                document.getElementById('prodStockCajas').value = prod.stockCajas !== undefined ? prod.stockCajas : '';
 
+                document.getElementById('prodCatSelect').value = prod.cat;
+                if(!document.getElementById('prodCatSelect').value) { document.getElementById('prodCatSelect').value = "otra"; verificarCategoria('Cat'); document.getElementById('prodCatNueva').value = prod.cat; }
+                
+                document.getElementById('prodSubSelect').value = prod.subcat;
+                if(!document.getElementById('prodSubSelect').value) { document.getElementById('prodSubSelect').value = "otra"; verificarCategoria('Sub'); document.getElementById('prodSubNueva').value = prod.subcat; }
+                
+                if (prod.imagen) { procesarUrlImagen(prod.imagen); }
+                
+                document.querySelector(`input[name="prodLinea"][value="${prod.linea}"]`).checked = true;
                 const rEstado = document.querySelector(`input[name="prodEstado"][value="${prod.estado || 'Disponible'}"]`);
                 if(rEstado) rEstado.checked = true;
-
-                if(prod.imagen) {
-                    imagenTempBase64 = prod.imagen;
-                    if(prod.imagen.startsWith('http://') || prod.imagen.startsWith('https://')) {
-                        document.getElementById('prodImagenUrl').value = prod.imagen;
-                    }
-                    document.getElementById('previewBox').innerHTML = `<img src="${prod.imagen}" style="width:100%; height:100%; object-fit:cover; border-radius:6px;" onerror="this.onerror=null; this.parentElement.innerHTML='❌ Error URL';">`;
-                }
-
-                if(prod.categoria) {
-                    if(!categoriasBase.includes(prod.categoria)) {
-                        categoriasBase.push(prod.categoria);
-                        cargarSelectsCategoria();
-                    }
-                    document.getElementById('prodCatSelect').value = prod.categoria;
-                }
-
-                if(prod.subcategoria) {
-                    if(!subcategoriasBase.includes(prod.subcategoria)) {
-                        subcategoriasBase.push(prod.subcategoria);
-                        cargarSelectsCategoria();
-                    }
-                    document.getElementById('prodSubSelect').value = prod.subcategoria;
-                }
+                
+                calcularUnitarioAuto();
+            } else {
+                document.getElementById('tituloModalProd').innerText = "➕ Nuevo Producto";
+                document.getElementById('prodNombre').value = '';
+                document.getElementById('prodLink').value = '';
+                document.getElementById('prodDesc').value = '';
+                document.getElementById('prodMin').value = '';
+                document.getElementById('prodMinCant').value = '';
+                document.getElementById('prodMayMult').value = '';
+                document.getElementById('prodMay').value = '';
+                document.getElementById('prodOferta').value = '';
+                document.getElementById('prodStockUnid').value = '';
+                document.getElementById('prodStockCajas').value = '';
+                document.querySelector('input[name="prodLinea"][value="Eco"]').checked = true;
+                document.querySelector('input[name="prodEstado"][value="Disponible"]').checked = true;
+                
+                document.getElementById('prodCantCaja').value = '';
+                document.getElementById('prodUni').value = '';
             }
-            
             document.getElementById('modalProd').style.display = 'flex';
         }
 
         function cerrarModalProd() { document.getElementById('modalProd').style.display = 'none'; }
 
         function procesarGuardadoProducto() {
-            try {
-                let cat = document.getElementById('prodCatSelect').value;
-                let sub = document.getElementById('prodSubSelect').value;
+            let cat = document.getElementById('prodCatSelect').value === 'otra' ? document.getElementById('prodCatNueva').value : document.getElementById('prodCatSelect').value;
+            let sub = document.getElementById('prodSubSelect').value === 'otra' ? document.getElementById('prodSubNueva').value : document.getElementById('prodSubSelect').value;
+            
+            if(cat && !categoriasBase.includes(cat)) categoriasBase.push(cat);
+            if(sub && !subcategoriasBase.includes(sub)) subcategoriasBase.push(sub);
+
+            const minCantVal = document.getElementById('prodMinCant').value;
+            const mayMultVal = document.getElementById('prodMayMult').value;
+            const cantCajaVal = document.getElementById('prodCantCaja').value;
+            const sUnid = document.getElementById('prodStockUnid').value;
+            const sCajas = document.getElementById('prodStockCajas').value;
+
+            const prod = {
+                id: contextoProducto.idProd || generarId(),
+                linea: document.querySelector('input[name="prodLinea"]:checked').value,
+                estado: document.querySelector('input[name="prodEstado"]:checked').value,
+                cat: cat,
+                subcat: sub,
+                nombre: document.getElementById('prodNombre').value,
+                link: document.getElementById('prodLink').value,
+                desc: document.getElementById('prodDesc').value,
+                minorista: Number(document.getElementById('prodMin').value) || 0,
                 
-                if(cat === 'OTRA') {
-                    cat = document.getElementById('prodCatNueva').value.trim();
-                    if(cat && !categoriasBase.includes(cat)) categoriasBase.push(cat);
-                }
-                if(sub === 'OTRA') {
-                    sub = document.getElementById('prodSubNueva').value.trim();
-                    if(sub && !subcategoriasBase.includes(sub)) subcategoriasBase.push(sub);
-                }
+                minCant: minCantVal ? Number(minCantVal) : null,
+                mayMult: mayMultVal ? Number(mayMultVal) : null,
+                mayorista: Number(document.getElementById('prodMay').value) || 0,
+                cantCaja: cantCajaVal ? Number(cantCajaVal) : null,
+                unitario: Number(document.getElementById('prodUni').value) || 0,
+                
+                oferta: document.getElementById('prodOferta').value,
+                stockUnid: sUnid !== '' ? Number(sUnid) : null,
+                stockCajas: sCajas !== '' ? Number(sCajas) : null,
+                imagen: imagenTempBase64
+            };
 
-                const cantCajaVal = document.getElementById('prodCantCaja').value;
-                const stockUnidVal = document.getElementById('prodStockUnid').value;
-                const stockCajasVal = document.getElementById('prodStockCajas').value;
-
-                const rLinea = document.querySelector('input[name="prodLinea"]:checked');
-                const rEstado = document.querySelector('input[name="prodEstado"]:checked');
-
-                const prod = {
-                    nombre: document.getElementById('prodNombre').value.trim(),
-                    link: document.getElementById('prodLink').value.trim(),
-                    descripcion: document.getElementById('prodDesc').value.trim(),
-                    linea: rLinea ? rLinea.value : 'Eco',
-                    estado: rEstado ? rEstado.value : 'Disponible',
-                    imagen: imagenTempBase64,
-                    categoria: cat || 'Sin Categoría',
-                    subcategoria: sub || 'Sin Subcategoría',
-                    unitario: Number(document.getElementById('prodUni').value) || 0,
-                    minorista: Number(document.getElementById('prodMin').value) || 0,
-                    mayorista: Number(document.getElementById('prodMay').value) || 0,
-                    cantCaja: cantCajaVal ? Number(cantCajaVal) : null,
-                    stockUnid: stockUnidVal !== "" ? Number(stockUnidVal) : null,
-                    stockCajas: stockCajasVal !== "" ? Number(stockCajasVal) : null,
-                    oferta: document.getElementById('prodOferta').value.trim() || '-'
-                };
-
-                if(!prod.nombre || !prod.mayorista) { 
-                    alert("Ingresa al menos el nombre del producto y el precio mayorista."); 
-                    return; 
-                }
-
-                if(contextoProducto.modo === 'temp') {
-                    prod.id = 'temp_' + generarId();
-                    productosTemporales.push(prod);
-                    actualizarLineaTemp();
-                    actualizarTablaTemp();
-                } else if(contextoProducto.modo === 'edit_temp') {
+            if (contextoProducto.modo === 'temp') {
+                if (contextoProducto.idProd) {
                     const idx = productosTemporales.findIndex(p => p.id === contextoProducto.idProd);
-                    if(idx !== -1) {
-                        prod.id = contextoProducto.idProd;
-                        productosTemporales[idx] = prod;
-                        actualizarLineaTemp();
-                        actualizarTablaTemp();
-                    }
-                } else if (contextoProducto.modo === 'add_dir') {
-                    prod.id = 'prod_' + generarId();
-                    const prov = directorio.find(p => p.id === contextoProducto.idProv);
-                    if(prov) {
-                        if(!prov.productos) prov.productos = [];
-                        prov.productos.push(prod);
-                        prov.linea = determinarLineaProveedor(prov.productos);
-                        guardarDatos();
-                        actualizarDirectorio();
-                    }
-                } else if (contextoProducto.modo === 'edit') {
-                    const prov = directorio.find(p => p.id === contextoProducto.idProv);
-                    if(prov && prov.productos) {
-                        const indice = prov.productos.findIndex(p => p.id === contextoProducto.idProd);
-                        if(indice !== -1) {
-                            prod.id = contextoProducto.idProd;
-                            prov.productos[indice] = prod;
-                            prov.linea = determinarLineaProveedor(prov.productos);
-                            guardarDatos();
-                            actualizarDirectorio();
-                        }
-                    }
+                    productosTemporales[idx] = prod;
+                } else {
+                    productosTemporales.push(prod);
                 }
+                actualizarTablaTemp();
+            } else {
+                const prov = directorio.find(p => p.id === contextoProducto.idProv);
+                if (contextoProducto.idProd) {
+                    const idx = prov.productos.findIndex(p => p.id === contextoProducto.idProd);
+                    prov.productos[idx] = prod;
+                } else {
+                    prov.productos.push(prod);
+                }
+                guardarDatos();
+                actualizarDirectorio();
+            }
+            cerrarModalProd();
+        }
 
-                cerrarModalProd();
-            } catch (err) {
-                console.error("Error al procesar producto:", err);
-                alert("Ocurrió un error al guardar el producto: " + err.message);
+        function guardarProveedorFinal() {
+            const nombre = document.getElementById('provNombre').value;
+            if(!nombre) { alert('El nombre del proveedor es obligatorio'); return; }
+
+            const provData = {
+                id: idProveedorEnEdicion || generarId(),
+                nombre: nombre,
+                web: document.getElementById('provWeb').value,
+                contacto: document.getElementById('provContacto').value,
+                email: document.getElementById('provEmail').value,
+                ciudad: document.getElementById('provCiudad').value,
+                tiempo: document.getElementById('provTiempo').value,
+                estado: document.querySelector('input[name="catEstado"]:checked').value,
+                fav: esFavActual,
+                productos: productosTemporales,
+                fechaAct: new Date().toISOString()
+            };
+
+            if (idProveedorEnEdicion) {
+                const idx = directorio.findIndex(p => p.id === idProveedorEnEdicion);
+                directorio[idx] = provData;
+            } else {
+                directorio.push(provData);
+            }
+
+            guardarDatos();
+            cerrarModalProv();
+            actualizarDirectorio();
+        }
+
+        // --- ACTUALIZACIÓN VISUAL DEL DIRECTORIO ---
+        function actualizarDirectorio() {
+            const contenedor = document.getElementById('contenedorDirectorio');
+            contenedor.innerHTML = '';
+            
+            const fFav = document.getElementById('filtroFav').value;
+            const fCat = document.getElementById('filtroCat').value;
+            const fEst = document.getElementById('filtroEst').value;
+            const fCiu = document.getElementById('filtroCiu').value;
+            const fDisp = document.getElementById('filtroDisp').value;
+
+            let filtrados = directorio.filter(prov => {
+                if(fFav === 'fav' && !prov.fav) return false;
+                if(fEst !== 'todos' && prov.estado !== fEst) return false;
+                if(fCiu !== 'todos' && prov.ciudad !== fCiu) return false;
+                return true;
+            });
+
+            if (fCat !== 'todos' || fDisp !== 'todos') {
+                filtrados = filtrados.map(prov => {
+                    let clon = JSON.parse(JSON.stringify(prov));
+                    clon.productos = clon.productos.filter(p => {
+                        let pasaLinea = (fCat === 'todos' || p.linea === fCat);
+                        let pasaDisp = (fDisp === 'todos' || (p.estado || 'Disponible') === fDisp);
+                        return pasaLinea && pasaDisp;
+                    });
+                    return clon;
+                }).filter(prov => prov.productos.length > 0);
+            }
+
+            filtrados.forEach(prov => {
+                const lineaGeneral = determinarLineaProveedor(prov.productos);
+                const colorEstrella = prov.fav ? '#fbbf24' : '#cbd5e1';
+                const claseLinea = getClaseTag(lineaGeneral);
+                const tagEstado = prov.estado === 'Posible' ? `<span class="tag tag-posible">Posible Prov.</span>` : `<span class="tag tag-oficial">Prov. Oficial</span>`;
+
+                let htmlProv = `
+                <details>
+                    <summary>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="font-size:1.3em; color:${colorEstrella}; text-shadow:0 0 5px ${colorEstrella};">★</span>
+                            <span style="font-size:1.1em;">${prov.nombre}</span>
+                            <span class="tag ${claseLinea}">${lineaGeneral}</span>
+                            ${tagEstado}
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-warning" onclick="abrirModalProv('${prov.id}')">Editar Prov.</button>
+                            <button class="btn-primary" onclick="abrirModalProd('directo', '${prov.id}')">+ Prod.</button>
+                        </div>
+                    </summary>
+                    <div class="details-content">
+                        <div style="margin-bottom:15px; font-size:0.9em; opacity:0.8;">
+                            📍 ${prov.ciudad} | 🚚 Ent: ${prov.tiempo}d | 🌐 ${prov.web ? `<a href="${prov.web}" target="_blank" style="color:var(--cyan-accent)">Web</a>` : 'N/A'} | 📞 ${prov.contacto || 'N/A'}
+                        </div>
+                `;
+
+                const catsUnicas = [...new Set(prov.productos.map(p => p.cat))];
+                catsUnicas.forEach(cat => {
+                    htmlProv += `<div class="cat-details"><h4>📂 ${cat}</h4>`;
+                    const subUnicas = [...new Set(prov.productos.filter(p => p.cat === cat).map(p => p.subcat))];
+                    
+                    subUnicas.forEach(sub => {
+                        htmlProv += `<div class="subcat-details"><h5>📁 ${sub}</h5>`;
+                        const prods = prov.productos.filter(p => p.cat === cat && p.subcat === sub);
+                        
+                        prods.forEach(prod => {
+                            const imgTag = prod.imagen ? `<img src="${prod.imagen}" class="prod-img-thumb">` : `<div class="prod-img-thumb">N/A</div>`;
+                            
+                            // Bloques visuales para los precios con sus respectivas cajas
+                            const cantMinTag = prod.minCant ? `<small style="display:block; font-size:0.78em; opacity:0.8;">📦 ${fNum(prod.minCant)} un/caja min.</small>` : '';
+                            const cantCajaTag = prod.cantCaja ? `<small style="display:block; font-size:0.78em; color:var(--cyan-accent); font-weight:bold;">📦 ${fNum(prod.cantCaja)} un/caja may.</small>` : '';
+
+                            htmlProv += `
+                            <div class="prod-item-dir">
+                                <div style="display:flex; align-items:center; gap:15px;">
+                                    ${imgTag}
+                                    <div>
+                                        <strong>${prod.nombre}</strong> <span class="tag ${getClaseTag(prod.linea)}">${prod.linea}</span> ${renderStockTag(prod)}
+                                        <div style="font-size:0.8em; opacity:0.7; margin-top:4px;">${prod.desc}</div>
+                                        ${prod.oferta ? `<div style="color:var(--warning); font-size:0.8em; font-weight:bold; margin-top:2px;">🔥 Oferta: ${prod.oferta}</div>` : ''}
+                                    </div>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap; justify-content:flex-end;">
+                                    <span style="font-size:0.85em; opacity:0.8;">Uni: $${fNum(prod.unitario)}</span>
+                                    
+                                    <div style="text-align:right; border-right: 1px solid var(--border-color); padding-right: 15px;">
+                                        <span style="font-size:0.95em;">Min: $${fNum(prod.minorista)}</span>
+                                        ${cantMinTag}
+                                    </div>
+                                    
+                                    <div style="text-align:right;">
+                                        <span style="color:#10b981; font-weight:bold; font-size:1.1em;">May: $${fNum(prod.mayorista)}</span>
+                                        ${cantCajaTag}
+                                    </div>
+                                    
+                                    <button type="button" class="btn-warning" style="margin-left:10px;" onclick="abrirModalProd('edit', '${prov.id}', '${prod.id}')">✏️</button>
+                                    <button type="button" class="btn-danger" onclick="eliminarProductoDir('${prov.id}', '${prod.id}')">❌</button>
+                                </div>
+                            </div>`;
+                        });
+                        htmlProv += `</div>`;
+                    });
+                    htmlProv += `</div>`;
+                });
+
+                htmlProv += `</div></details>`;
+                contenedor.innerHTML += htmlProv;
+            });
+        }
+
+        // --- FUNCIONES EXTRA EXISTENTES ---
+        function sumarIVA() {
+            const inMin = document.getElementById('prodMin');
+            const inMay = document.getElementById('prodMay');
+            if (inMin.value) inMin.value = Math.round(Number(inMin.value) * 1.19);
+            if (inMay.value) {
+                inMay.value = Math.round(Number(inMay.value) * 1.19);
+                calcularUnitarioAuto();
+            }
+        }
+
+        function compararProveedores() {
+            const texto = document.getElementById('buscarProd').value.toLowerCase();
+            const rec = document.getElementById('recomendacion');
+            if (texto.length < 3) { rec.innerHTML = ''; return; }
+
+            let opciones = [];
+            directorio.forEach(prov => {
+                prov.productos.forEach(p => {
+                    if (p.nombre.toLowerCase().includes(texto) || p.cat.toLowerCase().includes(texto) || p.subcat.toLowerCase().includes(texto)) {
+                        opciones.push({ provNombre: prov.nombre, prodNombre: p.nombre, min: p.minorista, may: p.mayorista, uni: p.unitario, est: p.estado, cantCaja: p.cantCaja });
+                    }
+                });
+            });
+
+            if (opciones.length === 0) { rec.innerHTML = '<span style="color:var(--danger)">No se encontraron opciones.</span>'; return; }
+
+            opciones.sort((a, b) => {
+                if (a.est === 'No disponible' && b.est !== 'No disponible') return 1;
+                if (b.est === 'No disponible' && a.est !== 'No disponible') return -1;
+                return a.uni - b.uni; 
+            });
+
+            const mejor = opciones[0];
+            const infoCajaMay = mejor.cantCaja ? ` (${fNum(mejor.cantCaja)} un/caja)` : '';
+            
+            let html = `<strong>Mejor Opción (x Unitario):</strong> ${mejor.provNombre} - ${mejor.prodNombre} <br>
+                        <span style="color:var(--success); font-size:1.1em; font-weight:bold;">$${fNum(mejor.uni)}/un</span> 
+                        | May: $${fNum(mejor.may)}${infoCajaMay} | Est: ${mejor.est || 'Disponible'}`;
+            
+            rec.innerHTML = html;
+        }
+
+        function eliminarProductoTemp(idProd) {
+            if(confirm("¿Quitar producto de la lista temporal?")) {
+                productosTemporales = productosTemporales.filter(p => p.id !== idProd);
+                actualizarTablaTemp();
             }
         }
 
         function eliminarProductoDir(idProv, idProd) {
-            if(confirm("¿Eliminar este producto?")) {
+            if(confirm("¿Eliminar este producto permanentemente?")) {
                 const prov = directorio.find(p => p.id === idProv);
-                if(prov) {
-                    prov.productos = prov.productos.filter(p => p.id !== idProd);
-                    prov.linea = determinarLineaProveedor(prov.productos);
-                    guardarDatos();
-                    actualizarDirectorio();
-                }
+                prov.productos = prov.productos.filter(p => p.id !== idProd);
+                guardarDatos();
+                actualizarDirectorio();
             }
         }
 
-        // --- GESTIÓN DE CATEGORÍAS Y SUBCATEGORÍAS ---
+        // --- GESTIÓN DE CATEGORÍAS/SUBCATEGORÍAS ---
         function abrirModalCatSub() {
-            renderizarListaCatSub();
+            renderListasManager();
             document.getElementById('modalCatSub').style.display = 'flex';
         }
 
@@ -1092,458 +1153,50 @@
             document.getElementById('modalCatSub').style.display = 'none';
         }
 
-        function renderizarListaCatSub() {
-            const divCat = document.getElementById('listaCategoriasManager');
-            const divSub = document.getElementById('listaSubcategoriasManager');
-
-            divCat.innerHTML = categoriasBase.length === 0 ? '<em>No hay categorías registradas.</em>' : 
-                categoriasBase.map((cat, idx) => `
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--highlight-bg); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color);">
-                        <strong style="font-size:0.9em;">${cat}</strong>
-                        <div style="display:flex; gap:5px;">
-                            <button type="button" class="btn-warning" style="padding:2px 6px; font-size:0.75em;" onclick="editarCategoria(${idx})">✏️</button>
-                            <button type="button" class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="eliminarCategoria(${idx})">🗑️</button>
-                        </div>
-                    </div>
-                `).join('');
-
-            divSub.innerHTML = subcategoriasBase.length === 0 ? '<em>No hay sub-categorías registradas.</em>' : 
-                subcategoriasBase.map((sub, idx) => `
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--highlight-bg); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color);">
-                        <strong style="font-size:0.9em;">${sub}</strong>
-                        <div style="display:flex; gap:5px;">
-                            <button type="button" class="btn-warning" style="padding:2px 6px; font-size:0.75em;" onclick="editarSubcategoria(${idx})">✏️</button>
-                            <button type="button" class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="eliminarSubcategoria(${idx})">🗑️</button>
-                        </div>
-                    </div>
-                `).join('');
+        function renderListasManager() {
+            const listCat = document.getElementById('listaCategoriasManager');
+            const listSub = document.getElementById('listaSubcategoriasManager');
+            
+            listCat.innerHTML = categoriasBase.map((c, i) => `
+                <div style="display:flex; justify-content:space-between; background:var(--highlight-bg); padding:8px; border-radius:6px; border:1px solid var(--border-color);">
+                    <span>${c}</span>
+                    <button class="btn-danger" onclick="eliminarCatSub('cat', ${i})" style="padding:2px 6px;">x</button>
+                </div>
+            `).join('');
+            
+            listSub.innerHTML = subcategoriasBase.map((s, i) => `
+                <div style="display:flex; justify-content:space-between; background:var(--highlight-bg); padding:8px; border-radius:6px; border:1px solid var(--border-color);">
+                    <span>${s}</span>
+                    <button class="btn-danger" onclick="eliminarCatSub('sub', ${i})" style="padding:2px 6px;">x</button>
+                </div>
+            `).join('');
         }
 
-        function editarCategoria(index) {
-            const nombreViejo = categoriasBase[index];
-            const nuevoNombre = prompt("Modificar nombre de la Categoría:", nombreViejo);
-            
-            if (nuevoNombre && nuevoNombre.trim() !== "" && nuevoNombre !== nombreViejo) {
-                const nombreLimpio = nuevoNombre.trim();
-                categoriasBase[index] = nombreLimpio;
-
-                directorio.forEach(prov => {
-                    if(prov.productos) {
-                        prov.productos.forEach(prod => {
-                            if (prod.categoria === nombreViejo) prod.categoria = nombreLimpio;
-                        });
-                    }
-                });
-
+        function eliminarCatSub(tipo, index) {
+            if(confirm("¿Eliminar este ítem?")) {
+                if(tipo === 'cat') categoriasBase.splice(index, 1);
+                else subcategoriasBase.splice(index, 1);
                 guardarDatos();
-                renderizarListaCatSub();
-                actualizarDirectorio();
+                renderListasManager();
             }
         }
 
-        function eliminarCategoria(index) {
-            const catNombre = categoriasBase[index];
-            if (confirm(`¿Eliminar la categoría "${catNombre}"? Los productos asignados a ella cambiarán a "Sin Categoría".`)) {
-                categoriasBase.splice(index, 1);
-
-                directorio.forEach(prov => {
-                    if(prov.productos) {
-                        prov.productos.forEach(prod => {
-                            if (prod.categoria === catNombre) prod.categoria = "Sin Categoría";
-                        });
-                    }
-                });
-
-                guardarDatos();
-                renderizarListaCatSub();
-                actualizarDirectorio();
-            }
-        }
-
-        function editarSubcategoria(index) {
-            const nombreViejo = subcategoriasBase[index];
-            const nuevoNombre = prompt("Modificar nombre de la Sub-Categoría:", nombreViejo);
+        function cargarOpcionesCategorias() {
+            const cSel = document.getElementById('prodCatSelect');
+            cSel.innerHTML = categoriasBase.map(c => `<option value="${c}">${c}</option>`).join('') + `<option value="otra">+ Otra (Nueva)...</option>`;
             
-            if (nuevoNombre && nuevoNombre.trim() !== "" && nuevoNombre !== nombreViejo) {
-                const nombreLimpio = nuevoNombre.trim();
-                subcategoriasBase[index] = nombreLimpio;
-
-                directorio.forEach(prov => {
-                    if(prov.productos) {
-                        prov.productos.forEach(prod => {
-                            if (prod.subcategoria === nombreViejo) prod.subcategoria = nombreLimpio;
-                        });
-                    }
-                });
-
-                guardarDatos();
-                renderizarListaCatSub();
-                actualizarDirectorio();
-            }
+            const sSel = document.getElementById('prodSubSelect');
+            sSel.innerHTML = subcategoriasBase.map(s => `<option value="${s}">${s}</option>`).join('') + `<option value="otra">+ Otra (Nueva)...</option>`;
         }
 
-        function eliminarSubcategoria(index) {
-            const subNombre = subcategoriasBase[index];
-            if (confirm(`¿Eliminar la sub-categoría "${subNombre}"? Los productos asignados a ella cambiarán a "Sin Subcategoría".`)) {
-                subcategoriasBase.splice(index, 1);
-
-                directorio.forEach(prov => {
-                    if(prov.productos) {
-                        prov.productos.forEach(prod => {
-                            if (prod.subcategoria === subNombre) prod.subcategoria = "Sin Subcategoría";
-                        });
-                    }
-                });
-
-                guardarDatos();
-                renderizarListaCatSub();
-                actualizarDirectorio();
-            }
+        function verificarCategoria(tipo) {
+            const sel = document.getElementById(`prod${tipo}Select`).value;
+            document.getElementById(`prod${tipo}Nueva`).style.display = sel === 'otra' ? 'block' : 'none';
         }
 
-        // --- RENDERIZADO DIRECTORIO (EL ACORDEÓN ORIGINAL Y PERFECTO) ---
-        function actualizarDirectorio() {
-            const fFav = document.getElementById('filtroFav').value;
-            const fCat = document.getElementById('filtroCat').value;
-            const fEst = document.getElementById('filtroEst').value;
-            const fDisp = document.getElementById('filtroDisp').value;
-            const fCiu = document.getElementById('filtroCiu').value;
+        // INICIALIZACIÓN
+        window.onload = cargarDatosLocal;
 
-            let directorioFiltrado = directorio.map(prov => {
-                let copyProv = JSON.parse(JSON.stringify(prov));
-                if(!copyProv.productos) copyProv.productos = [];
-                if (fDisp !== 'todos') {
-                    copyProv.productos = copyProv.productos.filter(p => (p.estado || 'Disponible') === fDisp);
-                }
-                return copyProv;
-            }).filter(prov => {
-                let pasaFav = (fFav === 'todos') || (fFav === 'fav' && prov.favorito);
-                let pasaCat = (fCat === 'todos') || (prov.linea === fCat);
-                let pasaEst = (fEst === 'todos') || (prov.estado === fEst);
-                let pasaCiu = (fCiu === 'todos') || (prov.ciudad === fCiu);
-                let tieneProductos = (prov.productos && prov.productos.length > 0) || fDisp === 'todos';
-                return pasaFav && pasaCat && pasaEst && pasaCiu && tieneProductos;
-            });
-
-            directorioFiltrado.sort((a, b) => {
-                let scoreA = (a.favorito ? 2 : 0) + (a.estado === 'Oficial' ? 1 : 0);
-                let scoreB = (b.favorito ? 2 : 0) + (b.estado === 'Oficial' ? 1 : 0);
-                return scoreB - scoreA; 
-            });
-
-            const contenedor = document.getElementById('contenedorDirectorio');
-            contenedor.innerHTML = '';
-
-            if(directorioFiltrado.length === 0) {
-                contenedor.innerHTML = '<p>No hay datos que coincidan con tu búsqueda.</p>';
-                compararProveedores();
-                return;
-            }
-
-            directorioFiltrado.forEach(prov => {
-                const favIcon = prov.favorito ? '<span style="color:gold; font-size:1.2em; filter:drop-shadow(0 0 5px gold);">★</span>' : '<span style="color:gray;">☆</span>';
-                const tagLinea = `<span class="tag ${getClaseTag(prov.linea)}">${prov.linea}</span>`;
-                const tagEstado = prov.estado === 'Oficial' ? '<span class="tag tag-oficial">Oficial</span>' : '<span class="tag tag-posible">Posible</span>';
-                const webLink = prov.web ? `<a href="${prov.web}" target="_blank" style="color:var(--primary-blue); font-weight:bold; margin-left:10px;">🔗 Web</a>` : ``;
-                const mailInfo = prov.email && prov.email !== '-' ? ` | ✉️ ${prov.email}` : '';
-
-                let htmlProv = `
-                <details>
-                    <summary>
-                        <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
-                            ${favIcon} <strong style="font-size:1.1em;">${prov.nombre}</strong>
-                            ${tagLinea} ${tagEstado}
-                            <span style="font-size:0.85em; opacity:0.8;">📍 ${prov.ciudad} | 📞 ${prov.contacto} ${mailInfo} | 🚚 ${prov.tiempo}d.</span>
-                            ${webLink}
-                        </div>
-                        <div style="display:flex; gap:10px; margin-top:5px;">
-                            <button type="button" class="btn-primary" style="padding:4px 10px; font-size:0.8em;" onclick="abrirModalProd('add_dir', '${prov.id}')">+ Añadir Prod.</button>
-                            <button type="button" class="btn-warning" onclick="abrirModalProv('${prov.id}')">Editar Prov.</button>
-                            <button type="button" class="btn-danger" onclick="eliminarProveedor('${prov.id}')">X Eliminar</button>
-                        </div>
-                    </summary>
-                    <div class="details-content">
-                `;
-
-                let agrupado = {};
-                (prov.productos || []).forEach(prod => {
-                    const cName = prod.categoria || 'Sin Categoría';
-                    const sName = prod.subcategoria || 'Sin Subcategoría';
-                    if(!agrupado[cName]) agrupado[cName] = {};
-                    if(!agrupado[cName][sName]) agrupado[cName][sName] = [];
-                    agrupado[cName][sName].push(prod);
-                });
-
-                if(Object.keys(agrupado).length === 0) {
-                    htmlProv += `<em>Este proveedor no tiene productos registrados.</em>`;
-                }
-
-                for(let cat in agrupado) {
-                    htmlProv += `<details class="cat-details"><summary>📂 ${cat}</summary><div class="details-content">`;
-                    for(let sub in agrupado[cat]) {
-                        htmlProv += `<details class="subcat-details" open><summary>📁 ${sub}</summary><div class="details-content">`;
-                        
-                        agrupado[cat][sub].forEach(prod => {
-                            const descInfo = prod.descripcion ? `<br><small style="opacity:0.8;"><em>${prod.descripcion}</em></small>` : '';
-                            const prodWebLink = prod.link ? `<a href="${prod.link}" target="_blank" style="font-size: 0.8em; margin-left:10px; color:var(--primary-blue);">🔗 Ver en Web</a>` : '';
-                            
-                            const imgThumb = prod.imagen 
-                                ? `<img src="${prod.imagen}" class="prod-img-thumb" alt="${prod.nombre}" onerror="this.onerror=null; this.parentElement.innerHTML='📷 Sin Foto';">` 
-                                : `<div class="prod-img-thumb">📷 Sin Foto</div>`;
-
-                            const tagDisp = renderStockTag(prod);
-                            const cantCajaTag = prod.cantCaja ? `<small style="display:block; font-size:0.78em; color:var(--cyan-accent); font-weight:bold;">📦 ${fNum(prod.cantCaja)} un/caja</small>` : '';
-
-                            htmlProv += `
-                            <div class="prod-item-dir">
-                                <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:250px;">
-                                    ${imgThumb}
-                                    <div style="display:flex; flex-direction:column; gap:4px;">
-                                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                                            <span class="tag ${getClaseTag(prod.linea)}">${prod.linea}</span>
-                                            ${tagDisp}
-                                            <strong style="font-size:1em;">${prod.nombre}</strong> ${prodWebLink}
-                                        </div>
-                                        <small style="opacity:0.75;">Oferta: ${prod.oferta}</small>
-                                        ${descInfo}
-                                    </div>
-                                </div>
-
-                                <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:flex-end;">
-                                    <span style="font-size:0.85em; opacity:0.8;">Uni: $${fNum(prod.unitario)}</span>
-                                    <span style="font-size:0.85em;">Min: $${fNum(prod.minorista)}</span>
-                                    <div style="text-align:right;">
-                                        <span style="color:#10b981; font-weight:bold; font-size:1.1em;">May: $${fNum(prod.mayorista)}</span>
-                                        ${cantCajaTag}
-                                    </div>
-                                    <button type="button" class="btn-warning" onclick="abrirModalProd('edit', '${prov.id}', '${prod.id}')">Editar</button>
-                                    <button type="button" class="btn-danger" onclick="eliminarProductoDir('${prov.id}', '${prod.id}')">X</button>
-                                </div>
-                            </div>`;
-                        });
-                        htmlProv += `</div></details>`;
-                    }
-                    htmlProv += `</div></details>`;
-                }
-
-                htmlProv += `</div></details>`;
-                contenedor.innerHTML += htmlProv;
-            });
-            
-            compararProveedores();
-        }
-
-        // --- EVALUADOR Y COMPARADOR ---
-        function compararProveedores() {
-            const inputBusqueda = document.getElementById('buscarProd');
-            if(!inputBusqueda) return;
-
-            const busqueda = inputBusqueda.value.toLowerCase().trim();
-            const divRec = document.getElementById('recomendacion');
-
-            if (!busqueda || directorio.length === 0) {
-                if(divRec) divRec.innerHTML = ''; return;
-            }
-
-            let opciones = [];
-            directorio.forEach(prov => {
-                if(prov.productos) {
-                    prov.productos.forEach(prod => {
-                        if(prod.nombre.toLowerCase().includes(busqueda) || 
-                           prod.categoria.toLowerCase().includes(busqueda) || 
-                           prod.subcategoria.toLowerCase().includes(busqueda) || 
-                           (prod.descripcion && prod.descripcion.toLowerCase().includes(busqueda))) {
-                            opciones.push({
-                                provNombre: prov.nombre, prodNombre: prod.nombre,
-                                precio: prod.mayorista, cantCaja: prod.cantCaja, tiempo: prov.tiempo,
-                                esOficial: prov.estado === 'Oficial', esFav: prov.favorito,
-                                estado: prod.estado || 'Disponible',
-                                stockUnid: prod.stockUnid,
-                                stockCajas: prod.stockCajas
-                            });
-                        }
-                    });
-                }
-            });
-
-            if (opciones.length === 0) {
-                if(divRec) divRec.innerHTML = '<em>No hay coincidencias en tu base de datos.</em>'; return;
-            }
-
-            let disponibles = opciones.filter(o => o.estado !== 'No disponible');
-            
-            if (disponibles.length > 0) {
-                let mejor = disponibles.reduce((prev, curr) => (prev.precio < curr.precio) ? prev : curr);
-                const infoCaja = mejor.cantCaja ? ` (${fNum(mejor.cantCaja)} un/caja)` : '';
-                
-                let tagStock = `<span class="tag tag-disponible">🟢 En Stock</span>`;
-                let alertStockTxt = '';
-
-                if (mejor.estado === 'Últimas Unidades') {
-                    let stockTxt = (mejor.stockUnid !== null && mejor.stockUnid !== undefined) 
-                        ? ` (${fNum(mejor.stockUnid)} un / ${mejor.stockCajas || 0} cjas)` 
-                        : '';
-                    tagStock = `<span class="tag tag-ultimas">🟠 Últimas Unidades${stockTxt}</span>`;
-                    alertStockTxt = ` <strong style="color:var(--warning);">(⚠️ Quedan pocas unidades en la web del proveedor)</strong>`;
-                }
-
-                if(divRec) {
-                    divRec.innerHTML = `
-                        💡 <strong>Mejor Opción Disponible:</strong> 
-                        <strong>${mejor.provNombre}</strong> tiene "${mejor.prodNombre}" a 
-                        <strong style="color:#10b981;">$${fNum(mejor.precio)} (Mayorista${infoCaja})</strong>. 
-                        Tiempo estimado: ${mejor.tiempo} días. 
-                        ${tagStock} ${alertStockTxt}
-                        ${mejor.esFav ? '⭐(Tu Favorito)' : ''} 
-                        ${mejor.esOficial ? '<span class="tag tag-oficial">Prov. Oficial</span>' : ''}
-                    `;
-                }
-            } else {
-                let mejorSinStock = opciones.reduce((prev, curr) => (prev.precio < curr.precio) ? prev : curr);
-                if(divRec) {
-                    divRec.innerHTML = `
-                        ⚠️ <strong>Atención:</strong> Se encontró "${mejorSinStock.prodNombre}" en 
-                        <strong>${mejorSinStock.provNombre}</strong> a <strong style="color:#ef4444;">$${fNum(mejorSinStock.precio)}</strong>, 
-                        pero figura como <span class="tag tag-nodisponible">🔴 No disponible</span>. Consulta disponibilidad directamente con el proveedor.
-                    `;
-                }
-            }
-        }
-    </script>
-
-    <!-- SCRIPT 2: INTEGRACIÓN FIREBASE (Módulo separado para no romper nada del código original) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-
-        // Tu configuración exacta
-        const firebaseConfig = {
-            apiKey: "AIzaSyBTVITP2g-4Sy_ccaFnd7o5bkeWlgTa7Sc",
-            authDomain: "ciclopack-eco.firebaseapp.com",
-            projectId: "ciclopack-eco",
-            storageBucket: "ciclopack-eco.firebasestorage.app",
-            messagingSenderId: "587485375626",
-            appId: "1:587485375626:web:a2625a13f4ea9689add173"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Referencias a los elementos de la UI
-        const loginOverlay = document.getElementById('loginOverlay');
-        const loginError = document.getElementById('loginError');
-        const cloudStatus = document.getElementById('cloudStatus');
-        const btnLogout = document.getElementById('btnLogout');
-        const btnRescatar = document.getElementById('btnRescatar');
-
-        let usuarioActual = null;
-
-        // 1. Manejo del Login
-        document.getElementById('btnLogin').addEventListener('click', async () => {
-            const email = document.getElementById('loginEmail').value.trim();
-            const pass = document.getElementById('loginPass').value.trim();
-            try {
-                loginError.style.display = 'none';
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch (error) {
-                loginError.style.display = 'block';
-                loginError.innerText = "Error: Credenciales incorrectas.";
-                console.error(error);
-            }
-        });
-
-        // 2. Manejo del Logout
-        btnLogout.addEventListener('click', () => {
-            signOut(auth);
-        });
-
-        // 3. Vigilar el estado de la sesión
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                usuarioActual = user;
-                loginOverlay.style.display = 'none';
-                btnLogout.style.display = 'inline-block';
-                btnRescatar.style.display = 'inline-block';
-                cloudStatus.innerHTML = "☁️ Conectado, buscando datos...";
-                cloudStatus.className = "tag tag-ultimas";
-                
-                // Si el usuario entra, cargamos su info de Firestore
-                await cargarDatosDesdeNube();
-            } else {
-                usuarioActual = null;
-                loginOverlay.style.display = 'flex'; // Vuelve a mostrar el login
-                btnLogout.style.display = 'none';
-                btnRescatar.style.display = 'none';
-                cloudStatus.innerHTML = "☁️ Desconectado";
-                cloudStatus.className = "tag tag-nodisponible";
-            }
-        });
-
-        // 4. Leer de Firestore
-        async function cargarDatosDesdeNube() {
-            if (!usuarioActual) return;
-            try {
-                const docRef = doc(db, "usuarios", usuarioActual.uid);
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    if (data.directorio) window.directorio = data.directorio;
-                    if (data.categoriasBase) window.categoriasBase = data.categoriasBase;
-                    if (data.subcategoriasBase) window.subcategoriasBase = data.subcategoriasBase;
-                    
-                    // Al descargar de la nube, aseguramos un backup local
-                    window.guardarLocalSolo();
-                    window.actualizarDirectorio();
-
-                    cloudStatus.innerHTML = "☁️ Cloud Sincronizado";
-                    cloudStatus.className = "tag tag-disponible";
-                } else {
-                    // Si no hay datos en la nube para este usuario, cargamos los locales como base
-                    window.cargarDatosLocal();
-                    cloudStatus.innerHTML = "☁️ Nube vacía (Cargado Local)";
-                    cloudStatus.className = "tag tag-posible";
-                }
-            } catch (error) {
-                console.error("Error al cargar de Firestore:", error);
-                cloudStatus.innerHTML = "⚠️ Error de red";
-                cloudStatus.className = "tag tag-nodisponible";
-                window.cargarDatosLocal(); // Fallback si falla el internet
-            }
-        }
-
-        // 5. Función inyectada para guardar hacia la nube (usada por guardarDatos)
-        window.sincronizarHaciaNube = async function() {
-            if (!usuarioActual) return;
-            cloudStatus.innerHTML = "☁️ Guardando...";
-            cloudStatus.className = "tag tag-ultimas";
-            
-            try {
-                await setDoc(doc(db, "usuarios", usuarioActual.uid), {
-                    directorio: window.directorio,
-                    categoriasBase: window.categoriasBase,
-                    subcategoriasBase: window.subcategoriasBase,
-                    ultimaModificacion: new Date().toISOString()
-                });
-                cloudStatus.innerHTML = "☁️ Cloud Sincronizado";
-                cloudStatus.className = "tag tag-disponible";
-            } catch (error) {
-                console.error("Error al guardar en Firestore:", error);
-                cloudStatus.innerHTML = "⚠️ Error de Sincronización";
-                cloudStatus.className = "tag tag-nodisponible";
-            }
-        };
-
-        // 6. Botón de Rescate (Lee forzosamente la caché local y la tira a la nube)
-        btnRescatar.addEventListener('click', () => {
-            if(confirm("¿Estás seguro que deseas rescatar los datos locales? Esto sobreescribirá lo que esté en la nube actualmente.")){
-                window.cargarDatosLocal();
-                window.sincronizarHaciaNube();
-                alert("🎉 ¡Datos locales rescatados y enviados a la nube exitosamente!");
-            }
-        });
     </script>
 </body>
 </html>
