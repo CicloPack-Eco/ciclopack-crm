@@ -284,6 +284,36 @@
         @keyframes fadeInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
 
+        /* ESTILOS NUEVOS: BARRA FLOTANTE Y MATRIZ DE COMPARACIÓN */
+        .sticky-bar {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--card-bg); border: 2px solid var(--cyan-accent);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(0,245,212,0.3);
+            border-radius: 50px; padding: 10px 25px; display: flex; align-items: center;
+            gap: 20px; z-index: 1500; backdrop-filter: blur(8px); font-weight: bold;
+            animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes slideUp { from { transform: translate(-50%, 100px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+
+        .best-value {
+            background: rgba(16, 185, 129, 0.25) !important;
+            border: 1.5px solid var(--success) !important;
+            border-radius: 6px; padding: 4px; color: var(--success) !important;
+            font-weight: bold; display: inline-block;
+        }
+
+        .matrix-table {
+            width: 100%; border-collapse: collapse; margin-top: 10px;
+        }
+        .matrix-table th, .matrix-table td {
+            padding: 12px; border: 1px solid var(--border-color);
+            text-align: center; vertical-align: middle;
+        }
+        .matrix-table th:first-child, .matrix-table td:first-child {
+            text-align: left; font-weight: bold; background: var(--highlight-bg);
+            width: 180px; min-width: 160px;
+        }
+
     </style>
 </head>
 <body>
@@ -352,11 +382,14 @@
         </div>
 
         <div style="background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--cyan-accent); margin-bottom: 25px; box-shadow: 0 0 10px rgba(0,245,212,0.15);">
-            <h3 style="margin-top:0;">🔍 Analizador de Precios y Stock</h3>
-            <div class="form-group">
-                <input type="text" id="buscarProd" placeholder="Escribe un producto (ej. Cajas) para buscar la mejor opción disponible..." onkeyup="compararProveedores()">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:10px;">
+                <h3 style="margin:0;">🔍 Buscador Dinámico y Analizador Rápido</h3>
+                <small style="opacity:0.8;">Escribe desde la 2da letra para desplegar la búsqueda global</small>
             </div>
-            <div id="recomendacion" style="margin-top: 10px; font-size: 0.95em;"></div>
+            <div class="form-group">
+                <input type="text" id="buscarProd" placeholder="Escribe un producto (ej. Cajas, Vasos, Envase) para buscar la mejor opción..." onkeyup="compararProveedores()">
+            </div>
+            <div id="recomendacion" style="margin-top: 15px; font-size: 0.95em;"></div>
         </div>
 
         <h3>📋 Directorio General</h3>
@@ -394,6 +427,15 @@
 
         <div id="contenedorDirectorio">
             <!-- Proveedores dinámicos -->
+        </div>
+    </div>
+
+    <!-- BARRA FLOTANTE ADHESIVA (STICKY BAR) -->
+    <div id="stickyCompareBar" class="sticky-bar" style="display:none;">
+        <span id="stickyCompareCount">☑️ 0 productos seleccionados</span>
+        <div style="display:flex; gap:10px;">
+            <button type="button" class="btn-primary" onclick="abrirModalComparador()" style="padding: 8px 16px; font-size:0.9em;">🔍 Comparar Ahora</button>
+            <button type="button" class="btn-secondary" onclick="limpiarSeleccionComparar()" style="padding: 8px 16px; font-size:0.9em;">Limpiar Selección</button>
         </div>
     </div>
 
@@ -569,7 +611,7 @@
                 <textarea id="prodDesc" rows="2" placeholder="Detalles técnicos, material, dimensiones..."></textarea>
             </div>
 
-            <!-- PRECIOS Y UNIDADES POR CAJA (ESTRUCTURA NUEVA Y AUTO-CALCULADA) -->
+            <!-- PRECIOS Y UNIDADES POR CAJA -->
             <div class="form-grid" style="align-items: end; background: var(--highlight-bg); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);">
                 <div class="form-group">
                     <label style="color: var(--minor-color);">Unidades x Caja Minor</label>
@@ -658,9 +700,29 @@
         </div>
     </div>
 
-    <!-- SCRIPT 1: LÓGICA DE LA INTERFAZ Y EL CRM (Globales para que funcionen los botones) -->
+    <!-- NUEVO MODAL 4: COMPARADOR DETALLADO LADO A LADO -->
+    <div class="modal-overlay" id="modalComparador">
+        <div class="modal-content" style="max-width: 1050px; border-top-color: var(--cyan-accent);">
+            <div class="modal-header">
+                <h2>📊 Comparativa Detallada Lado a Lado</h2>
+                <button type="button" class="btn-danger" onclick="cerrarModalComparador()">✕ Cerrar</button>
+            </div>
+
+            <!-- SECCIÓN A: RESUMEN COMPARATIVO INTELIGENTE -->
+            <div id="resumenComparativoInteligente" style="background: var(--highlight-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--cyan-accent); margin-bottom: 20px; font-size: 0.95em; line-height: 1.5;"></div>
+
+            <!-- SECCIÓN B: MATRIZ COMPARATIVA LADO A LADO -->
+            <div class="table-responsive" id="matrizComparativaContainer"></div>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <button type="button" class="btn-info" onclick="copiarResumenComparativa()">📋 Copiar Resumen para WhatsApp / Correo</button>
+                <button type="button" class="btn-secondary" onclick="cerrarModalComparador()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT LÓGICA DE LA INTERFAZ Y EL CRM -->
     <script>
-        // Usamos "var" para que Firebase pueda acceder a estas variables globalmente (window.directorio)
         var directorio = []; 
         var productosTemporales = [];
         var esFavActual = false;
@@ -672,7 +734,10 @@
 
         var contextoProducto = { modo: 'temp', idProv: null, idProd: null }; 
 
-        // --- SISTEMA DE NOTIFICACIONES TOAST (MEJORA UX) ---
+        // ARRAY GLOBAL PARA COMPARADOR DE PRODUCTOS
+        var seleccionComparar = []; // Guarda objetos: { provId, prodId }
+
+        // --- SISTEMA DE NOTIFICACIONES TOAST ---
         function mostrarToast(mensaje, tipo = 'info') {
             const container = document.getElementById('toastContainer');
             if(!container) return;
@@ -693,7 +758,7 @@
             }, 4000);
         }
 
-        // --- EXPORTAR E IMPORTAR RESPALDO LOCAL JSON (MEJORA DE SEGURIDAD) ---
+        // --- EXPORTAR E IMPORTAR RESPALDO LOCAL JSON ---
         function exportarBackupData() {
             try {
                 const payload = {
@@ -742,7 +807,7 @@
             reader.readAsText(file);
         }
 
-        // --- COPIAR FICHA DE PRODUCTO AL PORTAPAPELES (MEJORA DE PRODUCTIVIDAD) ---
+        // --- COPIAR FICHA DE PRODUCTO AL PORTAPAPELES ---
         function copiarFichaProducto(provNombre, prodNombre, minorista, mayorista, link, oferta) {
             const texto = `📦 *${prodNombre}* (${provNombre})\n` +
                           `• Minorista: $${fNum(minorista)}\n` +
@@ -775,7 +840,6 @@
             actualizarDirectorio();
         }
 
-        // Guarda localmente y luego intenta sincronizar con la nube
         function guardarDatos() {
             guardarLocalSolo();
             if (window.sincronizarHaciaNube) {
@@ -783,7 +847,6 @@
             }
         }
 
-        // Exclusivo para guardar local
         function guardarLocalSolo() {
             try {
                 localStorage.setItem('cicloPackBio_directorio', JSON.stringify(directorio));
@@ -858,7 +921,7 @@
             document.getElementById('kpiFavoritos').innerText = totalFav;
         }
 
-        // CÁLCULOS AUTOMÁTICOS DE FORMULARIO (ACTUALIZADO CON MULTIPLICACIÓN Y UNITARIOS MINORISTA / MAYORISTA)
+        // CÁLCULOS AUTOMÁTICOS DE FORMULARIO
         function calcularUnitarioAuto() {
             const uniMinor = parseFloat(document.getElementById('prodUniCajaMinor').value);
             const cajasInMayor = parseFloat(document.getElementById('prodCajasMinorEnMayor').value);
@@ -873,7 +936,6 @@
                 inputCantCajaMayor.value = totalUniMayor;
             }
 
-            // Cálculo Unitario Minorista
             const min = parseFloat(document.getElementById('prodMin').value);
             const inputUniMin = document.getElementById('prodUniMin');
             if (!isNaN(min) && !isNaN(uniMinor) && uniMinor > 0) {
@@ -884,7 +946,6 @@
                 if (inputUniMin) inputUniMin.value = '';
             }
 
-            // Cálculo Unitario Mayorista
             const may = parseFloat(document.getElementById('prodMay').value);
             const inputUniMay = document.getElementById('prodUni');
             const cantCaja = parseFloat(inputCantCajaMayor.value);
@@ -992,6 +1053,305 @@
             document.getElementById('previewBox').innerHTML = "Sin foto";
         }
 
+        // --- GESTIÓN DE SELECCIÓN PARA EL COMPARADOR ---
+        function toggleSeleccionComparar(provId, prodId) {
+            const index = seleccionComparar.findIndex(item => item.provId === provId && item.prodId === prodId);
+            if (index !== -1) {
+                seleccionComparar.splice(index, 1);
+            } else {
+                seleccionComparar.push({ provId, prodId });
+            }
+            actualizarStickyBar();
+            
+            // Sincronizar checkboxes de las tablas dinámicas
+            document.querySelectorAll(`.chk-cmp-${provId}-${prodId}`).forEach(chk => {
+                chk.checked = (index === -1);
+            });
+        }
+
+        function estaSeleccionado(provId, prodId) {
+            return seleccionComparar.some(item => item.provId === provId && item.prodId === prodId);
+        }
+
+        function limpiarSeleccionComparar() {
+            seleccionComparar = [];
+            actualizarStickyBar();
+            document.querySelectorAll('.chk-cmp').forEach(chk => chk.checked = false);
+        }
+
+        function actualizarStickyBar() {
+            const bar = document.getElementById('stickyCompareBar');
+            const count = document.getElementById('stickyCompareCount');
+            if (seleccionComparar.length > 0) {
+                count.innerHTML = `☑️ <strong>${seleccionComparar.length}</strong> producto${seleccionComparar.length > 1 ? 's' : ''} seleccionado${seleccionComparar.length > 1 ? 's' : ''}`;
+                bar.style.display = 'flex';
+            } else {
+                bar.style.display = 'none';
+            }
+        }
+
+        // --- BUSCADOR DINÁMICO CON TABLA DE 11 COLUMNAS ---
+        function compararProveedores() {
+            const query = document.getElementById('buscarProd').value.trim().toLowerCase();
+            const contRes = document.getElementById('recomendacion');
+
+            if (query.length < 2) {
+                contRes.innerHTML = '<small style="opacity:0.7;">Ingresa al menos 2 letras para desplegar la búsqueda global en tiempo real.</small>';
+                return;
+            }
+
+            let resultados = [];
+            directorio.forEach(prov => {
+                if (prov.productos && prov.productos.length > 0) {
+                    prov.productos.forEach(prod => {
+                        const coincideNombre = prod.nombre && prod.nombre.toLowerCase().includes(query);
+                        const coincideCat = prod.categoria && prod.categoria.toLowerCase().includes(query);
+                        const coincideSub = prod.subcategoria && prod.subcategoria.toLowerCase().includes(query);
+                        
+                        if (coincideNombre || coincideCat || coincideSub) {
+                            resultados.push({ prov, prod });
+                        }
+                    });
+                }
+            });
+
+            if (resultados.length === 0) {
+                contRes.innerHTML = '<div style="padding:10px; opacity:0.8;">No se encontraron productos coincidentes.</div>';
+                return;
+            }
+
+            let html = `
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align:center;">Comparar</th>
+                            <th style="text-align:center;">Fav</th>
+                            <th>Img</th>
+                            <th>Línea</th>
+                            <th>Producto</th>
+                            <th>Enlace</th>
+                            <th>Stock</th>
+                            <th>Proveedor</th>
+                            <th>Minorista</th>
+                            <th>Mayorista</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            resultados.forEach(res => {
+                const p = res.prod;
+                const prov = res.prov;
+                const isSelected = estaSeleccionado(prov.id, p.id);
+                
+                const imgHTML = p.imagen 
+                    ? `<img src="${p.imagen}" style="width:40px; height:40px; object-fit:cover; border-radius:6px;">`
+                    : `<span style="font-size:1.2em; opacity:0.4;">📷</span>`;
+
+                const linkHTML = p.link 
+                    ? `<a href="${p.link}" target="_blank" class="btn-info" style="padding:3px 8px; font-size:0.8em; text-decoration:none;">🔗 Ir</a>` 
+                    : `-`;
+
+                const uNetoMin = p.uniNetoMinor || (p.uniCajaMinor ? Math.round(p.minorista / p.uniCajaMinor) : p.minorista);
+                const celdaMinor = `<strong>$${fNum(p.minorista)}</strong><br><small style="color:var(--minor-color); font-weight:bold;">⚡ $${fNum(uNetoMin)}/un</small>`;
+
+                const uNetoMay = p.unitario || (p.cantCaja ? Math.round(p.mayorista / p.cantCaja) : p.mayorista);
+                const celdaMayor = `<strong>$${fNum(p.mayorista)}</strong><br><small style="color:var(--mayor-color); font-weight:bold;">⚡ $${fNum(uNetoMay)}/un</small>`;
+
+                html += `
+                    <tr>
+                        <td style="text-align:center;">
+                            <input type="checkbox" class="chk-cmp chk-cmp-${prov.id}-${p.id}" ${isSelected ? 'checked' : ''} onchange="toggleSeleccionComparar('${prov.id}', '${p.id}')">
+                        </td>
+                        <td style="text-align:center;">${prov.favorito ? '⭐' : '☆'}</td>
+                        <td>${imgHTML}</td>
+                        <td><span class="tag ${getClaseTag(p.linea)}">${p.linea}</span></td>
+                        <td><strong>${p.nombre}</strong><br><small style="opacity:0.7;">${p.categoria} > ${p.subcategoria}</small></td>
+                        <td>${linkHTML}</td>
+                        <td>${renderStockTag(p)}</td>
+                        <td><strong>${prov.nombre}</strong><br><small style="opacity:0.8;">📍 ${prov.ciudad} | 🚚 ${prov.tiempo}d</small></td>
+                        <td>${celdaMinor}</td>
+                        <td>${celdaMayor}</td>
+                        <td>
+                            <button type="button" class="btn-warning" style="padding:4px 8px;" onclick="abrirModalProd('edit', '${prov.id}', '${p.id}')">✏️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table></div>`;
+            contRes.innerHTML = html;
+        }
+
+        // --- SISTEMA COMPARADOR DETALLADO LADO A LADO ---
+        function abrirModalComparador() {
+            if (seleccionComparar.length === 0) {
+                mostrarToast("Selecciona al menos un producto para comparar.", "warning");
+                return;
+            }
+
+            const items = [];
+            seleccionComparar.forEach(sel => {
+                const prov = directorio.find(p => p.id === sel.provId);
+                if (prov) {
+                    const prod = (prov.productos || []).find(p => p.id === sel.prodId);
+                    if (prod) items.push({ prov, prod });
+                }
+            });
+
+            if (items.length === 0) return;
+
+            // CÁLCULOS PARA HIGHLIGHTS Y RESUMEN NARRATIVO
+            let menorCostoUnit = Infinity;
+            let prodMasBarato = null;
+            let mayorCostoUnit = 0;
+
+            let menorTiempo = Infinity;
+            let prodMasRapido = null;
+
+            items.forEach(item => {
+                const uNetoMay = item.prod.unitario || (item.prod.cantCaja ? Math.round(item.prod.mayorista / item.prod.cantCaja) : item.prod.mayorista);
+                if (uNetoMay < menorCostoUnit) {
+                    menorCostoUnit = uNetoMay;
+                    prodMasBarato = item;
+                }
+                if (uNetoMay > mayorCostoUnit) mayorCostoUnit = uNetoMay;
+
+                const tiempo = parseInt(item.prov.tiempo) || 999;
+                if (tiempo < menorTiempo) {
+                    menorTiempo = tiempo;
+                    prodMasRapido = item;
+                }
+            });
+
+            // A. RESUMEN COMPARATIVO INTELIGENTE (NARRATIVO)
+            const divResumen = document.getElementById('resumenComparativoInteligente');
+            let ahorroPercent = 0;
+            if (mayorCostoUnit > 0 && menorCostoUnit < Infinity && mayorCostoUnit !== menorCostoUnit) {
+                ahorroPercent = Math.round(((mayorCostoUnit - menorCostoUnit) / mayorCostoUnit) * 100);
+            }
+
+            let textoNarrativo = `<strong>💡 Resumen Analítico en Tiempo Real:</strong><br>`;
+            if (items.length === 1) {
+                textoNarrativo += `Analizando <strong>${items[0].prod.nombre}</strong> de <em>${items[0].prov.nombre}</em>: Presenta un costo unitario mayorista de <strong>$${fNum(menorCostoUnit)}/un</strong> con despacho a Coquimbo en <strong>${items[0].prov.tiempo} días</strong>.`;
+            } else {
+                textoNarrativo += `Analizando los <strong>${items.length} productos</strong> seleccionados: La opción más económica en precio unitario mayorista es <strong>${prodMasBarato.prod.nombre}</strong> ($${fNum(menorCostoUnit)}/un con <em>${prodMasBarato.prov.nombre}</em>)`;
+                if (ahorroPercent > 0) {
+                    textoNarrativo += `, lo que representa un <strong>ahorro del ${ahorroPercent}%</strong> respecto a la alternativa de mayor costo`;
+                }
+                textoNarrativo += `. `;
+
+                if (prodMasRapido && prodMasRapido.prov.tiempo !== '-') {
+                    textoNarrativo += `Si requieres entrega urgente en Coquimbo, <strong>${prodMasRapido.prov.nombre}</strong> ofrece el tiempo de respuesta más ágil (${prodMasRapido.prov.tiempo} días).`;
+                }
+            }
+            divResumen.innerHTML = textoNarrativo;
+
+            // B. MATRIZ COMPARATIVA LADO A LADO
+            const containerMatriz = document.getElementById('matrizComparativaContainer');
+            let htmlMatriz = `<table class="matrix-table"><tbody>`;
+
+            // Fila 1: Imagen y Nombre
+            htmlMatriz += `<tr><td>Producto</td>`;
+            items.forEach(item => {
+                const imgHTML = item.prod.imagen 
+                    ? `<img src="${item.prod.imagen}" style="width:65px; height:65px; object-fit:cover; border-radius:8px; display:block; margin:0 auto 5px;"><br>`
+                    : ``;
+                htmlMatriz += `<td>${imgHTML}<strong>${item.prod.nombre}</strong><br><span class="tag ${getClaseTag(item.prod.linea)}">${item.prod.linea}</span></td>`;
+            });
+            htmlMatriz += `</tr>`;
+
+            // Fila 2: Proveedor y Tiempo
+            htmlMatriz += `<tr><td>Proveedor & Despacho</td>`;
+            items.forEach(item => {
+                const isRapido = item === prodMasRapido && items.length > 1;
+                htmlMatriz += `<td><strong>${item.prov.nombre}</strong><br><small>📍 ${item.prov.ciudad}</small><br><span class="${isRapido ? 'best-value' : ''}">🚚 ${item.prov.tiempo} días a Coquimbo</span></td>`;
+            });
+            htmlMatriz += `</tr>`;
+
+            // Fila 3: Stock y Disponibilidad
+            htmlMatriz += `<tr><td>Stock / Estado</td>`;
+            items.forEach(item => {
+                htmlMatriz += `<td>${renderStockTag(item.prod)}</td>`;
+            });
+            htmlMatriz += `</tr>`;
+
+            // Fila 4: Minorista Neto + Un/Cja + Unitario
+            htmlMatriz += `<tr><td>Minorista Neto</td>`;
+            items.forEach(item => {
+                const uMinor = item.prod.uniCajaMinor ? `${fNum(item.prod.uniCajaMinor)} un/cja` : '1 un';
+                const uNetoMin = item.prod.uniNetoMinor || (item.prod.uniCajaMinor ? Math.round(item.prod.minorista / item.prod.uniCajaMinor) : item.prod.minorista);
+                htmlMatriz += `<td><strong style="color:var(--minor-color);">$${fNum(item.prod.minorista)}</strong><br><small>📦 ${uMinor}</small><br><small style="color:var(--minor-color); font-weight:bold;">⚡ $${fNum(uNetoMin)}/un</small></td>`;
+            });
+            htmlMatriz += `</tr>`;
+
+            // Fila 5: Mayorista Neto + Un/Cja + Unitario
+            htmlMatriz += `<tr><td>Mayorista Neto</td>`;
+            items.forEach(item => {
+                const uMayor = item.prod.cantCaja ? `${fNum(item.prod.cantCaja)} un/cja` : '1 un';
+                const uNetoMay = item.prod.unitario || (item.prod.cantCaja ? Math.round(item.prod.mayorista / item.prod.cantCaja) : item.prod.mayorista);
+                const isBestBarato = item === prodMasBarato && items.length > 1;
+
+                htmlMatriz += `<td><strong style="color:var(--mayor-color);">$${fNum(item.prod.mayorista)}</strong><br><small>📦 ${uMayor}</small><br><span class="${isBestBarato ? 'best-value' : ''}" style="color:var(--mayor-color); font-weight:bold;">⚡ $${fNum(uNetoMay)}/un</span></td>`;
+            });
+            htmlMatriz += `</tr>`;
+
+            // Fila 6: Margen / Diferencia con el más bajo
+            htmlMatriz += `<tr><td>Diferencia vs Más Bajo</td>`;
+            items.forEach(item => {
+                const uNetoMay = item.prod.unitario || (item.prod.cantCaja ? Math.round(item.prod.mayorista / item.prod.cantCaja) : item.prod.mayorista);
+                if (uNetoMay === menorCostoUnit) {
+                    htmlMatriz += `<td><span class="tag tag-disponible">🏆 Opción más económica</span></td>`;
+                } else {
+                    const diffUnit = uNetoMay - menorCostoUnit;
+                    const diffPercent = Math.round((diffUnit / uNetoMay) * 100);
+                    htmlMatriz += `<td><span style="color:var(--danger); font-weight:bold;">+$${fNum(diffUnit)}/un (+${diffPercent}%)</span></td>`;
+                }
+            });
+            htmlMatriz += `</tr>`;
+
+            htmlMatriz += `</tbody></table>`;
+            containerMatriz.innerHTML = htmlMatriz;
+
+            document.getElementById('modalComparador').style.display = 'flex';
+        }
+
+        function cerrarModalComparador() {
+            document.getElementById('modalComparador').style.display = 'none';
+        }
+
+        // --- BOTÓN COPIAR RESUMEN PARA WHATSAPP / CORREO ---
+        function copiarResumenComparativa() {
+            if (seleccionComparar.length === 0) return;
+
+            const items = [];
+            seleccionComparar.forEach(sel => {
+                const prov = directorio.find(p => p.id === sel.provId);
+                if (prov) {
+                    const prod = (prov.productos || []).find(p => p.id === sel.prodId);
+                    if (prod) items.push({ prov, prod });
+                }
+            });
+
+            let texto = `📊 *COMPARATIVA DE PRECIOS - CICLOPACK BIO*\n\n`;
+            items.forEach((item, idx) => {
+                const uNetoMay = item.prod.unitario || (item.prod.cantCaja ? Math.round(item.prod.mayorista / item.prod.cantCaja) : item.prod.mayorista);
+                texto += `*${idx + 1}. ${item.prod.nombre}*\n`;
+                texto += `  • Proveedor: ${item.prov.nombre} (${item.prov.ciudad})\n`;
+                texto += `  • Entrega: ${item.prov.tiempo} días a Coquimbo\n`;
+                texto += `  • Precio Mayorista: $${fNum(item.prod.mayorista)} (${fNum(item.prod.cantCaja || 1)} un/cja)\n`;
+                texto += `  • Costo Unitario Neto: *$${fNum(uNetoMay)}/un*\n\n`;
+            });
+
+            navigator.clipboard.writeText(texto).then(() => {
+                mostrarToast("📋 Resumen copiado para WhatsApp/Correo", "success");
+            }).catch(() => {
+                mostrarToast("No se pudo copiar automáticamente.", "warning");
+            });
+        }
+
         // --- MODAL PROVEEDOR ---
         function abrirModalProv(idProv = null) {
             idProveedorEnEdicion = idProv;
@@ -1048,7 +1408,6 @@
             if(linea === 'Sin Productos') etiqueta.style.background = '#64748b';
         }
 
-        // REESTRUCTURACIÓN DE TABLA TEMPORAL DEL PROVEEDOR (DIVISIÓN MINORISTA Y MAYORISTA)
         function actualizarTablaTemp() {
             const tbody = document.getElementById('listaTempProductos');
             tbody.innerHTML = '';
@@ -1486,9 +1845,9 @@
             }
         }
 
-        // --- RENDERIZADO DIRECTORIO (ACORDEÓN ALINEADO CON BLOQUES VISUALES SEPARADOS + CÁLCULO DE AHORRO) ---
+        // --- RENDERIZADO DIRECTORIO GENERAL CON CHECKBOXES COMPARATIVOS ---
         function actualizarDirectorio() {
-            actualizarKPIs(); // Actualiza contadores superiores
+            actualizarKPIs();
 
             const fFav = document.getElementById('filtroFav').value;
             const fCat = document.getElementById('filtroCat').value;
@@ -1561,316 +1920,82 @@
                     agrupado[cName][sName].push(prod);
                 });
 
-                if(Object.keys(agrupado).length === 0) {
-                    htmlProv += `<em>Este proveedor no tiene productos registrados.</em>`;
-                }
+                Object.keys(agrupado).forEach(cat => {
+                    htmlProv += `<div class="cat-details"><strong style="color:var(--primary-blue);">📂 ${cat}</strong>`;
+                    Object.keys(agrupado[cat]).forEach(sub => {
+                        htmlProv += `<div class="subcat-details"><strong style="color:var(--cyan-accent); font-size:0.9em;">📁 ${sub}</strong><div style="margin-top:8px;">`;
+                        agrupado[cat][sub].forEach(p => {
+                            const isSelected = estaSeleccionado(prov.id, p.id);
+                            const imgHTML = p.imagen 
+                                ? `<img src="${p.imagen}" class="prod-img-thumb" onerror="this.onerror=null; this.parentElement.innerHTML='📷';">` 
+                                : `<div class="prod-img-thumb">📷</div>`;
 
-                for(let cat in agrupado) {
-                    htmlProv += `<details class="cat-details"><summary>📂 ${cat}</summary><div class="details-content">`;
-                    for(let sub in agrupado[cat]) {
-                        htmlProv += `<details class="subcat-details" open><summary>📁 ${sub}</summary><div class="details-content">`;
-                        
-                        agrupado[cat][sub].forEach(prod => {
-                            const descInfo = prod.descripcion ? `<br><small style="opacity:0.8;"><em>${prod.descripcion}</em></small>` : '';
-                            const prodWebLink = prod.link ? `<a href="${prod.link}" target="_blank" style="font-size: 0.8em; margin-left:10px; color:var(--primary-blue);">🔗 Ver en Web</a>` : '';
+                            const linkHTML = p.link ? `<a href="${p.link}" target="_blank" style="color:var(--cyan-accent); font-size:0.8em; font-weight:bold;">🔗 Ficha/Web</a>` : '';
                             
-                            const imgThumb = prod.imagen 
-                                ? `<img src="${prod.imagen}" class="prod-img-thumb" alt="${prod.nombre}" onerror="this.onerror=null; this.parentElement.innerHTML='📷 Sin Foto';">` 
-                                : `<div class="prod-img-thumb">📷 Sin Foto</div>`;
+                            const uMinor = p.uniCajaMinor ? `${fNum(p.uniCajaMinor)} un/cja` : '1 un';
+                            const uNetoMin = p.uniNetoMinor || (p.uniCajaMinor ? Math.round(p.minorista / p.uniCajaMinor) : p.minorista);
+                            const celdaMinorista = `<div class="price-box-minor">
+                                <span style="font-size:0.7em; opacity:0.8; display:block; color:var(--minor-color); font-weight:bold;">MINORISTA NETO</span>
+                                <strong style="color:var(--minor-color); font-size:1.1em;">$${fNum(p.minorista)}</strong><br>
+                                <small style="opacity:0.8; font-size:0.75em;">📦 ${uMinor}</small><br>
+                                <small style="opacity:0.9; font-size:0.75em; color:var(--minor-color); font-weight:bold;">⚡ $${fNum(uNetoMin)}/un</small>
+                            </div>`;
 
-                            const tagDisp = renderStockTag(prod);
+                            const uMayor = p.cantCaja ? `${fNum(p.cantCaja)} un/cja mayor` : '1 un';
+                            const uNetoMay = p.unitario || (p.cantCaja ? Math.round(p.mayorista / p.cantCaja) : p.mayorista);
+                            const celdaMayorista = `<div class="price-box-mayor">
+                                <span style="font-size:0.7em; opacity:0.8; display:block; color:var(--mayor-color); font-weight:bold;">MAYORISTA NETO</span>
+                                <strong style="color:var(--mayor-color); font-size:1.15em;">$${fNum(p.mayorista)}</strong><br>
+                                <small style="opacity:0.8; font-size:0.75em;">📦 ${uMayor}</small><br>
+                                <small style="opacity:0.9; font-size:0.75em; color:var(--mayor-color); font-weight:bold;">⚡ $${fNum(uNetoMay)}/un</small>
+                            </div>`;
 
-                            // Cálculos seguros para despliegue de Minorista y Mayorista
-                            const uMinorCount = prod.uniCajaMinor ? fNum(prod.uniCajaMinor) : '1';
-                            const uNetoMin = prod.uniNetoMinor || (prod.minorista && prod.uniCajaMinor ? Math.round(prod.minorista / prod.uniCajaMinor) : (prod.minorista || 0));
-
-                            const uMayorCount = prod.cantCaja ? fNum(prod.cantCaja) : '1';
-                            const uNetoMay = prod.unitario || (prod.mayorista && prod.cantCaja ? Math.round(prod.mayorista / prod.cantCaja) : (prod.mayorista || 0));
-
-                            // CÁLCULO DE PORCENTAJE DE AHORRO EN COMPRA MAYORISTA
-                            let ahorroTag = '';
-                            if (uNetoMin > 0 && uNetoMay > 0 && uNetoMin > uNetoMay) {
-                                const ahorroPorc = Math.round(((uNetoMin - uNetoMay) / uNetoMin) * 100);
-                                if (ahorroPorc > 0) {
-                                    ahorroTag = `<small class="tag tag-disponible" style="font-size:0.7em; margin-top:3px; display:inline-block;">💰 Ahorro ${ahorroPorc}% x un.</small>`;
-                                }
-                            }
-
-                            // Bloque Minorista visualmente definido
-                            const bloqueMinorista = `
-                                <div class="price-box-minor">
-                                    <div style="font-size: 0.7em; text-transform: uppercase; font-weight: bold; color: var(--minor-color);">Minorista</div>
-                                    <div style="font-size: 1.05em; font-weight: bold; color: var(--minor-color);">$${fNum(prod.minorista)}</div>
-                                    <small style="display:block; font-size:0.75em; opacity:0.85;">📦 ${uMinorCount} un/caja</small>
-                                    <small style="display:block; font-size:0.75em; font-weight:bold; color: var(--minor-color);">⚡ $${fNum(uNetoMin)}/un</small>
-                                </div>
-                            `;
-
-                            // Bloque Mayorista visualmente definido
-                            const bloqueMayorista = `
-                                <div class="price-box-mayor">
-                                    <div style="font-size: 0.7em; text-transform: uppercase; font-weight: bold; color: var(--mayor-color);">Mayorista</div>
-                                    <div style="font-size: 1.25em; font-weight: bold; color: var(--mayor-color);">$${fNum(prod.mayorista)}</div>
-                                    <small style="display:block; font-size:0.75em; color:var(--cyan-accent); font-weight:bold;">📦 ${uMayorCount} un/caja mayor</small>
-                                    <small style="display:block; font-size:0.75em; font-weight:bold; color: var(--mayor-color);">⚡ $${fNum(uNetoMay)}/un</small>
-                                    ${ahorroTag}
-                                </div>
-                            `;
-
-                            // Escape de strings para evitar romper la llamada en HTML al copiar
-                            const pNameEsc = (prod.nombre || '').replace(/'/g, "\\'");
-                            const pProvEsc = (prov.nombre || '').replace(/'/g, "\\'");
-                            const pLinkEsc = (prod.link || '').replace(/'/g, "\\'");
-                            const pOfertaEsc = (prod.oferta || '').replace(/'/g, "\\'");
+                            const ofertaHTML = (p.oferta && p.oferta !== '-') ? `<div style="background:rgba(245,158,11,0.15); border:1px solid var(--warning); padding:4px 8px; border-radius:6px; font-size:0.8em; color:var(--warning); font-weight:bold;">🔥 Oferta: ${p.oferta}</div>` : '';
 
                             htmlProv += `
                             <div class="prod-item-dir">
-                                <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:250px;">
-                                    ${imgThumb}
-                                    <div style="display:flex; flex-direction:column; gap:4px;">
-                                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                                            <span class="tag ${getClaseTag(prod.linea)}">${prod.linea}</span>
-                                            ${tagDisp}
-                                            <strong style="font-size:1em;">${prod.nombre}</strong> ${prodWebLink}
+                                <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:220px;">
+                                    <input type="checkbox" title="Seleccionar para comparativa" class="chk-cmp chk-cmp-${prov.id}-${p.id}" ${isSelected ? 'checked' : ''} onchange="toggleSeleccionComparar('${prov.id}', '${p.id}')" style="transform:scale(1.2); cursor:pointer;">
+                                    ${imgHTML}
+                                    <div>
+                                        <div style="display:flex; align-items:center; gap:6px;">
+                                            <span class="tag ${getClaseTag(p.linea)}">${p.linea}</span>
+                                            <strong>${p.nombre}</strong>
                                         </div>
-                                        <small style="opacity:0.75;">Oferta: ${prod.oferta}</small>
-                                        ${descInfo}
+                                        <div style="margin-top:4px;">${renderStockTag(p)}</div>
+                                        <small style="opacity:0.8; display:block; margin-top:2px;">${p.descripcion || 'Sin descripción'}</small>
+                                        ${linkHTML}
                                     </div>
                                 </div>
-
-                                <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:flex-end;">
-                                    ${bloqueMinorista}
-                                    ${bloqueMayorista}
-                                    <div style="display:flex; flex-direction:column; gap:4px; justify-content:center;">
-                                        <button type="button" class="btn-copy" onclick="copiarFichaProducto('${pProvEsc}', '${pNameEsc}', ${prod.minorista || 0}, ${prod.mayorista || 0}, '${pLinkEsc}', '${pOfertaEsc}')">📋 Copiar Ficha</button>
-                                        <button type="button" class="btn-warning" onclick="abrirModalProd('edit', '${prov.id}', '${prod.id}')">Editar</button>
-                                        <button type="button" class="btn-danger" onclick="eliminarProductoDir('${prov.id}', '${prod.id}')">X</button>
+                                
+                                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                                    ${ofertaHTML}
+                                    ${celdaMinorista}
+                                    ${celdaMayorista}
+                                    <div style="display:flex; flex-direction:column; gap:4px;">
+                                        <button type="button" class="btn-copy" onclick="copiarFichaProducto('${prov.nombre}', '${p.nombre}', ${p.minorista}, ${p.mayorista}, '${p.link || ''}', '${p.oferta || ''}')">📋 Copiar</button>
+                                        <button type="button" class="btn-warning" style="padding:3px 8px; font-size:0.8em;" onclick="abrirModalProd('edit', '${prov.id}', '${p.id}')">✏️ Editar</button>
+                                        <button type="button" class="btn-danger" style="padding:3px 8px; font-size:0.8em;" onclick="eliminarProductoDir('${prov.id}', '${p.id}')">🗑️</button>
                                     </div>
                                 </div>
-                            </div>`;
+                            </div>
+                            `;
                         });
-                        htmlProv += `</div></details>`;
-                    }
-                    htmlProv += `</div></details>`;
-                }
+                        htmlProv += `</div></div>`;
+                    });
+                    htmlProv += `</div>`;
+                });
 
                 htmlProv += `</div></details>`;
                 contenedor.innerHTML += htmlProv;
             });
-            
+
             compararProveedores();
         }
 
-        // --- EVALUADOR Y COMPARADOR ---
-        function compararProveedores() {
-            const inputBusqueda = document.getElementById('buscarProd');
-            if(!inputBusqueda) return;
-
-            const busqueda = inputBusqueda.value.toLowerCase().trim();
-            const divRec = document.getElementById('recomendacion');
-
-            if (!busqueda || directorio.length === 0) {
-                if(divRec) divRec.innerHTML = ''; return;
-            }
-
-            let opciones = [];
-            directorio.forEach(prov => {
-                if(prov.productos) {
-                    prov.productos.forEach(prod => {
-                        if(prod.nombre.toLowerCase().includes(busqueda) || 
-                           prod.categoria.toLowerCase().includes(busqueda) || 
-                           prod.subcategoria.toLowerCase().includes(busqueda) || 
-                           (prod.descripcion && prod.descripcion.toLowerCase().includes(busqueda))) {
-                            opciones.push({
-                                provNombre: prov.nombre, prodNombre: prod.nombre,
-                                precio: prod.mayorista, cantCaja: prod.cantCaja, tiempo: prov.tiempo,
-                                esOficial: prov.estado === 'Oficial', esFav: prov.favorito,
-                                estado: prod.estado || 'Disponible',
-                                stockUnid: prod.stockUnid,
-                                stockCajas: prod.stockCajas
-                            });
-                        }
-                    });
-                }
-            });
-
-            if (opciones.length === 0) {
-                if(divRec) divRec.innerHTML = '<em>No hay coincidencias en tu base de datos.</em>'; return;
-            }
-
-            let disponibles = opciones.filter(o => o.estado !== 'No disponible');
-            
-            if (disponibles.length > 0) {
-                let mejor = disponibles.reduce((prev, curr) => (prev.precio < curr.precio) ? prev : curr);
-                const infoCaja = mejor.cantCaja ? ` (${fNum(mejor.cantCaja)} un/caja mayor)` : '';
-                
-                let tagStock = `<span class="tag tag-disponible">🟢 En Stock</span>`;
-                let alertStockTxt = '';
-
-                if (mejor.estado === 'Últimas Unidades') {
-                    let stockTxt = (mejor.stockUnid !== null && mejor.stockUnid !== undefined) 
-                        ? ` (${fNum(mejor.stockUnid)} un / ${mejor.stockCajas || 0} cjas)` 
-                        : '';
-                    tagStock = `<span class="tag tag-ultimas">🟠 Últimas Unidades${stockTxt}</span>`;
-                    alertStockTxt = ` <strong style="color:var(--warning);">(⚠️ Quedan pocas unidades en la web del proveedor)</strong>`;
-                }
-
-                if(divRec) {
-                    divRec.innerHTML = `
-                        💡 <strong>Mejor Opción Disponible:</strong> 
-                        <strong>${mejor.provNombre}</strong> tiene "${mejor.prodNombre}" a 
-                        <strong style="color:#10b981;">$${fNum(mejor.precio)} (Mayorista${infoCaja})</strong>. 
-                        Tiempo estimado: ${mejor.tiempo} días. 
-                        ${tagStock} ${alertStockTxt}
-                        ${mejor.esFav ? '⭐(Tu Favorito)' : ''} 
-                        ${mejor.esOficial ? '<span class="tag tag-oficial">Prov. Oficial</span>' : ''}
-                    `;
-                }
-            } else {
-                let mejorSinStock = opciones.reduce((prev, curr) => (prev.precio < curr.precio) ? prev : curr);
-                if(divRec) {
-                    divRec.innerHTML = `
-                        ⚠️ <strong>Atención:</strong> Se encontró "${mejorSinStock.prodNombre}" en 
-                        <strong>${mejorSinStock.provNombre}</strong> a <strong style="color:#ef4444;">$${fNum(mejorSinStock.precio)}</strong>, 
-                        pero figura como <span class="tag tag-nodisponible">🔴 No disponible</span>. Consulta disponibilidad directamente con el proveedor.
-                    `;
-                }
-            }
-        }
-    </script>
-
-    <!-- SCRIPT 2: INTEGRACIÓN FIREBASE (Módulo separado para no romper nada del código original) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-
-        // Tu configuración exacta
-        const firebaseConfig = {
-            apiKey: "AIzaSyBTVITP2g-4Sy_ccaFnd7o5bkeWlgTa7Sc",
-            authDomain: "ciclopack-eco.firebaseapp.com",
-            projectId: "ciclopack-eco",
-            storageBucket: "ciclopack-eco.firebasestorage.app",
-            messagingSenderId: "587485375626",
-            appId: "1:587485375626:web:a2625a13f4ea9689add173"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Referencias a los elementos de la UI
-        const loginOverlay = document.getElementById('loginOverlay');
-        const loginError = document.getElementById('loginError');
-        const cloudStatus = document.getElementById('cloudStatus');
-        const btnLogout = document.getElementById('btnLogout');
-        const btnRescatar = document.getElementById('btnRescatar');
-
-        let usuarioActual = null;
-
-        // 1. Manejo del Login
-        document.getElementById('btnLogin').addEventListener('click', async () => {
-            const email = document.getElementById('loginEmail').value.trim();
-            const pass = document.getElementById('loginPass').value.trim();
-            try {
-                loginError.style.display = 'none';
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch (error) {
-                loginError.style.display = 'block';
-                loginError.innerText = "Error: Credenciales incorrectas.";
-                console.error(error);
-            }
-        });
-
-        // 2. Manejo del Logout
-        btnLogout.addEventListener('click', () => {
-            signOut(auth);
-        });
-
-        // 3. Vigilar el estado de la sesión
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                usuarioActual = user;
-                loginOverlay.style.display = 'none';
-                btnLogout.style.display = 'inline-block';
-                btnRescatar.style.display = 'inline-block';
-                cloudStatus.innerHTML = "☁️ Conectado, buscando datos...";
-                cloudStatus.className = "tag tag-ultimas";
-                
-                // Si el usuario entra, cargamos su info de Firestore
-                await cargarDatosDesdeNube();
-            } else {
-                usuarioActual = null;
-                loginOverlay.style.display = 'flex'; // Vuelve a mostrar el login
-                btnLogout.style.display = 'none';
-                btnRescatar.style.display = 'none';
-                cloudStatus.innerHTML = "☁️ Desconectado";
-                cloudStatus.className = "tag tag-nodisponible";
-            }
-        });
-
-        // 4. Leer de Firestore
-        async function cargarDatosDesdeNube() {
-            if (!usuarioActual) return;
-            try {
-                const docRef = doc(db, "usuarios", usuarioActual.uid);
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    if (data.directorio) window.directorio = data.directorio;
-                    if (data.categoriasBase) window.categoriasBase = data.categoriasBase;
-                    if (data.subcategoriasBase) window.subcategoriasBase = data.subcategoriasBase;
-                    
-                    // Al descargar de la nube, aseguramos un backup local
-                    window.guardarLocalSolo();
-                    window.actualizarDirectorio();
-
-                    cloudStatus.innerHTML = "☁️ Cloud Sincronizado";
-                    cloudStatus.className = "tag tag-disponible";
-                } else {
-                    // Si no hay datos en la nube para este usuario, cargamos los locales como base
-                    window.cargarDatosLocal();
-                    cloudStatus.innerHTML = "☁️ Nube vacía (Cargado Local)";
-                    cloudStatus.className = "tag tag-posible";
-                }
-            } catch (error) {
-                console.error("Error al cargar de Firestore:", error);
-                cloudStatus.innerHTML = "⚠️ Error de red";
-                cloudStatus.className = "tag tag-nodisponible";
-                window.cargarDatosLocal(); // Fallback si falla el internet
-            }
-        }
-
-        // 5. Función inyectada para guardar hacia la nube (usada por guardarDatos)
-        window.sincronizarHaciaNube = async function() {
-            if (!usuarioActual) return;
-            cloudStatus.innerHTML = "☁️ Guardando...";
-            cloudStatus.className = "tag tag-ultimas";
-            
-            try {
-                await setDoc(doc(db, "usuarios", usuarioActual.uid), {
-                    directorio: window.directorio,
-                    categoriasBase: window.categoriasBase,
-                    subcategoriasBase: window.subcategoriasBase,
-                    ultimaModificacion: new Date().toISOString()
-                });
-                cloudStatus.innerHTML = "☁️ Cloud Sincronizado";
-                cloudStatus.className = "tag tag-disponible";
-            } catch (error) {
-                console.error("Error al guardar en Firestore:", error);
-                cloudStatus.innerHTML = "⚠️ Error de Sincronización";
-                cloudStatus.className = "tag tag-nodisponible";
-            }
-        };
-
-        // 6. Botón de Rescate (Lee forzosamente la caché local y la tira a la nube)
-        btnRescatar.addEventListener('click', () => {
-            if(confirm("¿Estás seguro que deseas rescatar los datos locales? Esto sobreescribirá lo que esté en la nube actualmente.")){
-                window.cargarDatosLocal();
-                window.sincronizarHaciaNube();
-                if(window.mostrarToast) window.mostrarToast("🎉 ¡Datos locales rescatados y enviados a la nube exitosamente!", "success");
-            }
+        // INICIALIZACIÓN
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarDatosLocal();
         });
     </script>
 </body>
