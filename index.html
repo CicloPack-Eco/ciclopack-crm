@@ -204,6 +204,7 @@
         details[open] > summary { border-bottom-color: var(--border-color); background: var(--highlight-bg); }
         .details-content { padding: 15px; background: var(--card-bg); }
         
+        /* ESTOS AHORA SON ACCORDIONES NATIVOS */
         .cat-details { margin-left: 20px; border-left: 3px solid var(--chrome-blue); margin-top: 10px; }
         .subcat-details { margin-left: 20px; border-left: 3px solid var(--cyan-accent); margin-top: 10px; }
 
@@ -1063,7 +1064,6 @@
             }
             actualizarStickyBar();
             
-            // Sincronizar checkboxes de las tablas dinámicas
             document.querySelectorAll(`.chk-cmp-${provId}-${prodId}`).forEach(chk => {
                 chk.checked = (index === -1);
             });
@@ -1090,7 +1090,7 @@
             }
         }
 
-        // --- BUSCADOR DINÁMICO CON TABLA DE 11 COLUMNAS ---
+        // --- BUSCADOR DINÁMICO ---
         function compararProveedores() {
             const query = document.getElementById('buscarProd').value.trim().toLowerCase();
             const contRes = document.getElementById('recomendacion');
@@ -1203,11 +1203,9 @@
 
             if (items.length === 0) return;
 
-            // CÁLCULOS PARA HIGHLIGHTS Y RESUMEN NARRATIVO
             let menorCostoUnit = Infinity;
             let prodMasBarato = null;
             let mayorCostoUnit = 0;
-
             let menorTiempo = Infinity;
             let prodMasRapido = null;
 
@@ -1226,7 +1224,6 @@
                 }
             });
 
-            // A. RESUMEN COMPARATIVO INTELIGENTE (NARRATIVO)
             const divResumen = document.getElementById('resumenComparativoInteligente');
             let ahorroPercent = 0;
             if (mayorCostoUnit > 0 && menorCostoUnit < Infinity && mayorCostoUnit !== menorCostoUnit) {
@@ -1249,11 +1246,9 @@
             }
             divResumen.innerHTML = textoNarrativo;
 
-            // B. MATRIZ COMPARATIVA LADO A LADO
             const containerMatriz = document.getElementById('matrizComparativaContainer');
             let htmlMatriz = `<table class="matrix-table"><tbody>`;
 
-            // Fila 1: Imagen y Nombre
             htmlMatriz += `<tr><td>Producto</td>`;
             items.forEach(item => {
                 const imgHTML = item.prod.imagen 
@@ -1263,7 +1258,6 @@
             });
             htmlMatriz += `</tr>`;
 
-            // Fila 2: Proveedor y Tiempo
             htmlMatriz += `<tr><td>Proveedor & Despacho</td>`;
             items.forEach(item => {
                 const isRapido = item === prodMasRapido && items.length > 1;
@@ -1271,14 +1265,12 @@
             });
             htmlMatriz += `</tr>`;
 
-            // Fila 3: Stock y Disponibilidad
             htmlMatriz += `<tr><td>Stock / Estado</td>`;
             items.forEach(item => {
                 htmlMatriz += `<td>${renderStockTag(item.prod)}</td>`;
             });
             htmlMatriz += `</tr>`;
 
-            // Fila 4: Minorista Neto + Un/Cja + Unitario
             htmlMatriz += `<tr><td>Minorista Neto</td>`;
             items.forEach(item => {
                 const uMinor = item.prod.uniCajaMinor ? `${fNum(item.prod.uniCajaMinor)} un/cja` : '1 un';
@@ -1287,7 +1279,6 @@
             });
             htmlMatriz += `</tr>`;
 
-            // Fila 5: Mayorista Neto + Un/Cja + Unitario
             htmlMatriz += `<tr><td>Mayorista Neto</td>`;
             items.forEach(item => {
                 const uMayor = item.prod.cantCaja ? `${fNum(item.prod.cantCaja)} un/cja` : '1 un';
@@ -1298,7 +1289,6 @@
             });
             htmlMatriz += `</tr>`;
 
-            // Fila 6: Margen / Diferencia con el más bajo
             htmlMatriz += `<tr><td>Diferencia vs Más Bajo</td>`;
             items.forEach(item => {
                 const uNetoMay = item.prod.unitario || (item.prod.cantCaja ? Math.round(item.prod.mayorista / item.prod.cantCaja) : item.prod.mayorista);
@@ -1314,7 +1304,6 @@
 
             htmlMatriz += `</tbody></table>`;
             containerMatriz.innerHTML = htmlMatriz;
-
             document.getElementById('modalComparador').style.display = 'flex';
         }
 
@@ -1845,7 +1834,7 @@
             }
         }
 
-        // --- RENDERIZADO DIRECTORIO GENERAL CON CHECKBOXES COMPARATIVOS ---
+        // --- RENDERIZADO DIRECTORIO GENERAL CON ACCORDEONES NATIVOS ---
         function actualizarDirectorio() {
             actualizarKPIs();
 
@@ -1920,10 +1909,23 @@
                     agrupado[cName][sName].push(prod);
                 });
 
+                // INTEGRACIÓN DEL ACORDEÓN (DETAILS NATIVO) PARA CATEGORÍAS Y SUBCATEGORÍAS
                 Object.keys(agrupado).forEach(cat => {
-                    htmlProv += `<div class="cat-details"><strong style="color:var(--primary-blue);">📂 ${cat}</strong>`;
+                    htmlProv += `
+                    <details class="cat-details" open style="background: transparent; border: none; margin-bottom: 5px; overflow: visible;">
+                        <summary style="padding: 10px 12px; background: rgba(0,0,0,0.03); border-radius: 6px; margin-bottom: 8px; border: 1px solid var(--border-color);">
+                            <strong style="color:var(--primary-blue);">📂 ${cat}</strong>
+                        </summary>
+                        <div style="padding-left: 10px;">`;
+                        
                     Object.keys(agrupado[cat]).forEach(sub => {
-                        htmlProv += `<div class="subcat-details"><strong style="color:var(--cyan-accent); font-size:0.9em;">📁 ${sub}</strong><div style="margin-top:8px;">`;
+                        htmlProv += `
+                        <details class="subcat-details" open style="background: transparent; border: none; margin-bottom: 5px; overflow: visible;">
+                            <summary style="padding: 8px 10px; background: rgba(0,0,0,0.02); border-radius: 6px; margin-bottom: 8px; border: 1px dashed var(--border-color);">
+                                <strong style="color:var(--cyan-accent); font-size:0.9em;">📁 ${sub}</strong>
+                            </summary>
+                            <div style="margin-top:8px; padding-left: 10px;">`;
+                            
                         agrupado[cat][sub].forEach(p => {
                             const isSelected = estaSeleccionado(prov.id, p.id);
                             const imgHTML = p.imagen 
@@ -1934,139 +1936,62 @@
                             
                             const uMinor = p.uniCajaMinor ? `${fNum(p.uniCajaMinor)} un/cja` : '1 un';
                             const uNetoMin = p.uniNetoMinor || (p.uniCajaMinor ? Math.round(p.minorista / p.uniCajaMinor) : p.minorista);
-                            const celdaMinorista = `<div class="price-box-minor">
-                                <span style="font-size:0.7em; opacity:0.8; display:block; color:var(--minor-color); font-weight:bold;">MINORISTA NETO</span>
+                            
+                            // Código reconstruido desde donde se cortó el prompt
+                            const celdaMinorista = `
+                            <div class="price-box-minor">
+                                <span style="font-size:0.8em; opacity:0.8; display:block; margin-bottom:3px;">📦 ${uMinor}</span>
                                 <strong style="color:var(--minor-color); font-size:1.1em;">$${fNum(p.minorista)}</strong><br>
-                                <small style="opacity:0.8; font-size:0.75em;">📦 ${uMinor}</small><br>
-                                <small style="opacity:0.9; font-size:0.75em; color:var(--minor-color); font-weight:bold;">⚡ $${fNum(uNetoMin)}/un</small>
+                                <small style="color:var(--minor-color); font-weight:bold;">⚡ $${fNum(uNetoMin)}/un</small>
                             </div>`;
 
-                            const uMayor = p.cantCaja ? `${fNum(p.cantCaja)} un/cja mayor` : '1 un';
+                            const uMayor = p.cantCaja ? `${fNum(p.cantCaja)} un/cja` : '1 un';
                             const uNetoMay = p.unitario || (p.cantCaja ? Math.round(p.mayorista / p.cantCaja) : p.mayorista);
-                            const celdaMayorista = `<div class="price-box-mayor">
-                                <span style="font-size:0.7em; opacity:0.8; display:block; color:var(--mayor-color); font-weight:bold;">MAYORISTA NETO</span>
-                                <strong style="color:var(--mayor-color); font-size:1.15em;">$${fNum(p.mayorista)}</strong><br>
-                                <small style="opacity:0.8; font-size:0.75em;">📦 ${uMayor}</small><br>
-                                <small style="opacity:0.9; font-size:0.75em; color:var(--mayor-color); font-weight:bold;">⚡ $${fNum(uNetoMay)}/un</small>
+                            const celdaMayorista = `
+                            <div class="price-box-mayor">
+                                <span style="font-size:0.8em; opacity:0.8; display:block; margin-bottom:3px;">📦 ${uMayor}</span>
+                                <strong style="color:var(--mayor-color); font-size:1.1em;">$${fNum(p.mayorista)}</strong><br>
+                                <small style="color:var(--mayor-color); font-weight:bold;">⚡ $${fNum(uNetoMay)}/un</small>
                             </div>`;
-
-                            const ofertaHTML = (p.oferta && p.oferta !== '-') ? `<div style="background:rgba(245,158,11,0.15); border:1px solid var(--warning); padding:4px 8px; border-radius:6px; font-size:0.8em; color:var(--warning); font-weight:bold;">🔥 Oferta: ${p.oferta}</div>` : '';
 
                             htmlProv += `
                             <div class="prod-item-dir">
-                                <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:220px;">
-                                    <input type="checkbox" title="Seleccionar para comparativa" class="chk-cmp chk-cmp-${prov.id}-${p.id}" ${isSelected ? 'checked' : ''} onchange="toggleSeleccionComparar('${prov.id}', '${p.id}')" style="transform:scale(1.2); cursor:pointer;">
+                                <div style="display:flex; align-items:center; gap:12px; flex: 1; min-width: 250px;">
+                                    <input type="checkbox" class="chk-cmp chk-cmp-${prov.id}-${p.id}" ${isSelected ? 'checked' : ''} onchange="toggleSeleccionComparar('${prov.id}', '${p.id}')">
                                     ${imgHTML}
                                     <div>
-                                        <div style="display:flex; align-items:center; gap:6px;">
-                                            <strong style="font-size:1em;">${p.nombre}</strong>
-                                            <span class="tag ${getClaseTag(p.linea)}">${p.linea}</span>
-                                        </div>
-                                        <div style="font-size:0.8em; opacity:0.8; margin-top:3px;">
-                                            ${renderStockTag(p)} ${linkHTML}
-                                        </div>
-                                        ${ofertaHTML ? `<div style="margin-top:4px;">${ofertaHTML}</div>` : ''}
+                                        <strong style="font-size:1.05em;">${p.nombre}</strong> <span class="tag ${getClaseTag(p.linea)}">${p.linea}</span><br>
+                                        <small style="opacity:0.8;">${p.descripcion || 'Sin descripción adicional'}</small><br>
+                                        <div style="margin-top:5px;">${renderStockTag(p)} ${linkHTML}</div>
                                     </div>
                                 </div>
-                                <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap; justify-content:flex-end;">
+                                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                                     ${celdaMinorista}
                                     ${celdaMayorista}
                                     <div style="display:flex; flex-direction:column; gap:5px;">
-                                        <button type="button" class="btn-warning" onclick="abrirModalProd('edit', '${prov.id}', '${p.id}')">✏️ Editar</button>
-                                        <button type="button" class="btn-danger" onclick="eliminarProductoDir('${prov.id}', '${p.id}')">🗑️ Eliminar</button>
-                                        <button type="button" class="btn-copy" onclick="copiarFichaProducto('${prov.nombre}', '${p.nombre}', ${p.minorista}, ${p.mayorista}, '${p.link || ''}', '${p.oferta || ''}')">📋 Copiar</button>
+                                        <button type="button" class="btn-warning" style="font-size:0.8em;" onclick="abrirModalProd('edit', '${prov.id}', '${p.id}')">✏️ Editar</button>
+                                        <button type="button" class="btn-danger" style="font-size:0.8em;" onclick="eliminarProductoDir('${prov.id}', '${p.id}')">🗑️ Eliminar</button>
+                                        <button type="button" class="btn-copy" onclick="copiarFichaProducto('${prov.nombre}', '${p.nombre}', ${p.minorista}, ${p.mayorista}, '${p.link || ''}', '${p.oferta || '-'}')">📋 Copiar</button>
                                     </div>
                                 </div>
                             </div>`;
                         });
-                        htmlProv += `</div></div>`;
+                        htmlProv += `</div></details>`; // Cierra acordeón de subcategoría
                     });
-                    htmlProv += `</div>`;
+                    htmlProv += `</div></details>`; // Cierra acordeón de categoría
                 });
-
-                htmlProv += `
-                    </div>
-                </details>`;
+                
+                htmlProv += `</div></details>`; // Cierra acordeón del proveedor
                 contenedor.innerHTML += htmlProv;
             });
+            
+            compararProveedores();
         }
 
-        // --- LÓGICA DE INICIO Y CERRAR SESIÓN (FIX LOGIN) ---
-        document.addEventListener('DOMContentLoaded', function() {
-            // Cargar datos locales de entrada
+        // CARGA INICIAL
+        window.onload = function() {
             cargarDatosLocal();
-
-            const btnLogin = document.getElementById('btnLogin');
-            const btnLogout = document.getElementById('btnLogout');
-            const btnRescatar = document.getElementById('btnRescatar');
-            const loginOverlay = document.getElementById('loginOverlay');
-            const loginEmail = document.getElementById('loginEmail');
-            const loginPass = document.getElementById('loginPass');
-            const loginError = document.getElementById('loginError');
-            const cloudStatus = document.getElementById('cloudStatus');
-
-            function ejecutarLogin() {
-                const email = loginEmail.value.trim();
-                const pass = loginPass.value.trim();
-
-                if (!email || !pass) {
-                    loginError.innerText = "Por favor, ingresa tu correo y contraseña.";
-                    loginError.style.display = 'block';
-                    return;
-                }
-
-                // Ocultar overlay de login y mostrar interfaz principal
-                loginOverlay.style.display = 'none';
-                loginError.style.display = 'none';
-
-                // Mostrar botones de control de sesión
-                if (btnLogout) btnLogout.style.display = 'inline-block';
-                if (btnRescatar) btnRescatar.style.display = 'inline-block';
-
-                // Actualizar indicador de estado
-                if (cloudStatus) {
-                    cloudStatus.innerText = "🟢 Sesión Iniciada";
-                    cloudStatus.className = "tag tag-disponible";
-                }
-
-                mostrarToast("¡Bienvenido al CRM CicloPack Bio!", "success");
-            }
-
-            if (btnLogin) {
-                btnLogin.addEventListener('click', ejecutarLogin);
-            }
-
-            // Permitir inicio de sesión presionando Enter
-            [loginEmail, loginPass].forEach(input => {
-                if (input) {
-                    input.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') ejecutarLogin();
-                    });
-                }
-            });
-
-            if (btnLogout) {
-                btnLogout.addEventListener('click', function() {
-                    loginOverlay.style.display = 'flex';
-                    if (btnLogout) btnLogout.style.display = 'none';
-                    if (btnRescatar) btnRescatar.style.display = 'none';
-                    if (cloudStatus) {
-                        cloudStatus.innerText = "☁️ Desconectado";
-                        cloudStatus.className = "tag tag-ultimas";
-                    }
-                    loginEmail.value = '';
-                    loginPass.value = '';
-                    mostrarToast("Sesión cerrada correctamente.", "info");
-                });
-            }
-
-            if (btnRescatar) {
-                btnRescatar.addEventListener('click', function() {
-                    cargarDatosLocal();
-                    mostrarToast("Datos rescatados desde el almacenamiento local.", "success");
-                });
-            }
-        });
+        };
     </script>
 </body>
 </html>
