@@ -723,6 +723,7 @@
 
     <!-- SCRIPT LÓGICA DE LA INTERFAZ Y EL CRM -->
     <script>
+        // Usamos "var" para que Firebase pueda acceder a estas variables globalmente (window.directorio)
         var directorio = []; 
         var productosTemporales = [];
         var esFavActual = false;
@@ -839,14 +840,16 @@
             }
             actualizarDirectorio();
         }
-
+        
+        // Guarda localmente y luego intenta sincronizar con la nube
         function guardarDatos() {
             guardarLocalSolo();
             if (window.sincronizarHaciaNube) {
                 window.sincronizarHaciaNube();
             }
         }
-
+        
+        // Exclusivo para guardar local
         function guardarLocalSolo() {
             try {
                 localStorage.setItem('cicloPackBio_directorio', JSON.stringify(directorio));
@@ -2013,7 +2016,7 @@
                 contenedor.innerHTML += htmlProv;
             });
         }
-
+    </script>
     <!-- SCRIPT 2: INTEGRACIÓN FIREBASE (Módulo separado para no romper nada del código original) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
