@@ -2014,82 +2014,141 @@
             });
         }
 
-// --- LÓGICA DE INICIO Y CERRAR SESIÓN (FIX LOGIN) ---
-document.addEventListener('DOMContentLoaded', function() {
-// Cargar datos locales de entrada
-cargarDatosLocal();
+    <!-- SCRIPT 2: INTEGRACIÓN FIREBASE (Módulo separado para no romper nada del código original) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-const btnLogin = document.getElementById('btnLogin');
-const btnLogout = document.getElementById('btnLogout');
-const btnRescatar = document.getElementById('btnRescatar');
-const loginOverlay = document.getElementById('loginOverlay');
-const loginEmail = document.getElementById('loginEmail');
-const loginPass = document.getElementById('loginPass');
-const loginError = document.getElementById('loginError');
-const cloudStatus = document.getElementById('cloudStatus');
+        // Tu configuración exacta
+        const firebaseConfig = {
+            apiKey: "AIzaSyBTVITP2g-4Sy_ccaFnd7o5bkeWlgTa7Sc",
+            authDomain: "ciclopack-eco.firebaseapp.com",
+            projectId: "ciclopack-eco",
+            storageBucket: "ciclopack-eco.firebasestorage.app",
+            messagingSenderId: "587485375626",
+            appId: "1:587485375626:web:a2625a13f4ea9689add173"
+        };
 
-function ejecutarLogin() {
-const email = loginEmail.value.trim();
-const pass = loginPass.value.trim();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-if (!email || !pass) {
-loginError.innerText = "Por favor, ingresa tu correo y contraseña.";
-loginError.style.display = 'block';
-return;
-}
+        // Referencias a los elementos de la UI
+        const loginOverlay = document.getElementById('loginOverlay');
+        const loginError = document.getElementById('loginError');
+        const cloudStatus = document.getElementById('cloudStatus');
+        const btnLogout = document.getElementById('btnLogout');
+        const btnRescatar = document.getElementById('btnRescatar');
 
-// Ocultar overlay de login y mostrar interfaz principal
-loginOverlay.style.display = 'none';
-loginError.style.display = 'none';
+        let usuarioActual = null;
 
-// Mostrar botones de control de sesión
-if (btnLogout) btnLogout.style.display = 'inline-block';
-if (btnRescatar) btnRescatar.style.display = 'inline-block';
+        // 1. Manejo del Login
+        document.getElementById('btnLogin').addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+            try {
+                loginError.style.display = 'none';
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (error) {
+                loginError.style.display = 'block';
+                loginError.innerText = "Error: Credenciales incorrectas.";
+                console.error(error);
+            }
+        });
 
-// Actualizar indicador de estado
-if (cloudStatus) {
-cloudStatus.innerText = "🟢 Sesión Iniciada";
-cloudStatus.className = "tag tag-disponible";
-}
+        // 2. Manejo del Logout
+        btnLogout.addEventListener('click', () => {
+            signOut(auth);
+            mostrarToast("Sesión cerrada correctamente.", "info");
+        });
 
-mostrarToast("¡Bienvenido al CRM CicloPack Bio!", "success");
-}
+        // 3. Vigilar el estado de la sesión
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                usuarioActual = user;
+                loginOverlay.style.display = 'none';
+                btnLogout.style.display = 'inline-block';
+                btnRescatar.style.display = 'inline-block';
+                cloudStatus.innerHTML = "☁️ Conectado, buscando datos...";
+                cloudStatus.className = "tag tag-ultimas";
+                
+                // Si el usuario entra, cargamos su info de Firestore
+                await cargarDatosDesdeNube();
+                mostrarToast("¡Bienvenido al CRM CicloPack Bio!", "success");
+            } else {
+                usuarioActual = null;
+                loginOverlay.style.display = 'flex'; // Vuelve a mostrar el login
+                btnLogout.style.display = 'none';
+                btnRescatar.style.display = 'none';
+                cloudStatus.innerHTML = "☁️ Desconectado";
+                cloudStatus.className = "tag tag-nodisponible";
+            }
+        });
 
-if (btnLogin) {
-btnLogin.addEventListener('click', ejecutarLogin);
-}
+        // 4. Leer de Firestore
+        async function cargarDatosDesdeNube() {
+            if (!usuarioActual) return;
+            try {
+                const docRef = doc(db, "usuarios", usuarioActual.uid);
+                const docSnap = await getDoc(docRef);
 
-// Permitir inicio de sesión presionando Enter
-[loginEmail, loginPass].forEach(input => {
-if (input) {
-input.addEventListener('keypress', function(e) {
-if (e.key === 'Enter') ejecutarLogin();
-});
-}
-});
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.directorio) window.directorio = data.directorio;
+                    if (data.categoriasBase) window.categoriasBase = data.categoriasBase;
+                    if (data.subcategoriasBase) window.subcategoriasBase = data.subcategoriasBase;
+                    
+                    // Al descargar de la nube, aseguramos un backup local
+                    window.guardarLocalSolo();
+                    window.actualizarDirectorio();
 
-if (btnLogout) {
-btnLogout.addEventListener('click', function() {
-loginOverlay.style.display = 'flex';
-if (btnLogout) btnLogout.style.display = 'none';
-if (btnRescatar) btnRescatar.style.display = 'none';
-if (cloudStatus) {
-cloudStatus.innerText = "☁️ Desconectado";
-cloudStatus.className = "tag tag-ultimas";
-}
-loginEmail.value = '';
-loginPass.value = '';
-mostrarToast("Sesión cerrada correctamente.", "info");
-});
-}
+                    cloudStatus.innerHTML = "☁️ Cloud Sincronizado";
+                    cloudStatus.className = "tag tag-disponible";
+                } else {
+                    // Si no hay datos en la nube para este usuario, cargamos los locales como base
+                    window.cargarDatosLocal();
+                    cloudStatus.innerHTML = "☁️ Nube vacía (Cargado Local)";
+                    cloudStatus.className = "tag tag-posible";
+                }
+            } catch (error) {
+                console.error("Error al cargar de Firestore:", error);
+                cloudStatus.innerHTML = "⚠️ Error de red";
+                cloudStatus.className = "tag tag-nodisponible";
+                window.cargarDatosLocal(); // Fallback si falla el internet
+            }
+        }
 
-if (btnRescatar) {
-btnRescatar.addEventListener('click', function() {
-cargarDatosLocal();
-mostrarToast("Datos rescatados desde el almacenamiento local.", "success");
-});
-}
-});
-</script>
+        // 5. Función inyectada para guardar hacia la nube (usada por guardarDatos)
+        window.sincronizarHaciaNube = async function() {
+            if (!usuarioActual) return;
+            cloudStatus.innerHTML = "☁️ Guardando...";
+            cloudStatus.className = "tag tag-ultimas";
+            
+            try {
+                await setDoc(doc(db, "usuarios", usuarioActual.uid), {
+                    directorio: window.directorio,
+                    categoriasBase: window.categoriasBase,
+                    subcategoriasBase: window.subcategoriasBase,
+                    ultimaModificacion: new Date().toISOString()
+                });
+                cloudStatus.innerHTML = "☁️ Cloud Sincronizado";
+                cloudStatus.className = "tag tag-disponible";
+            } catch (error) {
+                console.error("Error al guardar en Firestore:", error);
+                cloudStatus.innerHTML = "⚠️ Error de Sincronización";
+                cloudStatus.className = "tag tag-nodisponible";
+            }
+        };
+
+        // 6. Botón de Rescate (Lee forzosamente la caché local y la tira a la nube)
+        btnRescatar.addEventListener('click', () => {
+            if(confirm("¿Estás seguro que deseas rescatar los datos locales? Esto sobreescribirá lo que esté en la nube actualmente.")){
+                window.cargarDatosLocal();
+                window.sincronizarHaciaNube();
+                mostrarToast("🎉 ¡Datos locales rescatados y enviados a la nube exitosamente!", "success");
+            }
+        });
+    </script>
 </body>
 </html>
