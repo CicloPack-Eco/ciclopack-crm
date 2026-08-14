@@ -209,7 +209,7 @@
 
         .prod-item-dir { 
             display: flex; justify-content: space-between; align-items: center; 
-            padding: 10px; background: var(--highlight-bg); border-radius: 8px; 
+            padding: 12px; background: var(--highlight-bg); border-radius: 8px; 
             margin-bottom: 8px; border: 1px solid var(--border-color); flex-wrap: wrap; gap: 12px;
         }
         
@@ -228,16 +228,16 @@
 
         /* ESTILOS PARA BLOQUES DE PRECIOS EN DIRECTORIO */
         .price-box-minor {
-            background: rgba(2, 132, 199, 0.1);
-            border: 1px solid var(--minor-color);
+            background: rgba(2, 132, 199, 0.12);
+            border: 1.5px solid var(--minor-color);
             border-radius: 8px;
             padding: 6px 12px;
             text-align: right;
-            min-width: 125px;
+            min-width: 130px;
         }
         .price-box-mayor {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid var(--mayor-color);
+            background: rgba(16, 185, 129, 0.12);
+            border: 1.5px solid var(--mayor-color);
             border-radius: 8px;
             padding: 6px 12px;
             text-align: right;
@@ -1244,7 +1244,7 @@
                 textoNarrativo += `. `;
 
                 if (prodMasRapido && prodMasRapido.prov.tiempo !== '-') {
-                    textoNarrativo += `Si requieres entrega urgente en Coquimbo, <strong>${prodMasRapido.prov.nombre}</strong> ofrece el tiempo de respuesta más ágil (${prodMasRapido.prov.tiempo} días).`;
+                    textoNarrativo += `Si requieres entrega urgente en Coquimbo, <strong>${prodMasRapido.prov.nombre}</strong> offers el tiempo de respuesta más ágil (${prodMasRapido.prov.tiempo} días).`;
                 }
             }
             divResumen.innerHTML = textoNarrativo;
@@ -1845,7 +1845,7 @@
             }
         }
 
-        // --- RENDERIZADO DIRECTORIO GENERAL CON CHECKBOXES COMPARATIVOS ---
+        // --- RENDERIZADO DIRECTORIO GENERAL CON RESUMEN ESTILIZADO DE PRODUCTOS ---
         function actualizarDirectorio() {
             actualizarKPIs();
 
@@ -1921,7 +1921,6 @@
                 });
 
                 Object.keys(agrupado).forEach(cat => {
-                    // MODIFICACIÓN: Cambio de <div> a <details> y <summary> para la Categoría
                     htmlProv += `
                     <details class="cat-details">
                         <summary style="padding: 10px; border-bottom: 1px solid var(--border-color); background: rgba(0,0,0,0.03);">
@@ -1931,7 +1930,6 @@
                     `;
                     
                     Object.keys(agrupado[cat]).forEach(sub => {
-                        // MODIFICACIÓN: Cambio de <div> a <details> y <summary> para la Sub-categoría
                         htmlProv += `
                         <details class="subcat-details">
                             <summary style="padding: 10px; border-bottom: 1px dashed var(--border-color); background: rgba(0,245,212,0.05);">
@@ -1947,134 +1945,151 @@
                                 ? `<img src="${p.imagen}" class="prod-img-thumb" onerror="this.onerror=null; this.parentElement.innerHTML='📷';">` 
                                 : `<div class="prod-img-thumb">📷</div>`;
 
-                            const linkHTML = p.link ? `<a href="${p.link}" target="_blank" style="color:var(--cyan-accent); font-size:0.8em; font-weight:bold;">🔗 Ficha/Web</a>` : '';
+                            const linkHTML = p.link ? `<a href="${p.link}" target="_blank" style="color:var(--cyan-accent); font-size:0.8em; font-weight:bold; margin-left:8px;">🔗 Ficha/Web</a>` : '';
                             
                             const uMinor = p.uniCajaMinor ? `${fNum(p.uniCajaMinor)} un/cja` : '1 un';
                             const uNetoMin = p.uniNetoMinor || (p.uniCajaMinor ? Math.round(p.minorista / p.uniCajaMinor) : p.minorista);
                             const celdaMinorista = `<div class="price-box-minor">
-                                <span style="font-size:0.7em; opacity:0.8; display:block; color:var(--minor-color);">Minorista</span>
-                                <strong>$${fNum(p.minorista)}</strong><br>
-                                <small>📦 ${uMinor}</small><br>
+                                <span style="font-size:0.75em; opacity:0.85; display:block; font-weight:bold; color:var(--minor-color);">Minorista</span>
+                                <strong style="font-size:1.1em; color:var(--minor-color);">$${fNum(p.minorista)}</strong><br>
+                                <small style="opacity:0.8; font-size:0.75em;">📦 ${uMinor}</small><br>
                                 <span style="font-size:0.85em; font-weight:bold; color:var(--minor-color);">⚡ $${fNum(uNetoMin)}/un</span>
                             </div>`;
 
                             const uMayor = p.cantCaja ? `${fNum(p.cantCaja)} un/cja` : '1 un';
                             const uNetoMay = p.unitario || (p.cantCaja ? Math.round(p.mayorista / p.cantCaja) : p.mayorista);
                             const celdaMayorista = `<div class="price-box-mayor">
-                                <span style="font-size:0.7em; opacity:0.8; display:block; color:var(--mayor-color);">Mayorista</span>
-                                <strong>$${fNum(p.mayorista)}</strong><br>
-                                <small>📦 ${uMayor}</small><br>
+                                <span style="font-size:0.75em; opacity:0.85; display:block; font-weight:bold; color:var(--mayor-color);">Mayorista</span>
+                                <strong style="font-size:1.15em; color:var(--mayor-color);">$${fNum(p.mayorista)}</strong><br>
+                                <small style="opacity:0.8; font-size:0.75em;">📦 ${uMayor}</small><br>
                                 <span style="font-size:0.85em; font-weight:bold; color:var(--mayor-color);">⚡ $${fNum(uNetoMay)}/un</span>
                             </div>`;
 
+                            const ofertaHTML = (p.oferta && p.oferta !== '-') ? `<div style="font-size:0.8em; color:var(--warning); margin-top:3px;">🏷️ ${p.oferta}</div>` : '';
+
                             htmlProv += `
                             <div class="prod-item-dir">
-                                <div style="display:flex; align-items:center; gap:12px;">
-                                    <input type="checkbox" class="chk-cmp chk-cmp-${prov.id}-${p.id}" ${isSelected ? 'checked' : ''} onchange="toggleSeleccionComparar('${prov.id}', '${p.id}')">
+                                <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:250px;">
+                                    <input type="checkbox" class="chk-cmp chk-cmp-${prov.id}-${p.id}" ${isSelected ? 'checked' : ''} onchange="toggleSeleccionComparar('${prov.id}', '${p.id}')" title="Seleccionar para comparar">
                                     ${imgHTML}
                                     <div>
-                                        <strong>${p.nombre}</strong> <span class="tag ${getClaseTag(p.linea)}">${p.linea}</span><br>
-                                        ${renderStockTag(p)} ${linkHTML}
+                                        <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                                            <strong style="font-size:1em;">${p.nombre}</strong>
+                                            <span class="tag ${getClaseTag(p.linea)}">${p.linea}</span>
+                                            ${renderStockTag(p)}
+                                        </div>
+                                        ${p.descripcion ? `<small style="display:block; opacity:0.8; font-size:0.8em; margin-top:2px;">${p.descripcion}</small>` : ''}
+                                        ${ofertaHTML}
+                                        ${linkHTML}
                                     </div>
                                 </div>
-                                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                                <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
                                     ${celdaMinorista}
                                     ${celdaMayorista}
-                                    <div style="display:flex; flex-direction:column; gap:5px;">
-                                        <button type="button" class="btn-copy" onclick="copiarFichaProducto('${prov.nombre}', '${p.nombre}', ${p.minorista}, ${p.mayorista}, '${p.link || ''}', '${p.oferta || ''}')">📋 Copiar</button>
-                                        <button type="button" class="btn-warning" style="padding:4px 8px;" onclick="abrirModalProd('edit', '${prov.id}', '${p.id}')">✏️ Edit</button>
-                                        <button type="button" class="btn-danger" style="padding:4px 8px;" onclick="eliminarProductoDir('${prov.id}', '${p.id}')">X</button>
+                                    <div style="display:flex; flex-direction:column; gap:4px;">
+                                        <button type="button" class="btn-copy" onclick="copiarFichaProducto('${prov.nombre}', '${p.nombre}', ${p.minorista}, ${p.mayorista}, '${p.link || ''}', '${p.oferta || ''}')" title="Copiar Ficha">📋 Copiar</button>
+                                        <button type="button" class="btn-warning" style="padding:4px 8px; font-size:0.8em;" onclick="abrirModalProd('edit', '${prov.id}', '${p.id}')">✏️ Editar</button>
+                                        <button type="button" class="btn-danger" style="padding:4px 8px; font-size:0.8em;" onclick="eliminarProductoDir('${prov.id}', '${p.id}')">🗑️</button>
                                     </div>
                                 </div>
                             </div>`;
                         });
-                        htmlProv += `</div></div></details>`; // Cierre details subcat
+
+                        htmlProv += `
+                                </div>
+                            </div>
+                        </details>`;
                     });
-                    htmlProv += `</div></details>`; // Cierre details cat
+
+                    htmlProv += `
+                        </div>
+                    </details>`;
                 });
-                htmlProv += `</div></details>`; // Cierre details prov
-                
+
+                htmlProv += `
+                    </div>
+                </details>`;
+
                 contenedor.innerHTML += htmlProv;
             });
-            compararProveedores();
         }
 
 // --- LÓGICA DE INICIO Y CERRAR SESIÓN (FIX LOGIN) ---
-        document.addEventListener('DOMContentLoaded', function() {
-            // Cargar datos locales de entrada
-            cargarDatosLocal();
+document.addEventListener('DOMContentLoaded', function() {
+// Cargar datos locales de entrada
+cargarDatosLocal();
 
-            const btnLogin = document.getElementById('btnLogin');
-            const btnLogout = document.getElementById('btnLogout');
-            const btnRescatar = document.getElementById('btnRescatar');
-            const loginOverlay = document.getElementById('loginOverlay');
-            const loginEmail = document.getElementById('loginEmail');
-            const loginPass = document.getElementById('loginPass');
-            const loginError = document.getElementById('loginError');
-            const cloudStatus = document.getElementById('cloudStatus');
+const btnLogin = document.getElementById('btnLogin');
+const btnLogout = document.getElementById('btnLogout');
+const btnRescatar = document.getElementById('btnRescatar');
+const loginOverlay = document.getElementById('loginOverlay');
+const loginEmail = document.getElementById('loginEmail');
+const loginPass = document.getElementById('loginPass');
+const loginError = document.getElementById('loginError');
+const cloudStatus = document.getElementById('cloudStatus');
 
-            function ejecutarLogin() {
-                const email = loginEmail.value.trim();
-                const pass = loginPass.value.trim();
+function ejecutarLogin() {
+const email = loginEmail.value.trim();
+const pass = loginPass.value.trim();
 
-                if (!email || !pass) {
-                    loginError.innerText = "Por favor, ingresa tu correo y contraseña.";
-                    loginError.style.display = 'block';
-                    return;
-                }
+if (!email || !pass) {
+loginError.innerText = "Por favor, ingresa tu correo y contraseña.";
+loginError.style.display = 'block';
+return;
+}
 
-                // Ocultar overlay de login y mostrar interfaz principal
-                loginOverlay.style.display = 'none';
-                loginError.style.display = 'none';
+// Ocultar overlay de login y mostrar interfaz principal
+loginOverlay.style.display = 'none';
+loginError.style.display = 'none';
 
-                // Mostrar botones de control de sesión
-                if (btnLogout) btnLogout.style.display = 'inline-block';
-                if (btnRescatar) btnRescatar.style.display = 'inline-block';
+// Mostrar botones de control de sesión
+if (btnLogout) btnLogout.style.display = 'inline-block';
+if (btnRescatar) btnRescatar.style.display = 'inline-block';
 
-                // Actualizar indicador de estado
-                if (cloudStatus) {
-                    cloudStatus.innerText = "🟢 Sesión Iniciada";
-                    cloudStatus.className = "tag tag-disponible";
-                }
+// Actualizar indicador de estado
+if (cloudStatus) {
+cloudStatus.innerText = "🟢 Sesión Iniciada";
+cloudStatus.className = "tag tag-disponible";
+}
 
-                mostrarToast("¡Bienvenido al CRM CicloPack Bio!", "success");
-            }
+mostrarToast("¡Bienvenido al CRM CicloPack Bio!", "success");
+}
 
-            if (btnLogin) {
-                btnLogin.addEventListener('click', ejecutarLogin);
-            }
+if (btnLogin) {
+btnLogin.addEventListener('click', ejecutarLogin);
+}
 
-            // Permitir inicio de sesión presionando Enter
-            [loginEmail, loginPass].forEach(input => {
-                if (input) {
-                    input.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') ejecutarLogin();
-                    });
-                }
-            });
+// Permitir inicio de sesión presionando Enter
+[loginEmail, loginPass].forEach(input => {
+if (input) {
+input.addEventListener('keypress', function(e) {
+if (e.key === 'Enter') ejecutarLogin();
+});
+}
+});
 
-            if (btnLogout) {
-                btnLogout.addEventListener('click', function() {
-                    loginOverlay.style.display = 'flex';
-                    if (btnLogout) btnLogout.style.display = 'none';
-                    if (btnRescatar) btnRescatar.style.display = 'none';
-                    if (cloudStatus) {
-                        cloudStatus.innerText = "☁️ Desconectado";
-                        cloudStatus.className = "tag tag-ultimas";
-                    }
-                    loginEmail.value = '';
-                    loginPass.value = '';
-                    mostrarToast("Sesión cerrada correctamente.", "info");
-                });
-            }
+if (btnLogout) {
+btnLogout.addEventListener('click', function() {
+loginOverlay.style.display = 'flex';
+if (btnLogout) btnLogout.style.display = 'none';
+if (btnRescatar) btnRescatar.style.display = 'none';
+if (cloudStatus) {
+cloudStatus.innerText = "☁️ Desconectado";
+cloudStatus.className = "tag tag-ultimas";
+}
+loginEmail.value = '';
+loginPass.value = '';
+mostrarToast("Sesión cerrada correctamente.", "info");
+});
+}
 
-            if (btnRescatar) {
-                btnRescatar.addEventListener('click', function() {
-                    cargarDatosLocal();
-                    mostrarToast("Datos rescatados desde el almacenamiento local.", "success");
-                });
-            }
-        });
-    </script>
+if (btnRescatar) {
+btnRescatar.addEventListener('click', function() {
+cargarDatosLocal();
+mostrarToast("Datos rescatados desde el almacenamiento local.", "success");
+});
+}
+});
+</script>
 </body>
 </html>
