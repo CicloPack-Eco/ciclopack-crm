@@ -1959,43 +1959,113 @@
                                     ${imgHTML}
                                     <div>
                                         <div style="display:flex; align-items:center; gap:6px;">
+                                            <strong style="font-size:1em;">${p.nombre}</strong>
                                             <span class="tag ${getClaseTag(p.linea)}">${p.linea}</span>
-                                            <strong>${p.nombre}</strong>
                                         </div>
-                                        <div style="margin-top:4px;">${renderStockTag(p)}</div>
-                                        <small style="opacity:0.8; display:block; margin-top:2px;">${p.descripcion || 'Sin descripción'}</small>
-                                        ${linkHTML}
+                                        <div style="font-size:0.8em; opacity:0.8; margin-top:3px;">
+                                            ${renderStockTag(p)} ${linkHTML}
+                                        </div>
+                                        ${ofertaHTML ? `<div style="margin-top:4px;">${ofertaHTML}</div>` : ''}
                                     </div>
                                 </div>
-                                
-                                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                                    ${ofertaHTML}
+                                <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap; justify-content:flex-end;">
                                     ${celdaMinorista}
                                     ${celdaMayorista}
-                                    <div style="display:flex; flex-direction:column; gap:4px;">
+                                    <div style="display:flex; flex-direction:column; gap:5px;">
+                                        <button type="button" class="btn-warning" onclick="abrirModalProd('edit', '${prov.id}', '${p.id}')">✏️ Editar</button>
+                                        <button type="button" class="btn-danger" onclick="eliminarProductoDir('${prov.id}', '${p.id}')">🗑️ Eliminar</button>
                                         <button type="button" class="btn-copy" onclick="copiarFichaProducto('${prov.nombre}', '${p.nombre}', ${p.minorista}, ${p.mayorista}, '${p.link || ''}', '${p.oferta || ''}')">📋 Copiar</button>
-                                        <button type="button" class="btn-warning" style="padding:3px 8px; font-size:0.8em;" onclick="abrirModalProd('edit', '${prov.id}', '${p.id}')">✏️ Editar</button>
-                                        <button type="button" class="btn-danger" style="padding:3px 8px; font-size:0.8em;" onclick="eliminarProductoDir('${prov.id}', '${p.id}')">🗑️</button>
                                     </div>
                                 </div>
-                            </div>
-                            `;
+                            </div>`;
                         });
                         htmlProv += `</div></div>`;
                     });
                     htmlProv += `</div>`;
                 });
 
-                htmlProv += `</div></details>`;
+                htmlProv += `
+                    </div>
+                </details>`;
                 contenedor.innerHTML += htmlProv;
             });
-
-            compararProveedores();
         }
 
-        // INICIALIZACIÓN
-        document.addEventListener('DOMContentLoaded', () => {
+        // --- LÓGICA DE INICIO Y CERRAR SESIÓN (FIX LOGIN) ---
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar datos locales de entrada
             cargarDatosLocal();
+
+            const btnLogin = document.getElementById('btnLogin');
+            const btnLogout = document.getElementById('btnLogout');
+            const btnRescatar = document.getElementById('btnRescatar');
+            const loginOverlay = document.getElementById('loginOverlay');
+            const loginEmail = document.getElementById('loginEmail');
+            const loginPass = document.getElementById('loginPass');
+            const loginError = document.getElementById('loginError');
+            const cloudStatus = document.getElementById('cloudStatus');
+
+            function ejecutarLogin() {
+                const email = loginEmail.value.trim();
+                const pass = loginPass.value.trim();
+
+                if (!email || !pass) {
+                    loginError.innerText = "Por favor, ingresa tu correo y contraseña.";
+                    loginError.style.display = 'block';
+                    return;
+                }
+
+                // Ocultar overlay de login y mostrar interfaz principal
+                loginOverlay.style.display = 'none';
+                loginError.style.display = 'none';
+
+                // Mostrar botones de control de sesión
+                if (btnLogout) btnLogout.style.display = 'inline-block';
+                if (btnRescatar) btnRescatar.style.display = 'inline-block';
+
+                // Actualizar indicador de estado
+                if (cloudStatus) {
+                    cloudStatus.innerText = "🟢 Sesión Iniciada";
+                    cloudStatus.className = "tag tag-disponible";
+                }
+
+                mostrarToast("¡Bienvenido al CRM CicloPack Bio!", "success");
+            }
+
+            if (btnLogin) {
+                btnLogin.addEventListener('click', ejecutarLogin);
+            }
+
+            // Permitir inicio de sesión presionando Enter
+            [loginEmail, loginPass].forEach(input => {
+                if (input) {
+                    input.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') ejecutarLogin();
+                    });
+                }
+            });
+
+            if (btnLogout) {
+                btnLogout.addEventListener('click', function() {
+                    loginOverlay.style.display = 'flex';
+                    if (btnLogout) btnLogout.style.display = 'none';
+                    if (btnRescatar) btnRescatar.style.display = 'none';
+                    if (cloudStatus) {
+                        cloudStatus.innerText = "☁️ Desconectado";
+                        cloudStatus.className = "tag tag-ultimas";
+                    }
+                    loginEmail.value = '';
+                    loginPass.value = '';
+                    mostrarToast("Sesión cerrada correctamente.", "info");
+                });
+            }
+
+            if (btnRescatar) {
+                btnRescatar.addEventListener('click', function() {
+                    cargarDatosLocal();
+                    mostrarToast("Datos rescatados desde el almacenamiento local.", "success");
+                });
+            }
         });
     </script>
 </body>
