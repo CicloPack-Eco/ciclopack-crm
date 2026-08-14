@@ -1999,10 +1999,82 @@
             compararProveedores();
         }
 
-        // CARGA INICIAL (Reconstruida al final del script)
-        window.onload = function() {
+// --- LÓGICA DE INICIO Y CERRAR SESIÓN (FIX LOGIN) ---
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar datos locales de entrada
             cargarDatosLocal();
-        };
+
+            const btnLogin = document.getElementById('btnLogin');
+            const btnLogout = document.getElementById('btnLogout');
+            const btnRescatar = document.getElementById('btnRescatar');
+            const loginOverlay = document.getElementById('loginOverlay');
+            const loginEmail = document.getElementById('loginEmail');
+            const loginPass = document.getElementById('loginPass');
+            const loginError = document.getElementById('loginError');
+            const cloudStatus = document.getElementById('cloudStatus');
+
+            function ejecutarLogin() {
+                const email = loginEmail.value.trim();
+                const pass = loginPass.value.trim();
+
+                if (!email || !pass) {
+                    loginError.innerText = "Por favor, ingresa tu correo y contraseña.";
+                    loginError.style.display = 'block';
+                    return;
+                }
+
+                // Ocultar overlay de login y mostrar interfaz principal
+                loginOverlay.style.display = 'none';
+                loginError.style.display = 'none';
+
+                // Mostrar botones de control de sesión
+                if (btnLogout) btnLogout.style.display = 'inline-block';
+                if (btnRescatar) btnRescatar.style.display = 'inline-block';
+
+                // Actualizar indicador de estado
+                if (cloudStatus) {
+                    cloudStatus.innerText = "🟢 Sesión Iniciada";
+                    cloudStatus.className = "tag tag-disponible";
+                }
+
+                mostrarToast("¡Bienvenido al CRM CicloPack Bio!", "success");
+            }
+
+            if (btnLogin) {
+                btnLogin.addEventListener('click', ejecutarLogin);
+            }
+
+            // Permitir inicio de sesión presionando Enter
+            [loginEmail, loginPass].forEach(input => {
+                if (input) {
+                    input.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') ejecutarLogin();
+                    });
+                }
+            });
+
+            if (btnLogout) {
+                btnLogout.addEventListener('click', function() {
+                    loginOverlay.style.display = 'flex';
+                    if (btnLogout) btnLogout.style.display = 'none';
+                    if (btnRescatar) btnRescatar.style.display = 'none';
+                    if (cloudStatus) {
+                        cloudStatus.innerText = "☁️ Desconectado";
+                        cloudStatus.className = "tag tag-ultimas";
+                    }
+                    loginEmail.value = '';
+                    loginPass.value = '';
+                    mostrarToast("Sesión cerrada correctamente.", "info");
+                });
+            }
+
+            if (btnRescatar) {
+                btnRescatar.addEventListener('click', function() {
+                    cargarDatosLocal();
+                    mostrarToast("Datos rescatados desde el almacenamiento local.", "success");
+                });
+            }
+        });
     </script>
 </body>
 </html>
