@@ -85,7 +85,7 @@
             transition: all 0.2s ease;
         }
 
-        button:active, .btn-primary:active, .btn-secondary:active, .btn-warning:active, .btn-danger:active, .btn-iva:active {
+        button:active, .btn-primary:active, .btn-secondary:active, .btn-warning:active, .btn-danger:active, .btn-iva:active, .btn-info:active {
             box-shadow: 0 0 20px var(--cyan-accent), 0 0 8px var(--cyan-accent) !important;
             transform: scale(0.96);
         }
@@ -113,6 +113,12 @@
         
         .btn-warning { background: var(--warning); color: #000; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8em; font-weight: bold; transition: 0.3s;}
         .btn-warning:hover { filter: brightness(1.1); box-shadow: 0 0 10px var(--warning); }
+
+        .btn-info { background: #0284c7; color: white; border: 1px solid var(--cyan-accent); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85em; font-weight: bold; transition: 0.3s; }
+        .btn-info:hover { filter: brightness(1.15); box-shadow: 0 0 12px #38bdf8; }
+
+        .btn-copy { background: transparent; color: var(--cyan-accent); border: 1px dashed var(--cyan-accent); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.75em; font-weight: bold; transition: 0.3s; }
+        .btn-copy:hover { background: rgba(0, 245, 212, 0.15); transform: translateY(-1px); }
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -238,9 +244,55 @@
             min-width: 140px;
         }
 
+        /* BARRA DE KPIs/RESUMEN DE DASHBOARD */
+        .kpi-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .kpi-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .kpi-title { font-size: 0.8em; opacity: 0.8; font-weight: bold; text-transform: uppercase; }
+        .kpi-num { font-size: 1.6em; font-weight: bold; color: var(--cyan-accent); }
+
+        /* NOTIFICACIONES TOAST */
+        .toast-container {
+            position: fixed; bottom: 20px; right: 20px; z-index: 2000;
+            display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+        }
+        .toast {
+            background: var(--card-bg); color: var(--text-color);
+            border-left: 5px solid var(--cyan-accent); border-radius: 8px;
+            padding: 12px 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            font-size: 0.9em; font-weight: bold; pointer-events: auto;
+            animation: fadeInRight 0.3s ease, fadeOut 0.3s ease 3.7s forwards;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .toast-success { border-left-color: var(--success); }
+        .toast-warning { border-left-color: var(--warning); }
+        .toast-danger { border-left-color: var(--danger); }
+
+        @keyframes fadeInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
     </style>
 </head>
 <body>
+
+    <!-- CONTENEDOR DE NOTIFICACIONES TOAST -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- INPUT OCULTO PARA IMPORTAR RESPALDO JSON -->
+    <input type="file" id="importJsonInput" accept=".json" style="display:none;" onchange="importarBackupData(event)">
 
     <div class="main-container">
         <div class="header">
@@ -250,7 +302,11 @@
                 <br>
                 <small>Sistema CRM - Gestión de Proveedores</small>
             </div>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                <!-- BOTONES DE COPIA DE SEGURIDAD LOCAL (JSON) -->
+                <button type="button" class="btn-info" onclick="exportarBackupData()" title="Descargar Respaldo JSON">📥 Backup JSON</button>
+                <button type="button" class="btn-info" onclick="document.getElementById('importJsonInput').click()" title="Restaurar desde JSON">📤 Cargar JSON</button>
+
                 <!-- BOTÓN RESCATAR (Se oculta hasta loguearse) -->
                 <button type="button" class="btn-warning" id="btnRescatar" style="display:none; padding: 10px 20px;">📥 Rescatar Datos Locales</button>
                 
@@ -260,6 +316,38 @@
                 
                 <!-- BOTÓN SALIR (Se oculta hasta loguearse) -->
                 <button type="button" class="btn-danger" id="btnLogout" style="display:none; padding: 10px 20px;">🚪 Salir</button>
+            </div>
+        </div>
+
+        <!-- DASHBOARD RESUMEN DE KPIs -->
+        <div class="kpi-bar">
+            <div class="kpi-card">
+                <div>
+                    <div class="kpi-title">Proveedores</div>
+                    <div class="kpi-num" id="kpiTotalProv">0</div>
+                </div>
+                <div style="font-size:1.8em;">🏢</div>
+            </div>
+            <div class="kpi-card">
+                <div>
+                    <div class="kpi-title">Total Productos</div>
+                    <div class="kpi-num" id="kpiTotalProd">0</div>
+                </div>
+                <div style="font-size:1.8em;">📦</div>
+            </div>
+            <div class="kpi-card">
+                <div>
+                    <div class="kpi-title">Prov. Oficiales</div>
+                    <div class="kpi-num" id="kpiOficiales" style="color:var(--success);">0</div>
+                </div>
+                <div style="font-size:1.8em;">✅</div>
+            </div>
+            <div class="kpi-card">
+                <div>
+                    <div class="kpi-title">Favoritos</div>
+                    <div class="kpi-num" id="kpiFavoritos" style="color:#fbbf24;">0</div>
+                </div>
+                <div style="font-size:1.8em;">⭐</div>
             </div>
         </div>
 
@@ -584,6 +672,91 @@
 
         var contextoProducto = { modo: 'temp', idProv: null, idProd: null }; 
 
+        // --- SISTEMA DE NOTIFICACIONES TOAST (MEJORA UX) ---
+        function mostrarToast(mensaje, tipo = 'info') {
+            const container = document.getElementById('toastContainer');
+            if(!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${tipo}`;
+            
+            let icono = 'ℹ️';
+            if(tipo === 'success') icono = '✅';
+            if(tipo === 'warning') icono = '⚠️';
+            if(tipo === 'danger') icono = '❌';
+
+            toast.innerHTML = `<span>${icono}</span> <div>${mensaje}</div>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                if(toast.parentElement) toast.remove();
+            }, 4000);
+        }
+
+        // --- EXPORTAR E IMPORTAR RESPALDO LOCAL JSON (MEJORA DE SEGURIDAD) ---
+        function exportarBackupData() {
+            try {
+                const payload = {
+                    directorio,
+                    categoriasBase,
+                    subcategoriasBase,
+                    fechaExportacion: new Date().toISOString()
+                };
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
+                const downloadAnchor = document.createElement('a');
+                downloadAnchor.setAttribute("href", dataStr);
+                downloadAnchor.setAttribute("download", `CicloPack_CRM_Backup_${new Date().toISOString().slice(0,10)}.json`);
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
+                mostrarToast("Respaldo descargado exitosamente.", "success");
+            } catch (e) {
+                console.error(e);
+                mostrarToast("Error al exportar datos.", "danger");
+            }
+        }
+
+        function importarBackupData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (parsed.directorio && Array.isArray(parsed.directorio)) {
+                        directorio = parsed.directorio;
+                        if(parsed.categoriasBase) categoriasBase = parsed.categoriasBase;
+                        if(parsed.subcategoriasBase) subcategoriasBase = parsed.subcategoriasBase;
+                        
+                        guardarDatos();
+                        actualizarDirectorio();
+                        mostrarToast("¡Datos importados con éxito!", "success");
+                    } else {
+                        mostrarToast("El archivo JSON no tiene un formato válido de CicloPack.", "warning");
+                    }
+                } catch (err) {
+                    mostrarToast("Error al leer el archivo JSON.", "danger");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // --- COPIAR FICHA DE PRODUCTO AL PORTAPAPELES (MEJORA DE PRODUCTIVIDAD) ---
+        function copiarFichaProducto(provNombre, prodNombre, minorista, mayorista, link, oferta) {
+            const texto = `📦 *${prodNombre}* (${provNombre})\n` +
+                          `• Minorista: $${fNum(minorista)}\n` +
+                          `• Mayorista: $${fNum(mayorista)}\n` +
+                          (oferta && oferta !== '-' ? `• Oferta: ${oferta}\n` : '') +
+                          (link ? `🔗 Link: ${link}` : '');
+
+            navigator.clipboard.writeText(texto).then(() => {
+                mostrarToast("📋 Ficha copiada al portapapeles", "success");
+            }).catch(() => {
+                mostrarToast("No se pudo copiar automáticamente.", "warning");
+            });
+        }
+
         // --- PERSISTENCIA HÍBRIDA ---
         function cargarDatosLocal() {
             try {
@@ -618,7 +791,7 @@
                 localStorage.setItem('cicloPackBio_subcategorias', JSON.stringify(subcategoriasBase));
             } catch (e) {
                 console.error("Error guardando datos en localStorage:", e);
-                alert("⚠️ Atención: La memoria del navegador está llena. Se recomienda usar URLs de imágenes para optimizar espacio.");
+                mostrarToast("⚠️ Memoria del navegador llena. Usa URLs de imágenes para ahorrar espacio.", "warning");
             }
         }
 
@@ -664,6 +837,25 @@
 
         function fNum(num) {
             return Number(num || 0).toLocaleString('es-CL');
+        }
+
+        // ACTUALIZACIÓN DE KPIs DE TABLERO
+        function actualizarKPIs() {
+            document.getElementById('kpiTotalProv').innerText = directorio.length;
+            
+            let totalProd = 0;
+            let totalOficiales = 0;
+            let totalFav = 0;
+
+            directorio.forEach(p => {
+                if(p.productos) totalProd += p.productos.length;
+                if(p.estado === 'Oficial') totalOficiales++;
+                if(p.favorito) totalFav++;
+            });
+
+            document.getElementById('kpiTotalProd').innerText = totalProd;
+            document.getElementById('kpiOficiales').innerText = totalOficiales;
+            document.getElementById('kpiFavoritos').innerText = totalFav;
         }
 
         // CÁLCULOS AUTOMÁTICOS DE FORMULARIO (ACTUALIZADO CON MULTIPLICACIÓN Y UNITARIOS MINORISTA / MAYORISTA)
@@ -903,7 +1095,8 @@
         function guardarProveedorFinal() {
             const nombre = document.getElementById('provNombre').value.trim();
             if(!nombre || productosTemporales.length === 0) {
-                alert("Ingresa el nombre del proveedor y al menos un producto."); return;
+                mostrarToast("Ingresa el nombre del proveedor y al menos un producto.", "warning"); 
+                return;
             }
 
             const estadoRadio = document.querySelector('input[name="catEstado"]:checked');
@@ -935,6 +1128,7 @@
             guardarDatos();
             actualizarDirectorio();
             cerrarModalProv();
+            mostrarToast("Proveedor guardado correctamente.", "success");
         }
 
         function eliminarProveedor(idProv) {
@@ -942,6 +1136,7 @@
                 directorio = directorio.filter(p => p.id !== idProv);
                 guardarDatos();
                 actualizarDirectorio();
+                mostrarToast("Proveedor eliminado.", "danger");
             }
         }
 
@@ -971,6 +1166,7 @@
             if(iMin.value) iMin.value = Math.round(Number(iMin.value) * 1.19);
             if(iMay.value) iMay.value = Math.round(Number(iMay.value) * 1.19);
             calcularUnitarioAuto();
+            mostrarToast("IVA del 19% aplicado a los precios.", "info");
         }
 
         function abrirModalProd(modo, idProv = null, idProd = null) {
@@ -1105,7 +1301,7 @@
                 };
 
                 if(!prod.nombre || !prod.mayorista) { 
-                    alert("Ingresa al menos el nombre del producto y el precio mayorista."); 
+                    mostrarToast("Ingresa al menos el nombre del producto y el precio mayorista.", "warning"); 
                     return; 
                 }
 
@@ -1147,9 +1343,10 @@
                 }
 
                 cerrarModalProd();
+                mostrarToast("Producto procesado con éxito.", "success");
             } catch (err) {
                 console.error("Error al procesar producto:", err);
-                alert("Ocurrió un error al guardar el producto: " + err.message);
+                mostrarToast("Error al guardar producto: " + err.message, "danger");
             }
         }
 
@@ -1161,6 +1358,7 @@
                     prov.linea = determinarLineaProveedor(prov.productos);
                     guardarDatos();
                     actualizarDirectorio();
+                    mostrarToast("Producto eliminado.", "danger");
                 }
             }
         }
@@ -1221,6 +1419,7 @@
                 guardarDatos();
                 renderizarListaCatSub();
                 actualizarDirectorio();
+                mostrarToast("Categoría actualizada.", "success");
             }
         }
 
@@ -1240,6 +1439,7 @@
                 guardarDatos();
                 renderizarListaCatSub();
                 actualizarDirectorio();
+                mostrarToast("Categoría eliminada.", "danger");
             }
         }
 
@@ -1262,6 +1462,7 @@
                 guardarDatos();
                 renderizarListaCatSub();
                 actualizarDirectorio();
+                mostrarToast("Sub-categoría actualizada.", "success");
             }
         }
 
@@ -1281,11 +1482,14 @@
                 guardarDatos();
                 renderizarListaCatSub();
                 actualizarDirectorio();
+                mostrarToast("Sub-categoría eliminada.", "danger");
             }
         }
 
-        // --- RENDERIZADO DIRECTORIO (ACORDEÓN ALINEADO CON BLOQUES VISUALES SEPARADOS) ---
+        // --- RENDERIZADO DIRECTORIO (ACORDEÓN ALINEADO CON BLOQUES VISUALES SEPARADOS + CÁLCULO DE AHORRO) ---
         function actualizarDirectorio() {
+            actualizarKPIs(); // Actualiza contadores superiores
+
             const fFav = document.getElementById('filtroFav').value;
             const fCat = document.getElementById('filtroCat').value;
             const fEst = document.getElementById('filtroEst').value;
@@ -1318,7 +1522,7 @@
             contenedor.innerHTML = '';
 
             if(directorioFiltrado.length === 0) {
-                contenedor.innerHTML = '<p>No hay datos que coincidan con tu búsqueda.</p>';
+                contenedor.innerHTML = '<p style="padding:15px; text-align:center; opacity:0.8;">No hay datos que coincidan con tu búsqueda.</p>';
                 compararProveedores();
                 return;
             }
@@ -1383,6 +1587,15 @@
                             const uMayorCount = prod.cantCaja ? fNum(prod.cantCaja) : '1';
                             const uNetoMay = prod.unitario || (prod.mayorista && prod.cantCaja ? Math.round(prod.mayorista / prod.cantCaja) : (prod.mayorista || 0));
 
+                            // CÁLCULO DE PORCENTAJE DE AHORRO EN COMPRA MAYORISTA
+                            let ahorroTag = '';
+                            if (uNetoMin > 0 && uNetoMay > 0 && uNetoMin > uNetoMay) {
+                                const ahorroPorc = Math.round(((uNetoMin - uNetoMay) / uNetoMin) * 100);
+                                if (ahorroPorc > 0) {
+                                    ahorroTag = `<small class="tag tag-disponible" style="font-size:0.7em; margin-top:3px; display:inline-block;">💰 Ahorro ${ahorroPorc}% x un.</small>`;
+                                }
+                            }
+
                             // Bloque Minorista visualmente definido
                             const bloqueMinorista = `
                                 <div class="price-box-minor">
@@ -1400,8 +1613,15 @@
                                     <div style="font-size: 1.25em; font-weight: bold; color: var(--mayor-color);">$${fNum(prod.mayorista)}</div>
                                     <small style="display:block; font-size:0.75em; color:var(--cyan-accent); font-weight:bold;">📦 ${uMayorCount} un/caja mayor</small>
                                     <small style="display:block; font-size:0.75em; font-weight:bold; color: var(--mayor-color);">⚡ $${fNum(uNetoMay)}/un</small>
+                                    ${ahorroTag}
                                 </div>
                             `;
+
+                            // Escape de strings para evitar romper la llamada en HTML al copiar
+                            const pNameEsc = (prod.nombre || '').replace(/'/g, "\\'");
+                            const pProvEsc = (prov.nombre || '').replace(/'/g, "\\'");
+                            const pLinkEsc = (prod.link || '').replace(/'/g, "\\'");
+                            const pOfertaEsc = (prod.oferta || '').replace(/'/g, "\\'");
 
                             htmlProv += `
                             <div class="prod-item-dir">
@@ -1421,7 +1641,8 @@
                                 <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:flex-end;">
                                     ${bloqueMinorista}
                                     ${bloqueMayorista}
-                                    <div style="display:flex; flex-direction:column; gap:4px;">
+                                    <div style="display:flex; flex-direction:column; gap:4px; justify-content:center;">
+                                        <button type="button" class="btn-copy" onclick="copiarFichaProducto('${pProvEsc}', '${pNameEsc}', ${prod.minorista || 0}, ${prod.mayorista || 0}, '${pLinkEsc}', '${pOfertaEsc}')">📋 Copiar Ficha</button>
                                         <button type="button" class="btn-warning" onclick="abrirModalProd('edit', '${prov.id}', '${prod.id}')">Editar</button>
                                         <button type="button" class="btn-danger" onclick="eliminarProductoDir('${prov.id}', '${prod.id}')">X</button>
                                     </div>
@@ -1648,7 +1869,7 @@
             if(confirm("¿Estás seguro que deseas rescatar los datos locales? Esto sobreescribirá lo que esté en la nube actualmente.")){
                 window.cargarDatosLocal();
                 window.sincronizarHaciaNube();
-                alert("🎉 ¡Datos locales rescatados y enviados a la nube exitosamente!");
+                if(window.mostrarToast) window.mostrarToast("🎉 ¡Datos locales rescatados y enviados a la nube exitosamente!", "success");
             }
         });
     </script>
